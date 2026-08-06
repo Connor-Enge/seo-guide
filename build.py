@@ -235,6 +235,12 @@ def main():
 
     os.makedirs(OUT, exist_ok=True)
 
+    # copy static assets (CSS, images) into docs/ so the stylesheet actually resolves
+    import shutil
+    _assets = os.path.join(HERE, "assets")
+    if os.path.isdir(_assets):
+        shutil.copytree(_assets, os.path.join(OUT, "assets"), dirs_exist_ok=True)
+
     # ---------- guide pages ----------
     for idx, (meta, body) in enumerate(pages):
         slug = meta["slug"]
