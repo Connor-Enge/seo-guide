@@ -378,7 +378,8 @@ def main():
             title=html.escape(title), site=html.escape(SITE_NAME),
             description=html.escape(description), canonical=url, base=BASE_URL,
             og_type=og_type, nav=nav, h1=html.escape(h1), byline=byline,
-            toc=toc, content=content, pager=pager, jsonld=jsonld, scripts=scripts,
+            toc=toc, content=content, pager=pager, jsonld=jsonld,
+            scripts=('<script defer src="%s/assets/search-focus.js"></script>' % BASE_URL) + scripts,
             breadcrumb=breadcrumb, year=today[:4])
 
     def toc_block(toc):
