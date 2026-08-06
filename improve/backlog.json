@@ -1,0 +1,22 @@
+{
+  "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
+  "pending": [
+    {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)"},
+    {"id": "related-block", "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors"},
+    {"id": "glossary", "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions"},
+    {"id": "local-seo", "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"},
+    {"id": "common-mistakes", "title": "New section: Common SEO mistakes and exactly how to avoid each"},
+    {"id": "audit-checklist", "title": "New page: a concrete technical-SEO audit checklist readers can work through"},
+    {"id": "reading-time", "title": "Compute + display reading time and a one-line summary per page (build.py feature)"},
+    {"id": "og-image", "title": "Generate a lightweight per-page SVG social image and wire og:image / twitter:image"},
+    {"id": "howto-schema", "title": "Add valid HowTo JSON-LD to procedural sections (keyword research, running an audit)"},
+    {"id": "examples", "title": "Add concrete before/after examples (title tags, URLs, headings) to on-page + technical"},
+    {"id": "ecommerce-seo", "title": "New section: E-commerce SEO — product schema, faceted navigation, canonical strategy"},
+    {"id": "international-seo", "title": "New section: International SEO — hreflang, ccTLD vs subfolder, duplicate-language handling"},
+    {"id": "homepage-depth", "title": "Enrich the homepage: section summaries, what-you'll-learn, clear reading path"},
+    {"id": "accessibility", "title": "Accessibility pass: landmarks, aria labels, focus styles, color contrast — helps UX + SEO"},
+    {"id": "internal-link-audit", "title": "Audit internal linking across all pages; add missing contextual links, fix orphan risk"},
+    {"id": "freshness", "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"}
+  ],
+  "done": []
+}
