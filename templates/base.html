@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{title} — {site}</title>
+<meta name="description" content="{description}">
+<link rel="canonical" href="{canonical}">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Connor Enge">
+<meta property="og:type" content="{og_type}">
+<meta property="og:title" content="{title}">
+<meta property="og:description" content="{description}">
+<meta property="og:url" content="{canonical}">
+<meta property="og:site_name" content="{site}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{title}">
+<meta name="twitter:description" content="{description}">
+<meta name="theme-color" content="#0b6bcb">
+<link rel="stylesheet" href="{base}/assets/style.css">
+{jsonld}
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="site">
+  <a class="brand" href="{base}/">{site}</a>
+  <nav aria-label="Guide sections"><ul>{nav}</ul></nav>
+</header>
+<main id="main" class="wrap">
+  <article>
+    <h1>{h1}</h1>
+    <p class="meta">Updated {updated} · by Connor Enge</p>
+    {toc}
+    {content}
+    {pager}
+  </article>
+</main>
+<footer class="site">
+  <p>© {year} The Guide to SEO · Built as a static, no-JS, Core-Web-Vitals-first site — an SEO guide that practices what it preaches.</p>
+</footer>
+</body>
+</html>

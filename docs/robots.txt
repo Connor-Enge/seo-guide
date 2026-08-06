@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://connor-enge.github.io/seo-guide/sitemap.xml
