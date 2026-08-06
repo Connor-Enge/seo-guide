@@ -34,6 +34,45 @@ def inline(t):
     return t
 
 
+def plain(t):
+    """Strip the inline markdown subset to readable plain text (for JSON-LD answer text)."""
+    t = re.sub(r"\*\*(.+?)\*\*", r"\1", t)
+    t = re.sub(r"`(.+?)`", r"\1", t)
+    t = re.sub(r"\[(.+?)\]\((.+?)\)", r"\1", t)
+    return t.strip()
+
+
+def extract_faq(body):
+    """Pull (question, answer) pairs from a `## FAQ` section so the visible Q&A and the
+    FAQPage JSON-LD are generated from one source and can never drift apart.
+    Inside the FAQ section each `### ...` is a question; the prose beneath it is the answer."""
+    faqs, q, ans, in_faq = [], None, [], False
+
+    def flush():
+        nonlocal q, ans
+        if q is not None:
+            text = plain(" ".join(a.strip() for a in ans if a.strip()))
+            if text:
+                faqs.append((q, text))
+        q, ans = None, []
+
+    for ln in body.split("\n"):
+        s = ln.rstrip()
+        if s.startswith("## "):
+            flush()
+            in_faq = s[3:].strip().lower() == "faq"
+            continue
+        if not in_faq:
+            continue
+        if s.startswith("### "):
+            flush()
+            q = s[4:].strip()
+        elif q is not None and s.strip():
+            ans.append(s.strip())
+    flush()
+    return faqs
+
+
 def render_md(body):
     out, i, lines = [], 0, body.split("\n")
     toc = []
@@ -135,6 +174,15 @@ def main():
             '"@type":"BreadcrumbList","itemListElement":[%s]}</script>'
         ) % (_json(meta["title"]), _json(meta["description"]), _json(AUTHOR),
              meta.get("updated", today), today, url, _json(SITE_NAME), breadcrumb)
+
+        # FAQPage schema — only on pages that ship a `## FAQ` section, built from the same text.
+        faqs = extract_faq(body)
+        if faqs:
+            entities = ",".join(
+                '{"@type":"Question","name":%s,"acceptedAnswer":{"@type":"Answer","text":%s}}'
+                % (_json(q), _json(a)) for q, a in faqs)
+            jsonld += ('\n<script type="application/ld+json">{"@context":"https://schema.org",'
+                       '"@type":"FAQPage","mainEntity":[%s]}</script>' % entities)
 
         page = TEMPLATE.format(
             title=html.escape(meta["title"]), site=html.escape(SITE_NAME),

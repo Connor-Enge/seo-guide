@@ -1,7 +1,6 @@
 {
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
-    {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)"},
     {"id": "related-block", "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors"},
     {"id": "glossary", "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions"},
     {"id": "local-seo", "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"},
@@ -18,5 +17,7 @@
     {"id": "internal-link-audit", "title": "Audit internal linking across all pages; add missing contextual links, fix orphan risk"},
     {"id": "freshness", "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"}
   ],
-  "done": []
+  "done": [
+    {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)", "changed": "Added a build.py extract_faq() feature that turns a `## FAQ` section into synced visible Q&A + valid FAQPage JSON-LD (emitted only where a FAQ exists); wrote 4 genuine Q&A each on keyword-research, on-page-seo, technical-seo.", "date": "2026-08-05"}
+  ]
 }

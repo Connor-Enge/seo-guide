@@ -26,4 +26,18 @@ Compress them, use modern formats, set explicit `width`/`height` to avoid layout
 ## Internal links
 Link related pages to each other with **descriptive anchor text**. Internal links spread authority through your site, help Google discover pages, and keep readers moving. This guide cross-links every section on purpose.
 
+## FAQ
+
+### How long should a title tag be?
+Aim for roughly 60 characters or under so it isn't truncated in results — Google actually cuts by pixel width, near 600 pixels, not a hard character count. Put the primary topic near the front, keep every title unique, and write it for a person deciding whether to click.
+
+### Do meta descriptions affect rankings?
+Not directly — Google has said the meta description is not a ranking factor, and it often rewrites the snippet anyway. It still matters because a clear, compelling description improves click-through from the results page, and clicks are what a good ranking is for.
+
+### How many H1 tags should a page have?
+Use one H1 that states the page's subject, then structure the rest with H2 and H3. Google has said multiple H1s won't necessarily hurt, but a single, clear H1 gives readers and crawlers an unambiguous outline, so it remains the safe best practice.
+
+### Does keyword density still matter?
+No. Google does not count a target percentage, and writing to a density reads as stuffing, which can hurt. Cover the topic thoroughly in natural language — mention the subject, its synonyms, and the related questions a reader actually has — and density takes care of itself.
+
 Next: the thing all of this serves — **[content quality and E-E-A-T](/content-quality/)**.
