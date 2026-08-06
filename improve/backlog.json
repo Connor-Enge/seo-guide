@@ -2,10 +2,6 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
-      "id": "mobile-first-redesign",
-      "title": "★ TOP PRIORITY THIS RUN — DESIGN OVERHAUL: give the site a genuinely sexy, modern, MOBILE-FIRST look. Rewrite assets/style.css YOURSELF (do NOT delegate to the local dev — design quality matters). Goals: fluid mobile-first type scale; a slick sticky header that condenses cleanly on phones (nav wraps/scrolls, tap targets >=44px); tasteful accent use + generous vertical rhythm; polished cards, TOC, and prev/next pager; a subtle homepage hero; smooth focus/hover/active states; keep AND beautify the existing dark mode. Stay no-JS (or tiny) and Core-Web-Vitals-fast; keep the build green and ALL SEO checks passing (title, meta, canonical, JSON-LD, one H1, sitemap). Make it feel like a premium modern docs site, not a default template. This is the single most important task — ship it this run."
-    },
-    {
       "id": "rss-feed",
       "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer"
     },
@@ -147,6 +143,12 @@
       "id": "author-page",
       "title": "FEATURE: About/author page establishing E-E-A-T, linked from every byline",
       "changed": "Added content/about.md (ProfilePage + Person JSON-LD, sameAs github.com/Connor-Enge, knowsAbout, honest 'the site is the credential' framing + sourcing/update/corrections/editorial-principles sections, grounded in Google's helpful-content guidance which names an About/author page as a trust signal). Wired it site-wide: build.py now emits author.url on every Article/BlogPosting, turns each byline into a rel=author link to /about/ (guide pages, blog posts, blog index), branches About to ProfilePage/og:profile instead of Article, and the template footer links 'About & editorial standards' on every page. About is in nav + sitemap; all JSON-LD validates; build green.",
+      "date": "2026-08-05"
+    },
+    {
+      "id": "mobile-first-redesign",
+      "title": "Mobile-first premium redesign",
+      "changed": "Rewrote assets/style.css: fluid mobile-first type, glass sticky header with brand mark + horizontal-scroll nav, gradient H1 + accent H2 markers, hover-lift cards/pager, refined dark mode. No-JS, build green, SEO intact. (Done by Claude — Grok runs 402'd on the subscription.)",
       "date": "2026-08-05"
     }
   ]
