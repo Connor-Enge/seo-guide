@@ -2,10 +2,6 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
-      "id": "onsite-search",
-      "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)"
-    },
-    {
       "id": "tag-pages",
       "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
@@ -98,10 +94,6 @@
       "title": "BLOG POST: which structured data still earns rich results in 2026 — what Google retired (FAQ/HowTo for most sites) vs. still shows (Article, Breadcrumb, Product, Video…), how to choose the types worth implementing, and a Rich Results Test workflow; source to Google Search Central's search-gallery + deprecation posts"
     },
     {
-      "id": "search-action",
-      "title": "FEATURE: once on-site search ships, add a WebSite potentialAction SearchAction (sitelinks searchbox) to the homepage entity graph, wired to the client-side search URL — the foundation entity graph is now in place"
-    },
-    {
       "id": "feed-full-content",
       "title": "FEATURE: full-content feeds — extend feed.xml with <content:encoded> (CDATA-wrapped rendered HTML) and feed.json items with content_html, so subscribers get the whole article, not just the summary; keep the summary fields too. Build on the existing feed_items pipeline in build.py."
     },
@@ -128,9 +120,31 @@
     {
       "id": "copy-code-button",
       "title": "FEATURE: no-dependency 'copy' button on <pre> code blocks (reduced-motion aware, graceful without JS)"
+    },
+    {
+      "id": "search-slash-shortcut",
+      "title": "FEATURE: press-'/' keyboard shortcut to focus the header search box from any page (progressive enhancement; ignore when typing in an input/textarea/contenteditable; visible focus ring; no-JS safe). Tiny standalone asset wired via the existing {scripts} slot."
+    },
+    {
+      "id": "search-term-highlight",
+      "title": "FEATURE: highlight matched query terms with <mark> in on-site search results for scannability (extend the existing draw() in search.js; escape first then wrap matches, reduced-motion/contrast-safe styling in style.css)."
     }
   ],
   "done": [
+    {
+      "id": "onsite-search",
+      "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)",
+      "changed": "Shipped end-to-end on-site search. Local Qwen dev authored assets/search.js — a dependency-free progressive-enhancement script that fetches the build-time search-index.json and turns the static list into a live client-side filter (term-AND matching, title/tag-weighted ranking, ?q= deep-link support, aria-live result count, XSS-escaped output, graceful fallback on fetch error). PM wired build.py: a search_text() helper that flattens page/post body markdown into indexable plain text, ONE search_items list that drives BOTH docs/search-index.json (compact, 11 items) and the static no-JS browsable list on a new /search/ page (so index and list can never drift), plus the header .hsearch box (base.html) and a {scripts} template slot. Local Qwen also authored the search CSS block (header box, results cards, .visually-hidden a11y label, responsive 2-up grid, empty state). Zero JS required to use the page — it renders the full list and every page/article is reachable; JS only enhances it. Validated: build green (9 pages + 1 post), all index SEO checks + single-h1 sweep pass, search-index.json valid, /search/ has canonical+title+desc+single-h1+no-JS list, search.js passes node --check, JSON-LD valid sitewide, sitemap includes /search/.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
+    {
+      "id": "search-action",
+      "title": "FEATURE: once on-site search ships, add a WebSite potentialAction SearchAction (sitelinks searchbox) to the homepage entity graph, wired to the client-side search URL",
+      "changed": "Added a WebSite potentialAction SearchAction to the node_website() JSON-LD node (EntryPoint urlTemplate -> /search/?q={search_term_string}, query-input required name=search_term_string), so Google can surface a sitelinks searchbox pointing at the newly-shipped on-site search. Emitted within the connected @graph on every page; validated the literal {search_term_string} placeholder is preserved and JSON-LD parses sitewide.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "print-styles",
       "title": "FEATURE: print/PDF stylesheet",

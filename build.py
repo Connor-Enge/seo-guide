@@ -27,6 +27,8 @@ TEMPLATE = open(os.path.join(HERE, "templates", "base.html")).read()
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
+SEARCH_URL = BASE_URL + "/search/"       # on-site client-side search + human-browsable index
+SEARCH_INDEX_URL = BASE_URL + "/search-index.json"  # tiny build-time index the search page fetches
 FEED_URL = BASE_URL + "/feed.xml"        # RSS 2.0 feed of posts + content pages
 JSON_FEED_URL = BASE_URL + "/feed.json"  # JSON Feed 1.1 mirror of the same items
 SITE_NAME = "The Guide to SEO"
@@ -102,6 +104,22 @@ def extract_faq(body):
             ans.append(s.strip())
     flush()
     return faqs
+
+
+def search_text(body):
+    """Body markdown -> compact plain text for the search index. Matched against but never
+    displayed, so a query for a term that lives in the prose (canonical, hreflang, INP,
+    robots.txt) finds the right page — not just words in the title/description."""
+    out = []
+    for ln in body.split("\n"):
+        s = ln.strip()
+        if not s:
+            continue
+        s = re.sub(r"^#{1,6}\s+", "", s)     # heading markers
+        s = re.sub(r"^\d+\.\s+", "", s)      # ordered-list markers
+        s = re.sub(r"^[-*>]\s+", "", s)      # bullet / blockquote markers
+        out.append(plain(s))
+    return re.sub(r"\s+", " ", " ".join(out)).strip()
 
 
 def render_md(body):
@@ -200,6 +218,14 @@ def node_website():
         "@type": "WebSite", "@id": SITE_ID, "url": HOME_URL, "name": SITE_NAME,
         "alternateName": "SEO Guide", "description": SITE_DESC, "inLanguage": "en",
         "publisher": {"@id": ORG_ID},
+        # Sitelinks searchbox: points Google at the on-site search page. The literal
+        # {search_term_string} placeholder is required by the SearchAction spec.
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {"@type": "EntryPoint",
+                       "urlTemplate": SEARCH_URL + "?q={search_term_string}"},
+            "query-input": "required name=search_term_string",
+        },
     }
 
 
@@ -332,12 +358,14 @@ def main():
     nav = "".join(f'<li><a href="{page_url(m["slug"])}">{html.escape(m["title"])}</a></li>' for m, _ in pages)
     nav += f'<li><a href="{BLOG_URL}">Blog</a></li>'
 
-    def render(*, title, description, url, og_type, h1, byline, toc="", content="", pager="", jsonld=""):
+    def render(*, title, description, url, og_type, h1, byline, toc="", content="", pager="",
+               jsonld="", scripts=""):
         return TEMPLATE.format(
             title=html.escape(title), site=html.escape(SITE_NAME),
             description=html.escape(description), canonical=url, base=BASE_URL,
             og_type=og_type, nav=nav, h1=html.escape(h1), byline=byline,
-            toc=toc, content=content, pager=pager, jsonld=jsonld, year=today[:4])
+            toc=toc, content=content, pager=pager, jsonld=jsonld, scripts=scripts,
+            year=today[:4])
 
     def toc_block(toc):
         return ('<nav class="toc" aria-label="On this page"><p>On this page</p><ul>'
@@ -465,10 +493,64 @@ def main():
         h1=BLOG_TITLE, byline=f"Practical, sourced SEO articles · {BYLINE_BY}",
         content=blog_content, jsonld=blog_jsonld))
 
+    # ---------- on-site search: a build-time index + the /search/ page ----------
+    # One `search_items` list drives BOTH the JSON index (fetched by search.js) and the
+    # static, no-JS browsable list on the page — so they can never drift. Every page and
+    # post is searchable; the page works with zero JS (it renders the full list) and is
+    # progressively enhanced into a live client-side filter. No server, no dependencies.
+    def item_type(m):
+        if m.get("schema") == "ProfilePage":
+            return "About"
+        return "Home" if m["slug"] == "index" else "Guide"
+
+    search_items = [{"title": m["title"], "url": page_url(m["slug"]),
+                     "description": m["description"], "type": item_type(m),
+                     "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()],
+                     "text": search_text(b)}
+                    for m, b in pages]
+    search_items.append({"title": BLOG_TITLE, "url": BLOG_URL,
+                         "description": BLOG_DESC, "type": "Blog", "tags": [], "text": ""})
+    search_items += [{"title": m["title"], "url": post_url(m["slug"]),
+                      "description": m["description"], "type": "Article",
+                      "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()],
+                      "text": search_text(b)}
+                     for m, b in posts]
+    open(os.path.join(OUT, "search-index.json"), "w").write(
+        json.dumps(search_items, ensure_ascii=False, separators=(",", ":")) + "\n")
+
+    def search_li(it):
+        return ('<li><a href="%s">%s</a> <span class="tag">%s</span><p>%s</p></li>'
+                % (it["url"], html.escape(it["title"]), html.escape(it["type"]),
+                   html.escape(it["description"])))
+
+    search_content = (
+        '<div class="search" id="search" data-index="%s">' % SEARCH_INDEX_URL
+        + '<form class="searchform" role="search" method="get" action="%s">' % SEARCH_URL
+        + '<label class="visually-hidden" for="q">Search the guide</label>'
+        + '<input type="search" id="q" name="q" placeholder="Search the guide…" '
+          'autocomplete="off" enterkeyhint="search" aria-describedby="search-status">'
+        + '<button type="submit">Search</button></form>'
+        + '<p id="search-status" class="search-status" role="status" aria-live="polite"></p>'
+        + '<ul class="search-results" id="results" hidden></ul>'
+        + '<div id="all"><p class="search-hint">Every page and article on the site:</p>'
+        + '<ul class="search-results">%s</ul></div>' % "".join(search_li(it) for it in search_items)
+        + '</div>')
+    search_desc = ("Search The Guide to SEO — instantly filter every page and article on keyword "
+                   "research, on-page and technical SEO, content quality, links, and measurement.")
+    search_jsonld = graph(node_org(), node_website(), node_person(),
+                          node_breadcrumb(SEARCH_URL, [("Home", HOME_URL), ("Search", SEARCH_URL)]))
+    write("search", render(
+        title="Search", description=search_desc, url=SEARCH_URL, og_type="website",
+        h1="Search the guide",
+        byline="Type to filter every page and article on the site — no page reload, no tracking.",
+        content=search_content, jsonld=search_jsonld,
+        scripts='<script defer src="%s/assets/search.js"></script>' % BASE_URL))
+
     # ---------- sitemap + robots ----------
     entries = [(page_url(m["slug"]), today, "1.0" if m["slug"] == "index" else "0.8") for m, _ in pages]
     entries.append((BLOG_URL, today, "0.7"))
     entries += [(post_url(m["slug"]), m.get("updated", m.get("date", today)), "0.6") for m, _ in posts]
+    entries.append((SEARCH_URL, today, "0.4"))  # human-browsable index + on-site search
     urls = "".join(f"<url><loc>{loc}</loc><lastmod>{mod}</lastmod><priority>{pri}</priority></url>"
                    for loc, mod, pri in entries)
     open(os.path.join(OUT, "sitemap.xml"), "w").write(
