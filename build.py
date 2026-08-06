@@ -24,6 +24,14 @@ BLOG = os.path.join(CONTENT, "blog")
 OUT = os.path.join(HERE, "docs")
 TEMPLATE = open(os.path.join(HERE, "templates", "base.html")).read()
 
+# Visible breadcrumb trail (mirrors the BreadcrumbList JSON-LD). Rendering logic lives in
+# improve/breadcrumb.py; loaded by path so it works regardless of the invoking cwd.
+import importlib.util as _ilu
+_bc_spec = _ilu.spec_from_file_location("breadcrumb", os.path.join(HERE, "improve", "breadcrumb.py"))
+_bc_mod = _ilu.module_from_spec(_bc_spec)
+_bc_spec.loader.exec_module(_bc_mod)
+breadcrumb_block = _bc_mod.breadcrumb_block
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -359,13 +367,13 @@ def main():
     nav += f'<li><a href="{BLOG_URL}">Blog</a></li>'
 
     def render(*, title, description, url, og_type, h1, byline, toc="", content="", pager="",
-               jsonld="", scripts=""):
+               jsonld="", scripts="", breadcrumb=""):
         return TEMPLATE.format(
             title=html.escape(title), site=html.escape(SITE_NAME),
             description=html.escape(description), canonical=url, base=BASE_URL,
             og_type=og_type, nav=nav, h1=html.escape(h1), byline=byline,
             toc=toc, content=content, pager=pager, jsonld=jsonld, scripts=scripts,
-            year=today[:4])
+            breadcrumb=breadcrumb, year=today[:4])
 
     def toc_block(toc):
         return ('<nav class="toc" aria-label="On this page"><p>On this page</p><ul>'
@@ -447,7 +455,7 @@ def main():
             byline=byline,
             toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
             pager=('<nav class="pager">' + "".join(links) + "</nav>") if links else "",
-            jsonld=jsonld)
+            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs))
         write("" if slug == "index" else slug, page)
 
     # ---------- blog posts ----------
@@ -473,7 +481,7 @@ def main():
             h1=meta.get("h1", meta["title"]), byline=byline,
             toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
             pager=f'<nav class="pager"><a class="prev" href="{BLOG_URL}">← All articles</a></nav>',
-            jsonld=jsonld)
+            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs))
         write(os.path.join("blog", slug), page)
 
     # ---------- blog index ----------
@@ -491,7 +499,8 @@ def main():
     write("blog", render(
         title=BLOG_TITLE, description=BLOG_DESC, url=BLOG_URL, og_type="website",
         h1=BLOG_TITLE, byline=f"Practical, sourced SEO articles · {BYLINE_BY}",
-        content=blog_content, jsonld=blog_jsonld))
+        content=blog_content, jsonld=blog_jsonld,
+        breadcrumb=breadcrumb_block([("Home", HOME_URL), (BLOG_TITLE, BLOG_URL)])))
 
     # ---------- on-site search: a build-time index + the /search/ page ----------
     # One `search_items` list drives BOTH the JSON index (fetched by search.js) and the
@@ -544,6 +553,7 @@ def main():
         h1="Search the guide",
         byline="Type to filter every page and article on the site — no page reload, no tracking.",
         content=search_content, jsonld=search_jsonld,
+        breadcrumb=breadcrumb_block([("Home", HOME_URL), ("Search", SEARCH_URL)]),
         scripts='<script defer src="%s/assets/search.js"></script>' % BASE_URL))
 
     # ---------- sitemap + robots ----------

@@ -1,0 +1,39 @@
+/* breadcrumb.css */
+.breadcrumb ol {
+    list-style: none;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .35rem .5rem;
+    font-size: .85rem;
+    color: var(--muted, #5b6675);
+}
+
+.breadcrumb li {
+    display: flex;
+    align-items: center;
+    gap: .35rem .5rem;
+}
+
+.breadcrumb li + li::before {
+    content: "\203A";
+    color: var(--line, #d1d5db);
+}
+
+.breadcrumb a {
+    color: var(--muted, #5b6675);
+    text-decoration: none;
+}
+
+.breadcrumb a:hover,
+.breadcrumb a:focus-visible {
+    color: var(--accent, #007bff);
+    text-decoration: underline;
+}
+
+.breadcrumb span[aria-current="page"] {
+    color: var(--ink, #1a202c);
+    font-weight: 600;
+}

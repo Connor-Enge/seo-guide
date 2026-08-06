@@ -78,10 +78,6 @@
       "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"
     },
     {
-      "id": "breadcrumb-ui",
-      "title": "FEATURE: render a visible breadcrumb trail (Home › Section) matching the existing BreadcrumbList JSON-LD — current page unlinked, descriptive anchors, small accessible nav element"
-    },
-    {
       "id": "post-structured-data-2026",
       "title": "BLOG POST: which structured data still earns rich results in 2026 — what Google retired (FAQ/HowTo for most sites) vs. still shows (Article, Breadcrumb, Product, Video…), how to choose the types worth implementing, and a Rich Results Test workflow; source to Google Search Central's search-gallery + deprecation posts"
     },
@@ -136,6 +132,14 @@
     {
       "id": "post-eeat-2026",
       "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it — Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
+    },
+    {
+      "id": "breadcrumb-collapse-mobile",
+      "title": "FEATURE: on very narrow screens, keep the breadcrumb single-line by truncating long middle labels with ellipsis (CSS only, full label kept in title/aria) so the trail never wraps awkwardly — pure enhancement of the new assets/breadcrumb.css."
+    },
+    {
+      "id": "post-breadcrumbs-site-structure",
+      "title": "BLOG POST: breadcrumbs & site structure for SEO — why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
     }
   ],
   "done": [
@@ -226,6 +230,13 @@
       "changed": "Shipped the SEO Glossary cornerstone page (/glossary/, 27 plain-language term definitions — crawling, indexing, canonical, E-E-A-T, Core Web Vitals, hreflang, nofollow/noindex, rich results, structured data, topic clusters, etc.), each definition cross-linked to the relevant deep-dive guide (on-page, technical, keyword-research, content-quality, how-search-works, link-building) with descriptive anchors. The page carries full front-matter (title/h1/description/tags/updated + related: nav) and is fully integrated by build.py: it's in the nav, sitemap, on-site search index, and RSS/JSON feeds; single connected JSON-LD @graph per page intact. PM finalized a prior dev run that had left the page uncommitted alongside a BROKEN, unwired glossary_links.py auto-linker (its outer i+=1 dropped the <code>/<a>/<h*> tag that terminated each text run, corrupting HTML) — removed that helper, rebuilt, and verified. Validated: build green (11 guide pages + 1 post), full SEO gate PASS (index+glossary title/description/canonical/single-h1, glossary in sitemap+search-index, single-h1 sweep sitewide, all JSON-LD parses sitewide, sitemap/feed.xml well-formed, feed.json valid, 27 term sections rendered). The safe, correct auto-crosslinker remains queued as glossary-crosslink.",
       "dev": "grok",
       "date": "2026-08-06"
+    },
+    {
+      "id": "breadcrumb-ui",
+      "title": "FEATURE: render a visible breadcrumb trail (Home › Section) matching the existing BreadcrumbList JSON-LD — current page unlinked, descriptive anchors, small accessible nav element",
+      "date": "2026-08-06",
+      "dev": "local-qwen",
+      "note": "Visible accessible breadcrumb trail (Home › Section › Current) mirroring BreadcrumbList JSON-LD; render helper improve/breadcrumb.py + assets/breadcrumb.css, wired into template + all render sites; current page unlinked with aria-current=page; suppressed on homepage. Built by local-qwen; PM wired."
     }
   ]
 }
