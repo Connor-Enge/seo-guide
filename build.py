@@ -30,6 +30,10 @@ BLOG_TITLE = "The SEO Blog"
 BLOG_DESC = ("Practical, sourced articles on getting found in search — Core Web Vitals, content "
              "that earns rankings, technical fixes, and how Google actually ranks pages.")
 AUTHOR = "Connor Enge"
+AUTHOR_URL = BASE_URL + "/about/"
+AUTHOR_SAMEAS = ["https://github.com/Connor-Enge"]
+# Byline link to the author/About page — a lightweight, site-wide E-E-A-T signal.
+BYLINE_BY = 'by <a class="author" rel="author" href="%s">%s</a>' % (AUTHOR_URL, html.escape(AUTHOR))
 
 
 # ---------- tiny markdown renderer (headings, paras, lists, links, bold, code, blockquote) ----------
@@ -157,11 +161,12 @@ def _json(s):
 
 # ---------- JSON-LD builders (each returns one or more <script> blocks) ----------
 def schema_article(atype, headline, description, url, date_pub, date_mod):
+    author = {"@type": "Person", "name": AUTHOR, "url": AUTHOR_URL}
     return ('<script type="application/ld+json">{"@context":"https://schema.org","@type":"%s",'
-            '"headline":%s,"description":%s,"author":{"@type":"Person","name":%s},'
+            '"headline":%s,"description":%s,"author":%s,'
             '"datePublished":"%s","dateModified":"%s","mainEntityOfPage":"%s","publisher":'
             '{"@type":"Organization","name":%s}}</script>') % (
-        atype, _json(headline), _json(description), _json(AUTHOR),
+        atype, _json(headline), _json(description), _json(author),
         date_pub, date_mod, url, _json(SITE_NAME))
 
 
@@ -189,6 +194,17 @@ def schema_blog(posts):
         _json(BLOG_TITLE), BLOG_URL, _json(BLOG_DESC), items)
 
 
+def schema_profile(url, description):
+    """ProfilePage + Person for the About page — declares the author entity that every
+    Article/BlogPosting's author.url points back to, establishing E-E-A-T across the site."""
+    person = {"@type": "Person", "name": AUTHOR, "url": url, "description": description,
+              "sameAs": AUTHOR_SAMEAS,
+              "knowsAbout": ["Search engine optimization", "Technical SEO", "Core Web Vitals",
+                             "Structured data", "Content strategy"]}
+    profile = {"@context": "https://schema.org", "@type": "ProfilePage", "mainEntity": person}
+    return '<script type="application/ld+json">%s</script>' % _json(profile)
+
+
 def main():
     today = datetime.date.today().isoformat()
     pages = sorted((parse(p) for p in glob.glob(os.path.join(CONTENT, "*.md"))),
@@ -204,7 +220,7 @@ def main():
         return TEMPLATE.format(
             title=html.escape(title), site=html.escape(SITE_NAME),
             description=html.escape(description), canonical=url, base=BASE_URL,
-            og_type=og_type, nav=nav, h1=html.escape(h1), byline=html.escape(byline),
+            og_type=og_type, nav=nav, h1=html.escape(h1), byline=byline,
             toc=toc, content=content, pager=pager, jsonld=jsonld, year=today[:4])
 
     def toc_block(toc):
@@ -232,17 +248,24 @@ def main():
             links.append(f'<a class="next" href="{page_url(nm["slug"])}">{html.escape(nm["title"])} →</a>')
         url = page_url(slug)
         crumbs = [("Home", BASE_URL)] + ([] if slug == "index" else [(meta["title"], url)])
-        jsonld = (schema_article("Article", meta["title"], meta["description"], url,
-                                 meta.get("updated", today), today)
-                  + "\n" + schema_breadcrumb(crumbs))
-        faqs = extract_faq(body)
-        if faqs:
-            jsonld += "\n" + schema_faq(faqs)
+        if meta.get("schema") == "ProfilePage":
+            jsonld = schema_profile(url, meta["description"]) + "\n" + schema_breadcrumb(crumbs)
+            byline = f'Maintained by {html.escape(AUTHOR)} · Updated {meta.get("updated", today)}'
+            og_type = "profile"
+        else:
+            jsonld = (schema_article("Article", meta["title"], meta["description"], url,
+                                     meta.get("updated", today), today)
+                      + "\n" + schema_breadcrumb(crumbs))
+            faqs = extract_faq(body)
+            if faqs:
+                jsonld += "\n" + schema_faq(faqs)
+            byline = f'Updated {meta.get("updated", today)} · {BYLINE_BY}'
+            og_type = "website" if slug == "index" else "article"
         page = render(
             title=meta["title"], description=meta["description"], url=url,
-            og_type=("website" if slug == "index" else "article"),
+            og_type=og_type,
             h1=meta.get("h1", meta["title"]),
-            byline=f'Updated {meta.get("updated", today)} · by Connor Enge',
+            byline=byline,
             toc=toc_block(toc), content=content_html,
             pager=('<nav class="pager">' + "".join(links) + "</nav>") if links else "",
             jsonld=jsonld)
@@ -255,7 +278,7 @@ def main():
         url = post_url(slug)
         date_pub = meta.get("date", today)
         date_mod = meta.get("updated", date_pub)
-        byline = f"Published {date_pub} · by Connor Enge"
+        byline = f"Published {date_pub} · {BYLINE_BY}"
         if date_mod and date_mod != date_pub:
             byline += f" · Updated {date_mod}"
         crumbs = [("Home", BASE_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
@@ -285,7 +308,7 @@ def main():
     blog_jsonld = schema_blog(posts) + "\n" + schema_breadcrumb([("Home", BASE_URL), (BLOG_TITLE, BLOG_URL)])
     write("blog", render(
         title=BLOG_TITLE, description=BLOG_DESC, url=BLOG_URL, og_type="website",
-        h1=BLOG_TITLE, byline="Practical, sourced SEO articles · by Connor Enge",
+        h1=BLOG_TITLE, byline=f"Practical, sourced SEO articles · {BYLINE_BY}",
         content=blog_content, jsonld=blog_jsonld))
 
     # ---------- sitemap + robots ----------

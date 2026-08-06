@@ -6,7 +6,6 @@
     {"id": "tag-pages", "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"},
     {"id": "dark-mode", "title": "FEATURE: CSS-only dark mode via prefers-color-scheme (optional toggle), accessible contrast in both themes"},
     {"id": "related-articles", "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"},
-    {"id": "author-page", "title": "FEATURE: About/author page establishing E-E-A-T (who wrote this + credentials), linked from every byline"},
     {"id": "404-page", "title": "FEATURE: custom 404 page with helpful links + the search box"},
     {"id": "post-ai-content", "title": "BLOG POST: does AI content hurt SEO? What Google's scaled-content-abuse policy actually says, and how to stay on the right side"},
     {"id": "post-title-meta-ctr", "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples"},
@@ -25,11 +24,14 @@
     {"id": "homepage-depth", "title": "Enrich the homepage: section summaries, what-you'll-learn, clear reading path"},
     {"id": "accessibility", "title": "Accessibility pass: landmarks, aria labels, focus styles, color contrast — helps UX + SEO"},
     {"id": "internal-link-audit", "title": "Audit internal linking across all pages; add missing contextual links, fix orphan risk"},
-    {"id": "freshness", "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"}
+    {"id": "freshness", "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"},
+    {"id": "org-entity-graph", "title": "FEATURE: add Organization + WebSite JSON-LD to the homepage with stable @id values, and reference the Organization as publisher via @id across every page so author/publisher/pages form one connected entity graph (foundation for a sitelinks SearchAction once on-site search ships)"},
+    {"id": "breadcrumb-ui", "title": "FEATURE: render a visible breadcrumb trail (Home › Section) matching the existing BreadcrumbList JSON-LD — current page unlinked, descriptive anchors, small accessible nav element"}
   ],
   "done": [
     {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)", "changed": "Added a build.py extract_faq() feature that turns a `## FAQ` section into synced visible Q&A + valid FAQPage JSON-LD (emitted only where a FAQ exists); wrote 4 genuine Q&A each on keyword-research, on-page-seo, technical-seo.", "date": "2026-08-05"},
     {"id": "blog-system", "title": "FEATURE: build the blog system", "changed": "Built the blog: content/blog/*.md now render to /blog/<slug>/ with BlogPosting + BreadcrumbList (+ FAQPage) JSON-LD, published/updated bylines, TOC and back-to-blog pager; added a newest-first /blog/ index with Blog schema and a post-list, a Blog nav link on every page, and included the index + posts in sitemap.xml. Refactored build.py to share render/JSON-LD helpers and moved the byline into the template ({byline}).", "date": "2026-08-05"},
-    {"id": "post-cwv-2026", "title": "BLOG POST: passing Core Web Vitals in 2026", "changed": "Published the inaugural post 'How to Pass Core Web Vitals in 2026' — a ~1500-word field guide (LCP/INP/CLS thresholds at p75, field-vs-lab, concrete per-metric fixes, an order-of-operations, FAQ + FAQPage schema), sourced from web.dev (Vitals/LCP/INP/CLS guides) and Google Search Central, cross-linked to technical-seo and content-quality.", "date": "2026-08-05"}
+    {"id": "post-cwv-2026", "title": "BLOG POST: passing Core Web Vitals in 2026", "changed": "Published the inaugural post 'How to Pass Core Web Vitals in 2026' — a ~1500-word field guide (LCP/INP/CLS thresholds at p75, field-vs-lab, concrete per-metric fixes, an order-of-operations, FAQ + FAQPage schema), sourced from web.dev (Vitals/LCP/INP/CLS guides) and Google Search Central, cross-linked to technical-seo and content-quality.", "date": "2026-08-05"},
+    {"id": "author-page", "title": "FEATURE: About/author page establishing E-E-A-T, linked from every byline", "changed": "Added content/about.md (ProfilePage + Person JSON-LD, sameAs github.com/Connor-Enge, knowsAbout, honest 'the site is the credential' framing + sourcing/update/corrections/editorial-principles sections, grounded in Google's helpful-content guidance which names an About/author page as a trust signal). Wired it site-wide: build.py now emits author.url on every Article/BlogPosting, turns each byline into a rel=author link to /about/ (guide pages, blog posts, blog index), branches About to ProfilePage/og:profile instead of Article, and the template footer links 'About & editorial standards' on every page. About is in nav + sitemap; all JSON-LD validates; build green.", "date": "2026-08-05"}
   ]
 }
