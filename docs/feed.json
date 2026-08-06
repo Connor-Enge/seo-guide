@@ -138,6 +138,21 @@
           "url": "https://connor-enge.github.io/seo-guide/about/"
         }
       ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/common-seo-mistakes/",
+      "url": "https://connor-enge.github.io/seo-guide/common-seo-mistakes/",
+      "title": "Common SEO Mistakes",
+      "summary": "The SEO mistakes that quietly cap your rankings — keyword stuffing, thin content, blocked pages, bought links — and the exact, sourced fix for each.",
+      "content_text": "The SEO mistakes that quietly cap your rankings — keyword stuffing, thin content, blocked pages, bought links — and the exact, sourced fix for each.",
+      "date_published": "2026-08-06T00:00:00Z",
+      "date_modified": "2026-08-06T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
     }
   ]
 }

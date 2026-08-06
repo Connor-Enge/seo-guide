@@ -38,10 +38,6 @@
       "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
     {
-      "id": "common-mistakes",
-      "title": "New section: Common SEO mistakes and exactly how to avoid each"
-    },
-    {
       "id": "audit-checklist",
       "title": "New page: a concrete technical-SEO audit checklist readers can work through"
     },
@@ -128,6 +124,14 @@
     {
       "id": "search-term-highlight",
       "title": "FEATURE: highlight matched query terms with <mark> in on-site search results for scannability (extend the existing draw() in search.js; escape first then wrap matches, reduced-motion/contrast-safe styling in style.css)."
+    },
+    {
+      "id": "glossary-crosslink",
+      "title": "DEPTH: once the SEO glossary page ships, auto-link the first mention of each glossary term across all guide pages to its glossary anchor (build.py: term registry + first-mention linker, one link per term per page, skip headings/existing links)"
+    },
+    {
+      "id": "mistakes-crosslink-inbound",
+      "title": "INTERNAL LINKS: add a contextual link to the new Common SEO Mistakes page from the most relevant spot in content-quality, on-page-seo, technical-seo and link-building (descriptive anchors), so the new hub earns inbound internal links and isn't an orphan"
     }
   ],
   "done": [
@@ -205,6 +209,12 @@
       "title": "Mobile-first premium redesign",
       "changed": "Rewrote assets/style.css: fluid mobile-first type, glass sticky header with brand mark + horizontal-scroll nav, gradient H1 + accent H2 markers, hover-lift cards/pager, refined dark mode. No-JS, build green, SEO intact. (Done by Claude — Grok runs 402'd on the subscription.)",
       "date": "2026-08-05"
+    },
+    {
+      "id": "common-mistakes",
+      "title": "New page: Common SEO Mistakes — 10 mistakes (people-first vs SE-first, keyword stuffing, thin/scaled content, intent mismatch, weak/duplicate titles, robots-vs-noindex de-indexing, CWV-as-whole-strategy, bought links, orphan pages, not measuring) + FAQ + FAQPage/Article/Breadcrumb JSON-LD; cross-linked to every guide section",
+      "dev": "grok",
+      "date": "2026-08-06"
     }
   ]
 }
