@@ -98,8 +98,12 @@
       "title": "BLOG POST: internal linking & topic clusters — how pillar pages and descriptive-anchor internal links build topical authority and get new pages crawled and ranked; contrast good vs. over-optimized anchor text; source to Google Search Central's link best-practices + 'Make your links crawlable' docs."
     },
     {
-      "id": "heading-anchor-links",
-      "title": "FEATURE: no-JS heading deep-links — add scroll-margin-top to ## headings so anchor jumps clear the sticky header, and render a hover ¶ permalink on each section heading for easy sharing/deep-linking."
+      "id": "heading-h3-anchors",
+      "title": "FEATURE: extend the new deep-link permalinks to ### subheadings — give <h3> stable ids and a hover ¶ permalink (reuse improve/anchors.py's helper), and nest those subsections under their parent <h2> in the on-page TOC so deeper sections are linkable and navigable."
+    },
+    {
+      "id": "sitemap-lastmod",
+      "title": "FEATURE: emit <lastmod> in sitemap.xml from each page/post `updated` front-matter date (W3C/ISO-8601), so crawlers get accurate per-URL freshness signals instead of a bare url list — build on the existing sitemap generator in build.py."
     },
     {
       "id": "pdf-print-button",
@@ -143,6 +147,13 @@
     }
   ],
   "done": [
+    {
+      "id": "heading-anchor-links",
+      "title": "FEATURE: no-JS heading deep-links — scroll-offset so anchor jumps clear the sticky header, + a hover/focus ¶ permalink on each section heading for sharing/deep-linking.",
+      "changed": "Local Qwen dev authored BOTH artifacts from PM specs, each self-corrected against an objective verify script: (1) improve/anchors.py — a heading_html(slug, inner_html) helper returning `<h2 id=slug>…<a class=hanchor href=#slug aria-label='Permalink to this section'><span aria-hidden>¶</span></a></h2>` (attribute-escapes the slug, places inner HTML verbatim); (2) assets/anchors.css — sets html{scroll-padding-top:9rem} (→5rem at the ≥680px breakpoint) so EVERY in-page anchor jump (TOC, breadcrumb, ?q= deep-scroll, :target) clears the sticky glass header instead of landing under it (a real sitewide defect: there was previously no scroll-padding-top anywhere), plus the permalink styling (opacity:0 by default; revealed on h2:hover / :focus-within / .hanchor:focus; accent tint on hover; var(--muted)/var(--accent-ink) so it adapts to dark mode; prefers-reduced-motion guard). PM wired three one-line hooks: load anchors.py by path in build.py (mirroring the breadcrumb helper), swap the h2 render to call heading_html(), and add the <link> for anchors.css in base.html. Every guide page, blog post and the /search/ page now deep-links correctly and every section heading is shareable. Validated: build green (11 guide pages + 1 post), full SEO gate PASS across all 14 output pages — index title/description/canonical/JSON-LD Article, single-<h1> sweep, all JSON-LD parses sitewide, anchors.css linked+copied on every page, and every <h2 id> carries exactly one matching href=#id permalink (h2 count == hanchor count on every page).",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "onsite-search",
       "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)",

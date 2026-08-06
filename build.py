@@ -32,6 +32,12 @@ _bc_mod = _ilu.module_from_spec(_bc_spec)
 _bc_spec.loader.exec_module(_bc_mod)
 breadcrumb_block = _bc_mod.breadcrumb_block
 
+# Section heading with a hover/focus permalink (¶). Rendering logic lives in improve/anchors.py.
+_an_spec = _ilu.spec_from_file_location("anchors", os.path.join(HERE, "improve", "anchors.py"))
+_an_mod = _ilu.module_from_spec(_an_spec)
+_an_spec.loader.exec_module(_an_mod)
+heading_html = _an_mod.heading_html
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -144,7 +150,7 @@ def render_md(body):
             txt = ln[3:]
             slug = re.sub(r"[^a-z0-9]+", "-", txt.lower()).strip("-")
             toc.append((txt, slug))
-            out.append(f'<h2 id="{slug}">{inline(txt)}</h2>')
+            out.append(heading_html(slug, inline(txt)))
         elif ln.startswith("> "):
             buf = []
             while i < len(lines) and lines[i].startswith("> "):
