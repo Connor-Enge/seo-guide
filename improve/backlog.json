@@ -2,10 +2,6 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
-      "id": "rss-feed",
-      "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer"
-    },
-    {
       "id": "onsite-search",
       "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)"
     },
@@ -112,9 +108,23 @@
     {
       "id": "search-action",
       "title": "FEATURE: once on-site search ships, add a WebSite potentialAction SearchAction (sitelinks searchbox) to the homepage entity graph, wired to the client-side search URL — the foundation entity graph is now in place"
+    },
+    {
+      "id": "feed-full-content",
+      "title": "FEATURE: full-content feeds — extend feed.xml with <content:encoded> (CDATA-wrapped rendered HTML) and feed.json items with content_html, so subscribers get the whole article, not just the summary; keep the summary fields too. Build on the existing feed_items pipeline in build.py."
+    },
+    {
+      "id": "post-search-console",
+      "title": "BLOG POST: a practical Google Search Console workflow — which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation."
     }
   ],
   "done": [
+    {
+      "id": "rss-feed",
+      "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer",
+      "changed": "Added a single feed_items pipeline in build.py driving TWO syndication feeds from one source so they can't drift: docs/feed.xml (RSS 2.0, atom:self link, dc:creator, RFC-822 pubDates, per-post <category> from tags) and docs/feed.json (JSON Feed 1.1 with icon/authors/tags/date_published). Feed lists the blog post (newest first) then evergreen content pages (excludes the homepage + the ProfilePage About). Wired both as rel=alternate in <head> sitewide and added footer 'Subscribe: RSS · JSON' links. Validated: index SEO checks pass, feed.xml well-formed XML, feed.json valid JSON Feed 1.1 (8 items), build green.",
+      "date": "2026-08-05"
+    },
     {
       "id": "faq-schema",
       "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)",

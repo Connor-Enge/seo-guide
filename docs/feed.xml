@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+<channel>
+<title>The Guide to SEO</title>
+<link>https://connor-enge.github.io/seo-guide/</link>
+<atom:link href="https://connor-enge.github.io/seo-guide/feed.xml" rel="self" type="application/rss+xml"/>
+<description>A practical, no-fluff guide to search engine optimization — how Google ranks pages and how to earn visibility with helpful content, sound technical foundations, and honest measurement.</description>
+<language>en</language>
+<lastBuildDate>Wed, 05 Aug 2026 00:00:00 +0000</lastBuildDate>
+<generator>build.py — a static, no-JS SEO guide generator</generator>
+<item>
+<title>How to Pass Core Web Vitals in 2026</title>
+<link>https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<category>technical-seo</category>
+<category>performance</category>
+<category>core-web-vitals</category>
+<description>A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.</description>
+</item>
+<item>
+<title>How Search Works</title>
+<link>https://connor-enge.github.io/seo-guide/how-search-works/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/how-search-works/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>SEO makes sense once you understand Google's pipeline. Learn how crawling, indexing, ranking, and serving decide whether your page ever appears.</description>
+</item>
+<item>
+<title>Keyword Research</title>
+<link>https://connor-enge.github.io/seo-guide/keyword-research/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/keyword-research/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>Great SEO starts with intent. Learn to find the terms your audience uses and map each to the right page and the right type of content.</description>
+</item>
+<item>
+<title>On-Page SEO</title>
+<link>https://connor-enge.github.io/seo-guide/on-page-seo/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/on-page-seo/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>On-page SEO makes each page clearly about one topic for both readers and crawlers. Titles, meta descriptions, headings, URLs, images, and internal links.</description>
+</item>
+<item>
+<title>Content Quality &amp; E-E-A-T</title>
+<link>https://connor-enge.github.io/seo-guide/content-quality/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/content-quality/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>Google rewards helpful, people-first content that demonstrates Experience, Expertise, Authoritativeness, and Trust. Here's how to actually create it.</description>
+</item>
+<item>
+<title>Technical SEO</title>
+<link>https://connor-enge.github.io/seo-guide/technical-seo/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/technical-seo/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>Technical SEO removes obstacles between your content and search engines: indexability, sitemaps, mobile, HTTPS, Core Web Vitals, and structured data.</description>
+</item>
+<item>
+<title>Link Building &amp; Reputation</title>
+<link>https://connor-enge.github.io/seo-guide/link-building/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/link-building/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>Links remain a core signal of trust. Learn how to earn them the durable way — and which shortcuts get sites penalized.</description>
+</item>
+<item>
+<title>Measuring SEO</title>
+<link>https://connor-enge.github.io/seo-guide/measuring/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/measuring/</guid>
+<pubDate>Wed, 05 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>SEO is a loop. Learn the core tools and metrics to track results, find opportunities, and keep improving.</description>
+</item>
+</channel>
+</rss>

@@ -16,6 +16,7 @@ import html
 import glob
 import json
 import datetime
+import email.utils
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 CONTENT = os.path.join(HERE, "content")
@@ -26,6 +27,8 @@ TEMPLATE = open(os.path.join(HERE, "templates", "base.html")).read()
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
+FEED_URL = BASE_URL + "/feed.xml"        # RSS 2.0 feed of posts + content pages
+JSON_FEED_URL = BASE_URL + "/feed.json"  # JSON Feed 1.1 mirror of the same items
 SITE_NAME = "The Guide to SEO"
 BLOG_TITLE = "The SEO Blog"
 BLOG_DESC = ("Practical, sourced articles on getting found in search — Core Web Vitals, content "
@@ -249,6 +252,75 @@ def node_faq(url, faqs):
     }
 
 
+# ---------- syndication feeds (RSS 2.0 + JSON Feed 1.1) ----------
+# One `feed_items` list drives both feeds so they can never drift. Each item is a dict:
+# {title, url, description, date (YYYY-MM-DD published), updated, tags:[...]}.
+def rfc822(date_str):
+    """A YYYY-MM-DD date -> an RFC-822 timestamp (midnight UTC), the format RSS pubDate requires."""
+    try:
+        d = datetime.datetime.strptime(date_str, "%Y-%m-%d")
+    except (ValueError, TypeError):
+        d = datetime.datetime.combine(datetime.date.today(), datetime.time())
+    return email.utils.format_datetime(d.replace(tzinfo=datetime.timezone.utc))
+
+
+def build_rss(items, build_date):
+    def esc(s):
+        return html.escape(str(s), quote=False)
+    out = ['<?xml version="1.0" encoding="UTF-8"?>',
+           '<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" '
+           'xmlns:dc="http://purl.org/dc/elements/1.1/">',
+           '<channel>',
+           f'<title>{esc(SITE_NAME)}</title>',
+           f'<link>{HOME_URL}</link>',
+           f'<atom:link href="{FEED_URL}" rel="self" type="application/rss+xml"/>',
+           f'<description>{esc(SITE_DESC)}</description>',
+           '<language>en</language>',
+           f'<lastBuildDate>{rfc822(build_date)}</lastBuildDate>',
+           '<generator>build.py — a static, no-JS SEO guide generator</generator>']
+    for it in items:
+        out.append('<item>')
+        out.append(f'<title>{esc(it["title"])}</title>')
+        out.append(f'<link>{it["url"]}</link>')
+        out.append(f'<guid isPermaLink="true">{it["url"]}</guid>')
+        out.append(f'<pubDate>{rfc822(it["date"])}</pubDate>')
+        out.append(f'<dc:creator>{esc(AUTHOR)}</dc:creator>')
+        for tag in it.get("tags", []):
+            out.append(f'<category>{esc(tag)}</category>')
+        out.append(f'<description>{esc(it["description"])}</description>')
+        out.append('</item>')
+    out.append('</channel>')
+    out.append('</rss>')
+    return "\n".join(out) + "\n"
+
+
+def build_json_feed(items):
+    feed = {
+        "version": "https://jsonfeed.org/version/1.1",
+        "title": SITE_NAME,
+        "home_page_url": HOME_URL,
+        "feed_url": JSON_FEED_URL,
+        "description": SITE_DESC,
+        "language": "en",
+        "icon": LOGO_URL,
+        "favicon": LOGO_URL,
+        "authors": [{"name": AUTHOR, "url": AUTHOR_URL}],
+        "items": [],
+    }
+    for it in items:
+        entry = {
+            "id": it["url"], "url": it["url"], "title": it["title"],
+            "summary": it["description"], "content_text": it["description"],
+            "date_published": it["date"] + "T00:00:00Z",
+            "date_modified": it["updated"] + "T00:00:00Z",
+            "authors": [{"name": AUTHOR, "url": AUTHOR_URL}],
+        }
+        if it.get("tags"):
+            entry["tags"] = it["tags"]
+        feed["items"].append(entry)
+    return json.dumps(feed, ensure_ascii=False, indent=2) + "\n"
+
+
 def main():
     today = datetime.date.today().isoformat()
     pages = sorted((parse(p) for p in glob.glob(os.path.join(CONTENT, "*.md"))),
@@ -381,7 +453,22 @@ def main():
         f"User-agent: *\nAllow: /\nSitemap: {BASE_URL}/sitemap.xml\n")
     open(os.path.join(OUT, ".nojekyll"), "w").write("")
 
-    print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  (+ /blog/, sitemap.xml, robots.txt)")
+    # ---------- syndication feeds: blog posts (newest first) then evergreen content pages ----------
+    feed_items = [
+        {"title": m["title"], "url": post_url(m["slug"]), "description": m["description"],
+         "date": m.get("date", today), "updated": m.get("updated", m.get("date", today)),
+         "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()]}
+        for m, _ in posts]
+    feed_items += [
+        {"title": m["title"], "url": page_url(m["slug"]), "description": m["description"],
+         "date": m.get("updated", today), "updated": m.get("updated", today), "tags": []}
+        for m, _ in pages
+        if m["slug"] != "index" and m.get("schema") != "ProfilePage"]
+    open(os.path.join(OUT, "feed.xml"), "w").write(build_rss(feed_items, today))
+    open(os.path.join(OUT, "feed.json"), "w").write(build_json_feed(feed_items))
+
+    print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
+          f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
     for m, _ in pages:
         print(f"  {page_url(m['slug'])}")
     print(f"  {BLOG_URL}")

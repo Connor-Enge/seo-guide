@@ -1,0 +1,143 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "The Guide to SEO",
+  "home_page_url": "https://connor-enge.github.io/seo-guide/",
+  "feed_url": "https://connor-enge.github.io/seo-guide/feed.json",
+  "description": "A practical, no-fluff guide to search engine optimization — how Google ranks pages and how to earn visibility with helpful content, sound technical foundations, and honest measurement.",
+  "language": "en",
+  "icon": "https://connor-enge.github.io/seo-guide/assets/logo.svg",
+  "favicon": "https://connor-enge.github.io/seo-guide/assets/logo.svg",
+  "authors": [
+    {
+      "name": "Connor Enge",
+      "url": "https://connor-enge.github.io/seo-guide/about/"
+    }
+  ],
+  "items": [
+    {
+      "id": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
+      "title": "How to Pass Core Web Vitals in 2026",
+      "summary": "A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.",
+      "content_text": "A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "technical-seo",
+        "performance",
+        "core-web-vitals"
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/how-search-works/",
+      "url": "https://connor-enge.github.io/seo-guide/how-search-works/",
+      "title": "How Search Works",
+      "summary": "SEO makes sense once you understand Google's pipeline. Learn how crawling, indexing, ranking, and serving decide whether your page ever appears.",
+      "content_text": "SEO makes sense once you understand Google's pipeline. Learn how crawling, indexing, ranking, and serving decide whether your page ever appears.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/keyword-research/",
+      "url": "https://connor-enge.github.io/seo-guide/keyword-research/",
+      "title": "Keyword Research",
+      "summary": "Great SEO starts with intent. Learn to find the terms your audience uses and map each to the right page and the right type of content.",
+      "content_text": "Great SEO starts with intent. Learn to find the terms your audience uses and map each to the right page and the right type of content.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/on-page-seo/",
+      "url": "https://connor-enge.github.io/seo-guide/on-page-seo/",
+      "title": "On-Page SEO",
+      "summary": "On-page SEO makes each page clearly about one topic for both readers and crawlers. Titles, meta descriptions, headings, URLs, images, and internal links.",
+      "content_text": "On-page SEO makes each page clearly about one topic for both readers and crawlers. Titles, meta descriptions, headings, URLs, images, and internal links.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/content-quality/",
+      "url": "https://connor-enge.github.io/seo-guide/content-quality/",
+      "title": "Content Quality & E-E-A-T",
+      "summary": "Google rewards helpful, people-first content that demonstrates Experience, Expertise, Authoritativeness, and Trust. Here's how to actually create it.",
+      "content_text": "Google rewards helpful, people-first content that demonstrates Experience, Expertise, Authoritativeness, and Trust. Here's how to actually create it.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/technical-seo/",
+      "url": "https://connor-enge.github.io/seo-guide/technical-seo/",
+      "title": "Technical SEO",
+      "summary": "Technical SEO removes obstacles between your content and search engines: indexability, sitemaps, mobile, HTTPS, Core Web Vitals, and structured data.",
+      "content_text": "Technical SEO removes obstacles between your content and search engines: indexability, sitemaps, mobile, HTTPS, Core Web Vitals, and structured data.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/link-building/",
+      "url": "https://connor-enge.github.io/seo-guide/link-building/",
+      "title": "Link Building & Reputation",
+      "summary": "Links remain a core signal of trust. Learn how to earn them the durable way — and which shortcuts get sites penalized.",
+      "content_text": "Links remain a core signal of trust. Learn how to earn them the durable way — and which shortcuts get sites penalized.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/measuring/",
+      "url": "https://connor-enge.github.io/seo-guide/measuring/",
+      "title": "Measuring SEO",
+      "summary": "SEO is a loop. Learn the core tools and metrics to track results, find opportunities, and keep improving.",
+      "content_text": "SEO is a loop. Learn the core tools and metrics to track results, find opportunities, and keep improving.",
+      "date_published": "2026-08-05T00:00:00Z",
+      "date_modified": "2026-08-05T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    }
+  ]
+}
