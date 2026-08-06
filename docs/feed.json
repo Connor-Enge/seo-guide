@@ -153,6 +153,21 @@
           "url": "https://connor-enge.github.io/seo-guide/about/"
         }
       ]
+    },
+    {
+      "id": "https://connor-enge.github.io/seo-guide/glossary/",
+      "url": "https://connor-enge.github.io/seo-guide/glossary/",
+      "title": "SEO Glossary",
+      "summary": "Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.",
+      "content_text": "Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.",
+      "date_published": "2026-08-06T00:00:00Z",
+      "date_modified": "2026-08-06T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
     }
   ]
 }

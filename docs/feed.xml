@@ -83,5 +83,13 @@
 <dc:creator>Connor Enge</dc:creator>
 <description>The SEO mistakes that quietly cap your rankings — keyword stuffing, thin content, blocked pages, bought links — and the exact, sourced fix for each.</description>
 </item>
+<item>
+<title>SEO Glossary</title>
+<link>https://connor-enge.github.io/seo-guide/glossary/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/glossary/</guid>
+<pubDate>Thu, 06 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<description>Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.</description>
+</item>
 </channel>
 </rss>

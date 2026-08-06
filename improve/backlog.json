@@ -30,10 +30,6 @@
       "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)"
     },
     {
-      "id": "glossary",
-      "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions"
-    },
-    {
       "id": "local-seo",
       "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
@@ -132,6 +128,14 @@
     {
       "id": "mistakes-crosslink-inbound",
       "title": "INTERNAL LINKS: add a contextual link to the new Common SEO Mistakes page from the most relevant spot in content-quality, on-page-seo, technical-seo and link-building (descriptive anchors), so the new hub earns inbound internal links and isn't an orphan"
+    },
+    {
+      "id": "scrollspy-toc",
+      "title": "FEATURE: scrollspy table-of-contents — highlight the reader's current section in the existing in-article TOC as they scroll (IntersectionObserver, aria-current, progressive enhancement, reduced-motion safe, fully graceful with no JS). Tiny standalone asset via the existing {scripts} slot."
+    },
+    {
+      "id": "post-eeat-2026",
+      "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it — Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
     }
   ],
   "done": [
@@ -213,6 +217,13 @@
     {
       "id": "common-mistakes",
       "title": "New page: Common SEO Mistakes — 10 mistakes (people-first vs SE-first, keyword stuffing, thin/scaled content, intent mismatch, weak/duplicate titles, robots-vs-noindex de-indexing, CWV-as-whole-strategy, bought links, orphan pages, not measuring) + FAQ + FAQPage/Article/Breadcrumb JSON-LD; cross-linked to every guide section",
+      "dev": "grok",
+      "date": "2026-08-06"
+    },
+    {
+      "id": "glossary",
+      "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions",
+      "changed": "Shipped the SEO Glossary cornerstone page (/glossary/, 27 plain-language term definitions — crawling, indexing, canonical, E-E-A-T, Core Web Vitals, hreflang, nofollow/noindex, rich results, structured data, topic clusters, etc.), each definition cross-linked to the relevant deep-dive guide (on-page, technical, keyword-research, content-quality, how-search-works, link-building) with descriptive anchors. The page carries full front-matter (title/h1/description/tags/updated + related: nav) and is fully integrated by build.py: it's in the nav, sitemap, on-site search index, and RSS/JSON feeds; single connected JSON-LD @graph per page intact. PM finalized a prior dev run that had left the page uncommitted alongside a BROKEN, unwired glossary_links.py auto-linker (its outer i+=1 dropped the <code>/<a>/<h*> tag that terminated each text run, corrupting HTML) — removed that helper, rebuilt, and verified. Validated: build green (11 guide pages + 1 post), full SEO gate PASS (index+glossary title/description/canonical/single-h1, glossary in sitemap+search-index, single-h1 sweep sitewide, all JSON-LD parses sitewide, sitemap/feed.xml well-formed, feed.json valid, 27 term sections rendered). The safe, correct auto-crosslinker remains queued as glossary-crosslink.",
       "dev": "grok",
       "date": "2026-08-06"
     }
