@@ -1,7 +1,6 @@
 {
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
-    {"id": "blog-system", "title": "FEATURE: build the blog system — content/blog/*.md -> posts with Article schema, author + date; a /blog/ index listing posts newest-first; include posts in sitemap; add a nav link"},
     {"id": "rss-feed", "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer"},
     {"id": "onsite-search", "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)"},
     {"id": "tag-pages", "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"},
@@ -9,8 +8,9 @@
     {"id": "related-articles", "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"},
     {"id": "author-page", "title": "FEATURE: About/author page establishing E-E-A-T (who wrote this + credentials), linked from every byline"},
     {"id": "404-page", "title": "FEATURE: custom 404 page with helpful links + the search box"},
-    {"id": "post-cwv-2026", "title": "BLOG POST: a practical walkthrough of passing Core Web Vitals in 2026 (LCP/INP/CLS) with concrete fixes, sourced from web.dev"},
     {"id": "post-ai-content", "title": "BLOG POST: does AI content hurt SEO? What Google's scaled-content-abuse policy actually says, and how to stay on the right side"},
+    {"id": "post-title-meta-ctr", "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples"},
+    {"id": "blog-related-posts", "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)"},
     {"id": "related-block", "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors"},
     {"id": "glossary", "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions"},
     {"id": "local-seo", "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"},
@@ -28,6 +28,8 @@
     {"id": "freshness", "title": "Re-verify guidance against Google Search Central / web.dev and refresh any changed facts + updated dates"}
   ],
   "done": [
-    {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)", "changed": "Added a build.py extract_faq() feature that turns a `## FAQ` section into synced visible Q&A + valid FAQPage JSON-LD (emitted only where a FAQ exists); wrote 4 genuine Q&A each on keyword-research, on-page-seo, technical-seo.", "date": "2026-08-05"}
+    {"id": "faq-schema", "title": "Add a real FAQ block + FAQPage JSON-LD to the highest-intent pages (keyword-research, on-page, technical)", "changed": "Added a build.py extract_faq() feature that turns a `## FAQ` section into synced visible Q&A + valid FAQPage JSON-LD (emitted only where a FAQ exists); wrote 4 genuine Q&A each on keyword-research, on-page-seo, technical-seo.", "date": "2026-08-05"},
+    {"id": "blog-system", "title": "FEATURE: build the blog system", "changed": "Built the blog: content/blog/*.md now render to /blog/<slug>/ with BlogPosting + BreadcrumbList (+ FAQPage) JSON-LD, published/updated bylines, TOC and back-to-blog pager; added a newest-first /blog/ index with Blog schema and a post-list, a Blog nav link on every page, and included the index + posts in sitemap.xml. Refactored build.py to share render/JSON-LD helpers and moved the byline into the template ({byline}).", "date": "2026-08-05"},
+    {"id": "post-cwv-2026", "title": "BLOG POST: passing Core Web Vitals in 2026", "changed": "Published the inaugural post 'How to Pass Core Web Vitals in 2026' — a ~1500-word field guide (LCP/INP/CLS thresholds at p75, field-vs-lab, concrete per-metric fixes, an order-of-operations, FAQ + FAQPage schema), sourced from web.dev (Vitals/LCP/INP/CLS guides) and Google Search Central, cross-linked to technical-seo and content-quality.", "date": "2026-08-05"}
   ]
 }
