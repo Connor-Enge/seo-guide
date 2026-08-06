@@ -3,9 +3,10 @@
 
 Reads content/*.md (guide pages) and content/blog/*.md (blog posts), both as front-matter + a
 small markdown subset, and renders heavily-optimized static HTML into docs/ (GitHub Pages root):
-semantic HTML5, one H1/page, meta description, canonical, Open Graph + Twitter cards, JSON-LD
-(Article/BlogPosting + BreadcrumbList + FAQPage + Blog), a table of contents, cross-links,
-prev/next, a /blog/ index, plus sitemap.xml and robots.txt. No JS, tiny CSS — fast by construction.
+semantic HTML5, one H1/page, meta description, canonical, Open Graph + Twitter cards, and a single
+connected JSON-LD @graph per page (Organization + WebSite + Person entities with stable @ids, plus
+the page's Article/BlogPosting/ProfilePage/Blog + BreadcrumbList + FAQPage), a table of contents,
+cross-links, prev/next, a /blog/ index, plus sitemap.xml and robots.txt. No JS, tiny CSS — fast.
 
 Usage: python3 build.py   (writes docs/, prints a build report)
 """
@@ -34,6 +35,22 @@ AUTHOR_URL = BASE_URL + "/about/"
 AUTHOR_SAMEAS = ["https://github.com/Connor-Enge"]
 # Byline link to the author/About page — a lightweight, site-wide E-E-A-T signal.
 BYLINE_BY = 'by <a class="author" rel="author" href="%s">%s</a>' % (AUTHOR_URL, html.escape(AUTHOR))
+
+# ---- Entity graph: stable @id anchors so Organization/WebSite/Person/pages form one graph ----
+HOME_URL = BASE_URL + "/"
+ORG_ID = BASE_URL + "/#organization"
+SITE_ID = BASE_URL + "/#website"
+PERSON_ID = AUTHOR_URL + "#person"      # the author node, defined on /about/ but present on every page
+LOGO_ID = BASE_URL + "/#logo"
+LOGO_URL = BASE_URL + "/assets/logo.svg"
+SITE_DESC = ("A practical, no-fluff guide to search engine optimization — how Google ranks pages and "
+             "how to earn visibility with helpful content, sound technical foundations, and honest measurement.")
+ORG_DESC = ("An independent, hand-built SEO guide and blog explaining how search works and how to earn "
+            "rankings, with every claim sourced to primary documentation.")
+PERSON_DESC = ("Writes and maintains The Guide to SEO — explaining how search actually works and how to "
+               "earn rankings with genuinely useful pages, sourced to primary documentation.")
+PERSON_KNOWS = ["Search engine optimization", "Technical SEO", "Core Web Vitals",
+                "Structured data", "Content strategy"]
 
 
 # ---------- tiny markdown renderer (headings, paras, lists, links, bold, code, blockquote) ----------
@@ -155,54 +172,81 @@ def post_url(slug):
     return f"{BASE_URL}/blog/{slug}/"
 
 
-def _json(s):
-    return json.dumps(s, ensure_ascii=False)
+# ---------- JSON-LD: one connected @graph per page ----------
+# Every page carries the Organization, WebSite and Person nodes so each page-level @id
+# reference (author, publisher, isPartOf) resolves within that same page — the robust
+# pattern Google recommends over fragile cross-page @id references.
+def graph(*nodes):
+    doc = {"@context": "https://schema.org", "@graph": [n for n in nodes if n]}
+    return ('<script type="application/ld+json">%s</script>'
+            % json.dumps(doc, ensure_ascii=False, separators=(",", ":")))
 
 
-# ---------- JSON-LD builders (each returns one or more <script> blocks) ----------
-def schema_article(atype, headline, description, url, date_pub, date_mod):
-    author = {"@type": "Person", "name": AUTHOR, "url": AUTHOR_URL}
-    return ('<script type="application/ld+json">{"@context":"https://schema.org","@type":"%s",'
-            '"headline":%s,"description":%s,"author":%s,'
-            '"datePublished":"%s","dateModified":"%s","mainEntityOfPage":"%s","publisher":'
-            '{"@type":"Organization","name":%s}}</script>') % (
-        atype, _json(headline), _json(description), _json(author),
-        date_pub, date_mod, url, _json(SITE_NAME))
+def node_org():
+    return {
+        "@type": "Organization", "@id": ORG_ID, "name": SITE_NAME, "alternateName": "SEO Guide",
+        "url": HOME_URL, "description": ORG_DESC,
+        "logo": {"@type": "ImageObject", "@id": LOGO_ID, "url": LOGO_URL, "contentUrl": LOGO_URL,
+                 "width": 112, "height": 112, "caption": SITE_NAME},
+        "image": {"@id": LOGO_ID}, "sameAs": AUTHOR_SAMEAS, "founder": {"@id": PERSON_ID},
+    }
 
 
-def schema_breadcrumb(items):
-    li = ",".join('{"@type":"ListItem","position":%d,"name":%s,"item":"%s"}' % (i + 1, _json(n), u)
-                  for i, (n, u) in enumerate(items))
-    return ('<script type="application/ld+json">{"@context":"https://schema.org",'
-            '"@type":"BreadcrumbList","itemListElement":[%s]}</script>') % li
+def node_website():
+    return {
+        "@type": "WebSite", "@id": SITE_ID, "url": HOME_URL, "name": SITE_NAME,
+        "alternateName": "SEO Guide", "description": SITE_DESC, "inLanguage": "en",
+        "publisher": {"@id": ORG_ID},
+    }
 
 
-def schema_faq(faqs):
-    ents = ",".join('{"@type":"Question","name":%s,"acceptedAnswer":{"@type":"Answer","text":%s}}'
-                    % (_json(q), _json(a)) for q, a in faqs)
-    return ('<script type="application/ld+json">{"@context":"https://schema.org",'
-            '"@type":"FAQPage","mainEntity":[%s]}</script>') % ents
+def node_person():
+    return {
+        "@type": "Person", "@id": PERSON_ID, "name": AUTHOR, "url": AUTHOR_URL,
+        "description": PERSON_DESC, "sameAs": AUTHOR_SAMEAS, "knowsAbout": PERSON_KNOWS,
+    }
 
 
-def schema_blog(posts):
-    items = ",".join(
-        '{"@type":"BlogPosting","headline":%s,"url":"%s","datePublished":"%s","description":%s}'
-        % (_json(m["title"]), post_url(m["slug"]), m.get("date", ""), _json(m["description"]))
-        for m, _ in posts)
-    return ('<script type="application/ld+json">{"@context":"https://schema.org","@type":"Blog",'
-            '"name":%s,"url":"%s","description":%s,"blogPost":[%s]}</script>') % (
-        _json(BLOG_TITLE), BLOG_URL, _json(BLOG_DESC), items)
+def node_article(atype, headline, description, url, date_pub, date_mod):
+    return {
+        "@type": atype, "@id": url + "#article", "isPartOf": {"@id": SITE_ID},
+        "headline": headline, "description": description, "inLanguage": "en",
+        "datePublished": date_pub, "dateModified": date_mod, "mainEntityOfPage": url,
+        "author": {"@id": PERSON_ID}, "publisher": {"@id": ORG_ID},
+    }
 
 
-def schema_profile(url, description):
-    """ProfilePage + Person for the About page — declares the author entity that every
-    Article/BlogPosting's author.url points back to, establishing E-E-A-T across the site."""
-    person = {"@type": "Person", "name": AUTHOR, "url": url, "description": description,
-              "sameAs": AUTHOR_SAMEAS,
-              "knowsAbout": ["Search engine optimization", "Technical SEO", "Core Web Vitals",
-                             "Structured data", "Content strategy"]}
-    profile = {"@context": "https://schema.org", "@type": "ProfilePage", "mainEntity": person}
-    return '<script type="application/ld+json">%s</script>' % _json(profile)
+def node_profile(url, date_mod):
+    return {
+        "@type": "ProfilePage", "@id": url + "#profilepage", "isPartOf": {"@id": SITE_ID},
+        "url": url, "dateModified": date_mod, "mainEntity": {"@id": PERSON_ID},
+    }
+
+
+def node_blog(url, posts):
+    return {
+        "@type": "Blog", "@id": url + "#blog", "name": BLOG_TITLE, "url": BLOG_URL,
+        "description": BLOG_DESC, "isPartOf": {"@id": SITE_ID}, "publisher": {"@id": ORG_ID},
+        "blogPost": [{"@type": "BlogPosting", "headline": m["title"], "url": post_url(m["slug"]),
+                      "datePublished": m.get("date", ""), "description": m["description"]}
+                     for m, _ in posts],
+    }
+
+
+def node_breadcrumb(url, items):
+    return {
+        "@type": "BreadcrumbList", "@id": url + "#breadcrumb",
+        "itemListElement": [{"@type": "ListItem", "position": i + 1, "name": n, "item": u}
+                            for i, (n, u) in enumerate(items)],
+    }
+
+
+def node_faq(url, faqs):
+    return {
+        "@type": "FAQPage", "@id": url + "#faq",
+        "mainEntity": [{"@type": "Question", "name": q,
+                        "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in faqs],
+    }
 
 
 def main():
@@ -253,18 +297,22 @@ def main():
             nm = pages[idx + 1][0]
             links.append(f'<a class="next" href="{page_url(nm["slug"])}">{html.escape(nm["title"])} →</a>')
         url = page_url(slug)
-        crumbs = [("Home", BASE_URL)] + ([] if slug == "index" else [(meta["title"], url)])
+        crumbs = [("Home", HOME_URL)] + ([] if slug == "index" else [(meta["title"], url)])
+        base_nodes = [node_org(), node_website(), node_person()]
         if meta.get("schema") == "ProfilePage":
-            jsonld = schema_profile(url, meta["description"]) + "\n" + schema_breadcrumb(crumbs)
-            byline = f'Maintained by {html.escape(AUTHOR)} · Updated {meta.get("updated", today)}'
+            updated = meta.get("updated", today)
+            jsonld = graph(*base_nodes, node_profile(url, updated), node_breadcrumb(url, crumbs))
+            byline = f'Maintained by {html.escape(AUTHOR)} · Updated {updated}'
             og_type = "profile"
         else:
-            jsonld = (schema_article("Article", meta["title"], meta["description"], url,
-                                     meta.get("updated", today), today)
-                      + "\n" + schema_breadcrumb(crumbs))
             faqs = extract_faq(body)
+            page_nodes = base_nodes + [
+                node_article("Article", meta["title"], meta["description"], url,
+                             meta.get("updated", today), today),
+                node_breadcrumb(url, crumbs)]
             if faqs:
-                jsonld += "\n" + schema_faq(faqs)
+                page_nodes.append(node_faq(url, faqs))
+            jsonld = graph(*page_nodes)
             byline = f'Updated {meta.get("updated", today)} · {BYLINE_BY}'
             og_type = "website" if slug == "index" else "article"
         page = render(
@@ -287,12 +335,14 @@ def main():
         byline = f"Published {date_pub} · {BYLINE_BY}"
         if date_mod and date_mod != date_pub:
             byline += f" · Updated {date_mod}"
-        crumbs = [("Home", BASE_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
-        jsonld = (schema_article("BlogPosting", meta["title"], meta["description"], url, date_pub, date_mod)
-                  + "\n" + schema_breadcrumb(crumbs))
+        crumbs = [("Home", HOME_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
         faqs = extract_faq(body)
+        post_nodes = [node_org(), node_website(), node_person(),
+                      node_article("BlogPosting", meta["title"], meta["description"], url, date_pub, date_mod),
+                      node_breadcrumb(url, crumbs)]
         if faqs:
-            jsonld += "\n" + schema_faq(faqs)
+            post_nodes.append(node_faq(url, faqs))
+        jsonld = graph(*post_nodes)
         page = render(
             title=meta["title"], description=meta["description"], url=url, og_type="article",
             h1=meta.get("h1", meta["title"]), byline=byline,
@@ -311,7 +361,8 @@ def main():
         blog_content = f"<p>{BLOG_DESC}</p><ul class=\"post-list\">{items}</ul>"
     else:
         blog_content = f"<p>{BLOG_DESC}</p><p>Articles are on the way.</p>"
-    blog_jsonld = schema_blog(posts) + "\n" + schema_breadcrumb([("Home", BASE_URL), (BLOG_TITLE, BLOG_URL)])
+    blog_jsonld = graph(node_org(), node_website(), node_person(), node_blog(BLOG_URL, posts),
+                        node_breadcrumb(BLOG_URL, [("Home", HOME_URL), (BLOG_TITLE, BLOG_URL)]))
     write("blog", render(
         title=BLOG_TITLE, description=BLOG_DESC, url=BLOG_URL, og_type="website",
         h1=BLOG_TITLE, byline=f"Practical, sourced SEO articles · {BYLINE_BY}",
