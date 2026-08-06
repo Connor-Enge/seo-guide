@@ -120,9 +120,24 @@
     {
       "id": "heading-anchor-links",
       "title": "FEATURE: no-JS heading deep-links — add scroll-margin-top to ## headings so anchor jumps clear the sticky header, and render a hover ¶ permalink on each section heading for easy sharing/deep-linking."
+    },
+    {
+      "id": "pdf-print-button",
+      "title": "FEATURE: subtle 'Print / Save as PDF' action in the article footer (progressive-enhancement window.print() button, hidden with no JS) so readers discover the new print stylesheet"
+    },
+    {
+      "id": "copy-code-button",
+      "title": "FEATURE: no-dependency 'copy' button on <pre> code blocks (reduced-motion aware, graceful without JS)"
     }
   ],
   "done": [
+    {
+      "id": "print-styles",
+      "title": "FEATURE: print/PDF stylesheet",
+      "changed": "Local Qwen dev authored assets/print.css from a PM spec (hide header/nav/footer/toc/pager, black-on-white 12pt serif, print link URLs via a[href]::after, break-inside:avoid on blocks, @page 2cm margin); PM wired a media=print <link> in base.html and verified build green. First feature built end-to-end by the LOCAL DEV under the PM/dev split.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "related-block",
       "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors",
