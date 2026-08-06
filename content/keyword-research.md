@@ -5,6 +5,7 @@ title: Keyword Research
 h1: Keyword Research & Search Intent
 description: Great SEO starts with intent. Learn to find the terms your audience uses and map each to the right page and the right type of content.
 updated: 2026-08-05
+related: on-page-seo, content-quality, measuring
 ---
 Keyword research is not about stuffing phrases — it's about discovering **the questions your audience is actually asking** and the intent behind them.
 

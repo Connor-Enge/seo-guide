@@ -5,6 +5,7 @@ title: Link Building & Reputation
 h1: Link Building & Off-Page Reputation
 description: Links remain a core signal of trust. Learn how to earn them the durable way — and which shortcuts get sites penalized.
 updated: 2026-08-05
+related: content-quality, on-page-seo, measuring
 ---
 Links from other sites are votes of confidence. They remain one of Google's strongest signals — but only when they're **earned**, not manufactured.
 

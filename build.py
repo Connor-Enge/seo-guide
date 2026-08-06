@@ -344,6 +344,31 @@ def main():
                 + "".join(f'<li><a href="#{s}">{html.escape(t)}</a></li>' for t, s in toc)
                 + "</ul></nav>") if toc else ""
 
+    # Registry for the `related:` front-matter field -> descriptive internal links.
+    # A key is a guide-page slug (e.g. "technical-seo") or a post keyed "blog/<slug>",
+    # so any page or post can cross-link to any other with a genuine descriptive anchor.
+    related_registry = {m["slug"]: (m["title"], m["description"], page_url(m["slug"]))
+                        for m, _ in pages}
+    related_registry.update({"blog/" + m["slug"]: (m["title"], m["description"], post_url(m["slug"]))
+                             for m, _ in posts})
+
+    def related_block(field, current_url):
+        """Render a curated 'Related reading' block from a comma-separated `related:` field.
+        Unknown keys and self-links are skipped; returns '' when nothing resolves."""
+        seen, items = set(), []
+        for key in (k.strip() for k in field.split(",")):
+            entry = related_registry.get(key)
+            if not entry or entry[2] == current_url or entry[2] in seen:
+                continue
+            seen.add(entry[2])
+            items.append(entry)
+        if not items:
+            return ""
+        lis = "".join('<li><a href="%s">%s</a><p>%s</p></li>'
+                      % (u, html.escape(t), html.escape(d)) for t, d, u in items)
+        return ('<nav class="related" aria-label="Related reading"><h2>Related reading</h2>'
+                '<ul class="related-list">%s</ul></nav>' % lis)
+
     def write(slug_dir, page):
         d = OUT if slug_dir == "" else os.path.join(OUT, slug_dir)
         os.makedirs(d, exist_ok=True)
@@ -392,7 +417,7 @@ def main():
             og_type=og_type,
             h1=meta.get("h1", meta["title"]),
             byline=byline,
-            toc=toc_block(toc), content=content_html,
+            toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
             pager=('<nav class="pager">' + "".join(links) + "</nav>") if links else "",
             jsonld=jsonld)
         write("" if slug == "index" else slug, page)
@@ -418,7 +443,7 @@ def main():
         page = render(
             title=meta["title"], description=meta["description"], url=url, og_type="article",
             h1=meta.get("h1", meta["title"]), byline=byline,
-            toc=toc_block(toc), content=content_html,
+            toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
             pager=f'<nav class="pager"><a class="prev" href="{BLOG_URL}">← All articles</a></nav>',
             jsonld=jsonld)
         write(os.path.join("blog", slug), page)
@@ -452,6 +477,17 @@ def main():
     open(os.path.join(OUT, "robots.txt"), "w").write(
         f"User-agent: *\nAllow: /\nSitemap: {BASE_URL}/sitemap.xml\n")
     open(os.path.join(OUT, ".nojekyll"), "w").write("")
+
+    # ---------- web app manifest: makes the Organization logo the browser-tab + install icon ----------
+    # Generated (not a static asset) so BASE_URL is baked in and can't drift from the subpath deploy.
+    manifest = {
+        "name": SITE_NAME, "short_name": "SEO Guide", "description": SITE_DESC,
+        "start_url": HOME_URL, "scope": BASE_URL + "/", "display": "standalone",
+        "theme_color": "#0b6bcb", "background_color": "#ffffff",
+        "icons": [{"src": LOGO_URL, "type": "image/svg+xml", "sizes": "any", "purpose": "any"}],
+    }
+    open(os.path.join(OUT, "site.webmanifest"), "w").write(
+        json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
 
     # ---------- syndication feeds: blog posts (newest first) then evergreen content pages ----------
     feed_items = [

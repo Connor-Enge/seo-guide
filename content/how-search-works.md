@@ -5,6 +5,7 @@ title: How Search Works
 h1: How Search Works — Crawling, Indexing, Ranking
 description: SEO makes sense once you understand Google's pipeline. Learn how crawling, indexing, ranking, and serving decide whether your page ever appears.
 updated: 2026-08-05
+related: technical-seo, keyword-research, measuring
 ---
 Every SEO decision is easier when you know the four stages a page passes through before it can rank.
 

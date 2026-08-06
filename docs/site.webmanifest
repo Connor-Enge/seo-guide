@@ -1,0 +1,18 @@
+{
+  "name": "The Guide to SEO",
+  "short_name": "SEO Guide",
+  "description": "A practical, no-fluff guide to search engine optimization — how Google ranks pages and how to earn visibility with helpful content, sound technical foundations, and honest measurement.",
+  "start_url": "https://connor-enge.github.io/seo-guide/",
+  "scope": "https://connor-enge.github.io/seo-guide/",
+  "display": "standalone",
+  "theme_color": "#0b6bcb",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "https://connor-enge.github.io/seo-guide/assets/logo.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    }
+  ]
+}

@@ -5,6 +5,7 @@ title: Content Quality & E-E-A-T
 h1: Content Quality, Helpfulness & E-E-A-T
 description: Google rewards helpful, people-first content that demonstrates Experience, Expertise, Authoritativeness, and Trust. Here's how to actually create it.
 updated: 2026-08-05
+related: on-page-seo, link-building, keyword-research
 ---
 Technical SEO gets you in the door; **content is why you rank and stay ranked**. Google's guidance is explicit: create content for people, not to manipulate rankings.
 

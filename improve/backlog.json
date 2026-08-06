@@ -34,10 +34,6 @@
       "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)"
     },
     {
-      "id": "related-block",
-      "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors"
-    },
-    {
       "id": "glossary",
       "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions"
     },
@@ -98,10 +94,6 @@
       "title": "FEATURE: render a visible breadcrumb trail (Home › Section) matching the existing BreadcrumbList JSON-LD — current page unlinked, descriptive anchors, small accessible nav element"
     },
     {
-      "id": "logo-favicon-wiring",
-      "title": "FEATURE: surface the new /assets/logo.svg as the visible site identity — a header brand mark, plus favicon + apple-touch-icon + web-manifest (theme/background color) links, so the Organization logo is also the on-page and browser-tab identity (currently it only exists in JSON-LD)"
-    },
-    {
       "id": "post-structured-data-2026",
       "title": "BLOG POST: which structured data still earns rich results in 2026 — what Google retired (FAQ/HowTo for most sites) vs. still shows (Article, Breadcrumb, Product, Video…), how to choose the types worth implementing, and a Rich Results Test workflow; source to Google Search Central's search-gallery + deprecation posts"
     },
@@ -116,9 +108,33 @@
     {
       "id": "post-search-console",
       "title": "BLOG POST: a practical Google Search Console workflow — which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation."
+    },
+    {
+      "id": "related-auto-fallback",
+      "title": "FEATURE: auto-populate the Related-reading block from shared front-matter topics/tags when a page has no manual `related:` field, so every page always ships genuine descriptive internal links even before hand-curation — build on the existing related_registry + related_block pipeline in build.py."
+    },
+    {
+      "id": "post-internal-linking",
+      "title": "BLOG POST: internal linking & topic clusters — how pillar pages and descriptive-anchor internal links build topical authority and get new pages crawled and ranked; contrast good vs. over-optimized anchor text; source to Google Search Central's link best-practices + 'Make your links crawlable' docs."
+    },
+    {
+      "id": "heading-anchor-links",
+      "title": "FEATURE: no-JS heading deep-links — add scroll-margin-top to ## headings so anchor jumps clear the sticky header, and render a hover ¶ permalink on each section heading for easy sharing/deep-linking."
     }
   ],
   "done": [
+    {
+      "id": "related-block",
+      "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors",
+      "changed": "Added a build.py Related-reading feature: a `related:` front-matter field (comma-separated keys — a guide slug, or a post keyed 'blog/<slug>') resolves against a build-time related_registry to render an accessible <nav class=related aria-label='Related reading'> block of descriptive internal links (target title as anchor + its description as context), appended after content on both guide pages and blog posts. Skips unknown keys, self-links, and dupes; emits nothing when nothing resolves (so the hub homepage stays clean). Curated genuine topical relations across all 7 section pages + the CWV post — notably technical-seo → the Core Web Vitals blog post, giving that new post an inbound internal link from an established, topically-relevant page (helps discovery/ranking). Pure HTML/CSS, zero JS — keeps the no-JS/CWV-first identity — with card styling matching the pager (2-up grid ≥680px). The site now practices the descriptive-anchor internal linking that on-page-seo.md preaches. Validated: build green (9 pages + 1 post), index SEO checks + single-h1 sweep across all pages pass, related nav renders with correct links and no self-links, homepage has no block.",
+      "date": "2026-08-06"
+    },
+    {
+      "id": "logo-favicon-wiring",
+      "title": "FEATURE: surface the new /assets/logo.svg as the visible site identity — a header brand mark, plus favicon + web-manifest links, so the Organization logo is also the on-page and browser-tab identity (currently it only exists in JSON-LD)",
+      "changed": "Wired the existing assets/logo.svg (previously used ONLY in JSON-LD) as the real site identity across all 11 pages: (1) an SVG favicon <link rel=icon type=image/svg+xml> so browser tabs and Google's mobile-SERP favicon slot now show the mark; (2) a build-generated docs/site.webmanifest (name/short_name/description, start_url+scope baked to BASE_URL so they can't drift on the /seo-guide/ subpath deploy, display=standalone, theme_color #0b6bcb matching the existing meta theme-color + logo background, background_color #fff, SVG icon) linked via <link rel=manifest> for Android/PWA installability; (3) a visible header brand mark — replaced the fake 22px CSS gradient ::before square with an actual <img class=brand-mark src=logo.svg width/height=26 alt='' aria-hidden> (dimensions set → zero CLS), styled with matching radius+shadow. Kept the design dependency-free and no-JS (SVG-first; no rasterizer needed). Deferred the raster apple-touch-icon/ICO to a follow-up since build.py is intentionally stdlib-only and no SVG rasterizer is installed. Validated: build green (9 pages + 1 post), favicon+manifest links present sitewide, site.webmanifest is valid JSON, brand <img> renders, index SEO checks + JSON-LD @graph intact.",
+      "date": "2026-08-06"
+    },
     {
       "id": "rss-feed",
       "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer",

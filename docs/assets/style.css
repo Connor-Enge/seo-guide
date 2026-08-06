@@ -40,7 +40,7 @@ header.site .brand{
   letter-spacing:-.02em;color:var(--ink);padding:.85rem clamp(1rem,5vw,1.5rem) .55rem;
 }
 header.site .brand:hover{text-decoration:none}
-header.site .brand::before{content:"";width:22px;height:22px;border-radius:7px;background:var(--grad);box-shadow:var(--shadow);flex:none}
+header.site .brand-mark{width:26px;height:26px;border-radius:8px;flex:none;box-shadow:var(--shadow)}
 header.site nav{overflow:x;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;
   -webkit-mask:linear-gradient(90deg,#000 calc(100% - 24px),transparent)}
 header.site nav::-webkit-scrollbar{display:none}
@@ -93,6 +93,17 @@ summary,.faq summary{font-weight:650;cursor:pointer;padding:.3rem 0}
 .post-list .meta{margin:.15rem 0 .45rem}
 .tag,.badge{display:inline-block;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:.12rem .65rem;font-size:.78rem;color:var(--muted);margin:.2rem .3rem 0 0}
 
+/* related reading — curated internal links with descriptive anchors */
+.related{margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--line)}
+.related h2{font-size:1.15rem;margin:0 0 .9rem;padding:0}
+.related h2::before{display:none}
+.related-list{list-style:none;padding:0;margin:0;display:grid;gap:.75rem}
+.related-list li{border:1px solid var(--line);border-radius:var(--radius);padding:.85rem 1.1rem;background:var(--card);box-shadow:var(--shadow);transition:transform .16s,border-color .16s}
+.related-list li:hover{transform:translateY(-2px);border-color:var(--accent)}
+.related-list li::marker{content:""}
+.related-list a{font-weight:700}
+.related-list p{margin:.2rem 0 0;color:var(--muted);font-size:.9rem;line-height:1.5}
+
 .pager{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:3rem;padding-top:1.6rem;border-top:1px solid var(--line)}
 .pager a{flex:1 1 46%;padding:.9rem 1.1rem;border:1px solid var(--line);border-radius:var(--radius);font-weight:650;background:var(--card);box-shadow:var(--shadow);transition:transform .16s,border-color .16s}
 .pager a:hover{transform:translateY(-2px);border-color:var(--accent);text-decoration:none}
@@ -105,5 +116,6 @@ footer.site a{color:var(--muted);text-decoration:underline}
   header.site{display:flex;align-items:center;justify-content:space-between}
   header.site .brand{padding:.85rem 0 .85rem clamp(1rem,5vw,1.5rem)}
   header.site nav ul{padding:.7rem clamp(1rem,5vw,1.5rem)}
+  .related-list{grid-template-columns:1fr 1fr}
   .pager a{flex-basis:auto;min-width:44%}
 }
