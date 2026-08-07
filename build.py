@@ -38,6 +38,13 @@ _an_mod = _ilu.module_from_spec(_an_spec)
 _an_spec.loader.exec_module(_an_mod)
 heading_html = _an_mod.heading_html
 
+# Fenced ```code``` block support for the markdown renderer: convert a fenced block into a
+# semantic <pre><code> with HTML-escaped content. Logic lives in improve/fencedcode.py.
+_fc_spec = _ilu.spec_from_file_location("fencedcode", os.path.join(HERE, "improve", "fencedcode.py"))
+_fc_mod = _ilu.module_from_spec(_fc_spec)
+_fc_spec.loader.exec_module(_fc_mod)
+consume_fence = _fc_mod.consume_fence
+
 # Custom 404 page content (helpful links + search). Copy lives in improve/notfound.py.
 _nf_spec = _ilu.spec_from_file_location("notfound", os.path.join(HERE, "improve", "notfound.py"))
 _nf_mod = _ilu.module_from_spec(_nf_spec)
@@ -214,6 +221,11 @@ def render_md(body):
     toc = []
     while i < len(lines):
         ln = lines[i].rstrip()
+        fenced = consume_fence(lines, i)   # ```code``` fence -> <pre><code>…</pre>
+        if fenced is not None:
+            block, i = fenced
+            out.append(block)
+            continue
         if not ln.strip():
             i += 1
             continue
