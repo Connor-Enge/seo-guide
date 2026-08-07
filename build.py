@@ -46,6 +46,13 @@ notfound_content = _nf_mod.notfound_content
 NF_TITLE, NF_DESCRIPTION, NF_H1, NF_BYLINE = (
     _nf_mod.NF_TITLE, _nf_mod.NF_DESCRIPTION, _nf_mod.NF_H1, _nf_mod.NF_BYLINE)
 
+# Prefix root-relative in-body links (written in markdown as /slug/) with the deploy base path,
+# so they don't 404 on the GitHub Pages project subpath. Logic lives in improve/links.py.
+_lk_spec = _ilu.spec_from_file_location("links", os.path.join(HERE, "improve", "links.py"))
+_lk_mod = _ilu.module_from_spec(_lk_spec)
+_lk_spec.loader.exec_module(_lk_mod)
+resolve_href = _lk_mod.resolve_href
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -85,7 +92,8 @@ def inline(t):
     t = html.escape(t, quote=False)
     t = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", t)
     t = re.sub(r"`(.+?)`", r"<code>\1</code>", t)
-    t = re.sub(r"\[(.+?)\]\((.+?)\)", r'<a href="\2">\1</a>', t)
+    t = re.sub(r"\[(.+?)\]\((.+?)\)",
+               lambda m: '<a href="%s">%s</a>' % (resolve_href(m.group(2), BASE_URL), m.group(1)), t)
     return t
 
 

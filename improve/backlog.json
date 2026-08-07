@@ -143,10 +143,25 @@
     },
     {
       "id": "soft-404-audit",
-      "title": "DEPTH: audit that every internal href produced by build.py resolves to a real generated docs/ path (a build.py post-build check that parses each rendered page's internal <a href> and asserts the target index.html exists), so the site can never ship a broken internal link / accidental soft-404 — print a report and optionally fail the build on a dangling link."
+      "title": "DEPTH: audit that every internal href produced by build.py resolves to a real generated docs/ path (a build.py post-build check that parses each rendered page's internal <a href> and asserts the target index.html exists), so the site can never ship a broken internal link / accidental soft-404 — print a report and optionally fail the build on a dangling link. Extend it to ALSO flag any remaining root-relative href in rendered output (regression guard for the body-link-baseurl-fix, which subpath-broke links can't be caught by a local-file-exists check)."
+    },
+    {
+      "id": "canonical-selfref-audit",
+      "title": "DEPTH: build-time canonical audit — assert every rendered page's rel=canonical exactly equals its own BASE_URL page URL (never root-relative, never pointing at another page), a build.py post-build check that fails the build on drift, so canonicalization can never silently regress."
+    },
+    {
+      "id": "back-to-top",
+      "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery."
     }
   ],
   "done": [
+    {
+      "id": "body-link-baseurl-fix",
+      "title": "FIX (internal links): in-body markdown links authored root-relative (/slug/) 404'd on the GitHub Pages project subpath — prefix them with BASE_URL",
+      "changed": "Fixed a live sitewide SEO defect. Markdown body links were authored root-relative (e.g. [read this](/content-quality/)) and build.py's inline() renderer passed the href through verbatim, so on the project-subpath deploy (https://connor-enge.github.io/seo-guide/, with NO <base> tag) all 53 in-body internal links across 12 pages resolved to https://connor-enge.github.io/<slug>/ and 404'd — bleeding internal link equity and dead-ending both crawlers and readers. (Nav/header/footer/related/pager links were already correct because they are built with page_url()/BASE_URL; only the hand-written in-prose links were broken.) Local Qwen dev authored improve/links.py — a pure, stdlib-only resolve_href(href, base_url) that prefixes single-'/'-rooted hrefs with base_url and leaves fragments (#…), absolute/external (http(s)://, //), mailto:/tel:/javascript:/data:, empty, and already-relative hrefs untouched; idempotent and never double-prefixes an already-absolute href — self-corrected against an objective 16-case verify (root-relative→prefixed; fragment/external/protocol-relative/mailto/tel/empty/base-absolute untouched; idempotent; trailing-slash base tolerated). PM wired exactly two things in build.py: load the helper by path (mirroring the breadcrumb/anchors/notfound helpers) and route inline()'s [text](href) substitution through resolve_href(href, BASE_URL) via a lambda. Validated: build green (11 guide pages + 2 posts); root-relative body links sitewide went 53 -> 0; the fixed links now carry the full BASE_URL (verified on glossary/index + others); every #fragment anchor still intact; full SEO gate GREEN on index (title/description/canonical/JSON-LD Article/exactly one <h1>/sitemap present); and a single-<h1> + JSON-LD-parse sweep is clean across all 14 output pages.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "404-page",
       "title": "FEATURE: custom 404 page with helpful links + the search box",
