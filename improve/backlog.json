@@ -18,10 +18,6 @@
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
     },
     {
-      "id": "post-ai-content",
-      "title": "BLOG POST: does AI content hurt SEO? What Google's scaled-content-abuse policy actually says, and how to stay on the right side"
-    },
-    {
       "id": "post-title-meta-ctr",
       "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples"
     },
@@ -172,6 +168,18 @@
     {
       "id": "post-page-experience-2026",
       "title": "BLOG POST (Grok prose): 'Page experience in 2026 — what actually counts beyond Core Web Vitals'. Angle: Google folded the standalone Page Experience ranking system into its core 'helpful content' guidance, so page experience is a set of signals (Core Web Vitals, HTTPS, mobile-friendliness, no intrusive interstitials) evaluated holistically, not a single boost. Substantial + sourced: PM first web_fetch Google Search Central 'Understanding page experience in Google Search results' and the Core Web Vitals / INP docs to supply exact current facts (INP replaced FID in March 2024; the three CWV metrics + thresholds; that helpful-content is now a core-ranking signal not a separate system), Grok drafts from that brief, PM fact-checks every claim against the sources before publishing, adds tags + related:, and internally links to the existing Core Web Vitals and technical-seo pages. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "aicontent-inbound-links",
+      "title": "INTERNAL LINKS: add a contextual in-body link from content-quality.md and common-seo-mistakes.md to the new 'Does AI Content Hurt SEO?' post so the new post earns inbound internal links from its most relevant topic hubs (descriptive anchor text, one per page).",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "blogposting-schema-audit",
+      "title": "DEPTH: extend improve/jsonldcheck.py so the build fails if any /blog/ post page is missing a valid BlogPosting JSON-LD node with headline, datePublished, dateModified, and author — locks in structured-data quality as more posts ship.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -346,6 +354,14 @@
       "date": "2026-08-06",
       "dev": "local-qwen",
       "note": "Visible accessible breadcrumb trail (Home › Section › Current) mirroring BreadcrumbList JSON-LD; render helper improve/breadcrumb.py + assets/breadcrumb.css, wired into template + all render sites; current page unlinked with aria-current=page; suppressed on homepage. Built by local-qwen; PM wired."
+    },
+    {
+      "id": "post-ai-content",
+      "title": "BLOG POST: does AI content hurt SEO? What Google's scaled-content-abuse policy actually says, and how to stay on the right side",
+      "status": "done",
+      "date": "2026-08-07",
+      "dev": "grok",
+      "shipped": "content/blog/does-ai-content-hurt-seo.md — \"Does AI Content Hurt SEO? What Google Actually Rewards\", ~920 words, sourced from Google Search Central (AI-content guidance + scaled-content-abuse spam policy + Who/How/Why + E-E-A-T); 3 internal links; build green, 0 snippet warnings."
     }
   ]
 }
