@@ -3,7 +3,7 @@ slug: index
 order: 1
 title: The Guide to SEO
 h1: The Complete Guide to SEO
-description: A practical, no-fluff guide to search engine optimization — how Google works and how to earn rankings with helpful content, sound technical foundations, and honest measurement.
+description: SEO guide explains Google crawling and ranking, writing helpful content, fixing technical issues, earning links, and measuring SEO success accurately.
 updated: 2026-08-05
 ---
 Search engine optimization (SEO) is the practice of helping search engines understand your content and helping people find it. Done right, it is not a bag of tricks — it is the discipline of publishing genuinely useful pages and removing every technical obstacle between them and a searcher.

@@ -2,10 +2,6 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
-      "id": "trim-long-meta-descriptions",
-      "title": "DEPTH: the new metadata audit flags 5 pages whose rendered meta description exceeds ~155 chars (index 176, blog index 156, core-web-vitals post 174, internal-linking post 173, glossary 172) and risks SERP truncation — have GROK rewrite each to a compelling <=155-char description that keeps the primary keyword up front; PM edits only the front-matter `description:` fields and re-runs the audit until it reports 0 long_description warnings."
-    },
-    {
       "id": "metacheck-title-suffix-dupe",
       "title": "DEPTH: extend improve/metacheck.py to also warn when a page <title> is JUST the site-name suffix or repeats the brand twice (e.g. the homepage 'The Guide to SEO — The Guide to SEO'), since a doubled/near-empty title wastes the highest-value SERP real estate; add a 'redundant_title' warn kind with an objective fixture verify, then PM fixes the homepage title front-matter."
     },
@@ -164,9 +160,24 @@
     {
       "id": "jsonld-graph-audit",
       "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs. Objective fixture verify (good graph passes, a graph with a root-relative @id or a missing core node fails); PM wires the gate after the canonical audit."
+    },
+    {
+      "id": "metacheck-desc-title-lowerbound",
+      "title": "DEPTH: now that descriptions have been trimmed to <=155 chars, extend improve/metacheck.py with the OPPOSITE guard so trimming never overshoots — add report-only 'short_description' (rendered meta description < ~70 chars, too terse to earn a click) and 'short_title' (<title> under ~20 chars, wasting SERP real estate) warn kinds, measured after html.unescape like the existing checks, with an objective fixture verify (a 40-char desc and a 12-char title warn; a healthy 130-char desc / 45-char title do not). Report-only, never fail the build. Dev: local Qwen extends metacheck.py; PM re-runs the audit and acts on any real findings."
+    },
+    {
+      "id": "og-twitter-meta-audit",
+      "title": "DEPTH: build-time social-snippet integrity gate — a stdlib-only improve/socialmetacheck.py that walks docs/**/*.html and asserts every page carries og:title, og:description, og:url and twitter:card, warns when og:description is missing/empty or diverges sharply in length from the page meta description (social shares render badly otherwise), and errors only if og:url is root-relative or mismatches the page's canonical. Objective fixture verify (a clean page passes; a page missing og:description warns; a root-relative og:url fails); PM wires it after the metadata audit."
     }
   ],
   "done": [
+    {
+      "id": "trim-long-meta-descriptions",
+      "title": "DEPTH: the metadata audit flagged 5 pages whose rendered meta description exceeded ~155 chars (index 176, blog index 156, core-web-vitals post 174, internal-linking post 173, glossary 172) and risked SERP truncation — rewrite each to a compelling <=155-char description that keeps the primary keyword up front; re-run the audit until it reports 0 long_description warnings.",
+      "changed": "GROK (xai/grok-4.3, single-shot) authored 5 replacement meta descriptions from a precise PM brief that supplied each page's title, its exact current over-length description, and what the page covers, plus the hard constraint (<=155 chars incl. spaces, target 140-152, primary keyword up front, compelling+accurate, no clutter). Grok returned all five keyed (INDEX/BLOG/CWV/INTERNAL/GLOSSARY); PM measured each raw length (150/144/123/132/132 — all under 155, since & and ' render 1:1 after the audit's html.unescape) and fact-checked each against its page before placing. PM did ONLY the wiring — edited the front-matter `description:` field on content/index.md, content/glossary.md, content/blog/passing-core-web-vitals-2026.md and content/blog/internal-linking-and-topic-clusters.md, and updated the BLOG_DESC config string in build.py (drives the /blog/ index description) to Grok's text. Validated: build GREEN (11 guide pages + 2 posts, BUILD_EXIT=0); the metadata audit went from '5 warning(s)' to 'OK — 0 snippet warning(s)'; the five new descriptions verified in the rendered HTML (docs/index.html, docs/glossary/, docs/blog/, and both post pages); full SEO gate GREEN on index (exactly one <title>, one meta name=description, one rel=canonical, JSON-LD @type Article present, exactly one <h1>, sitemap.xml present). Live SERP-truncation risk across the 5 highest-traffic pages eliminated.",
+      "dev": "grok",
+      "date": "2026-08-06"
+    },
     {
       "id": "title-desc-length-audit",
       "title": "DEPTH: extend the build-time gate to sanity-check on-SERP metadata — for every rendered page assert exactly one <title> and one meta name=description, and warn (report, don't fail) when a title exceeds ~60 chars or a description exceeds ~155 chars, or when either is empty/duplicated across pages, so titles/descriptions never silently regress into truncation or duplication.",

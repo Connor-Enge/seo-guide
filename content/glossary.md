@@ -3,7 +3,7 @@ slug: glossary
 order: 10
 title: SEO Glossary
 h1: SEO Glossary — Key Terms, Clearly Defined
-description: Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.
+description: SEO glossary gives plain definitions for crawling, indexing, canonicals, E-E-A-T, and Core Web Vitals each linked to further guides.
 updated: 2026-08-06
 tags: glossary, seo terms, definitions, reference
 related: how-search-works, technical-seo, on-page-seo, common-seo-mistakes

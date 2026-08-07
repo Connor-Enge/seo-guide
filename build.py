@@ -87,8 +87,8 @@ FEED_URL = BASE_URL + "/feed.xml"        # RSS 2.0 feed of posts + content pages
 JSON_FEED_URL = BASE_URL + "/feed.json"  # JSON Feed 1.1 mirror of the same items
 SITE_NAME = "The Guide to SEO"
 BLOG_TITLE = "The SEO Blog"
-BLOG_DESC = ("Practical, sourced articles on getting found in search — Core Web Vitals, content "
-             "that earns rankings, technical fixes, and how Google actually ranks pages.")
+BLOG_DESC = ("SEO blog delivers practical articles on Core Web Vitals, content that ranks, "
+             "technical fixes, and how Google evaluates pages for search results.")
 AUTHOR = "Connor Enge"
 AUTHOR_URL = BASE_URL + "/about/"
 AUTHOR_SAMEAS = ["https://github.com/Connor-Enge"]

@@ -2,7 +2,7 @@
 slug: passing-core-web-vitals-2026
 title: How to Pass Core Web Vitals in 2026
 h1: How to Pass Core Web Vitals in 2026 — A Field Guide
-description: A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.
+description: Core Web Vitals guide covers LCP, INP, and CLS thresholds plus concrete fixes that improve each metric for 2026 compliance.
 date: 2026-08-05
 updated: 2026-08-05
 tags: technical-seo, performance, core-web-vitals

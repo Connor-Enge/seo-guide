@@ -17,7 +17,7 @@
 <category>internal-linking</category>
 <category>on-page-seo</category>
 <category>site-structure</category>
-<description>How internal links help Google find and rank your pages, how to write anchor text that actually works, and how the pillar-and-cluster model maps onto Google's real guidance.</description>
+<description>Internal linking guide shows effective anchor text use and pillar-and-cluster structures that match Google's actual recommendations.</description>
 </item>
 <item>
 <title>How to Pass Core Web Vitals in 2026</title>
@@ -28,7 +28,7 @@
 <category>technical-seo</category>
 <category>performance</category>
 <category>core-web-vitals</category>
-<description>A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.</description>
+<description>Core Web Vitals guide covers LCP, INP, and CLS thresholds plus concrete fixes that improve each metric for 2026 compliance.</description>
 </item>
 <item>
 <title>How Search Works</title>
@@ -100,7 +100,7 @@
 <guid isPermaLink="true">https://connor-enge.github.io/seo-guide/glossary/</guid>
 <pubDate>Thu, 06 Aug 2026 00:00:00 +0000</pubDate>
 <dc:creator>Connor Enge</dc:creator>
-<description>Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.</description>
+<description>SEO glossary gives plain definitions for crawling, indexing, canonicals, E-E-A-T, and Core Web Vitals each linked to further guides.</description>
 </item>
 </channel>
 </rss>

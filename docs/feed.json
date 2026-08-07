@@ -18,8 +18,8 @@
       "id": "https://connor-enge.github.io/seo-guide/blog/internal-linking-and-topic-clusters/",
       "url": "https://connor-enge.github.io/seo-guide/blog/internal-linking-and-topic-clusters/",
       "title": "Internal Linking and Topic Clusters",
-      "summary": "How internal links help Google find and rank your pages, how to write anchor text that actually works, and how the pillar-and-cluster model maps onto Google's real guidance.",
-      "content_text": "How internal links help Google find and rank your pages, how to write anchor text that actually works, and how the pillar-and-cluster model maps onto Google's real guidance.",
+      "summary": "Internal linking guide shows effective anchor text use and pillar-and-cluster structures that match Google's actual recommendations.",
+      "content_text": "Internal linking guide shows effective anchor text use and pillar-and-cluster structures that match Google's actual recommendations.",
       "date_published": "2026-08-06T00:00:00Z",
       "date_modified": "2026-08-06T00:00:00Z",
       "authors": [
@@ -38,8 +38,8 @@
       "id": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
       "url": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
       "title": "How to Pass Core Web Vitals in 2026",
-      "summary": "A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.",
-      "content_text": "A practical, metric-by-metric walkthrough of Core Web Vitals — what LCP, INP, and CLS measure, the thresholds Google uses, and the specific fixes that actually move each one.",
+      "summary": "Core Web Vitals guide covers LCP, INP, and CLS thresholds plus concrete fixes that improve each metric for 2026 compliance.",
+      "content_text": "Core Web Vitals guide covers LCP, INP, and CLS thresholds plus concrete fixes that improve each metric for 2026 compliance.",
       "date_published": "2026-08-05T00:00:00Z",
       "date_modified": "2026-08-05T00:00:00Z",
       "authors": [
@@ -178,8 +178,8 @@
       "id": "https://connor-enge.github.io/seo-guide/glossary/",
       "url": "https://connor-enge.github.io/seo-guide/glossary/",
       "title": "SEO Glossary",
-      "summary": "Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.",
-      "content_text": "Clear, plain-language definitions of the SEO terms that matter most — from crawling and indexing to canonical, E-E-A-T, and Core Web Vitals — each linked to a deeper guide.",
+      "summary": "SEO glossary gives plain definitions for crawling, indexing, canonicals, E-E-A-T, and Core Web Vitals each linked to further guides.",
+      "content_text": "SEO glossary gives plain definitions for crawling, indexing, canonicals, E-E-A-T, and Core Web Vitals each linked to further guides.",
       "date_published": "2026-08-06T00:00:00Z",
       "date_modified": "2026-08-06T00:00:00Z",
       "authors": [
