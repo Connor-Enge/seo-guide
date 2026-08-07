@@ -188,10 +188,6 @@
       "dev": "grok"
     },
     {
-      "id": "heading-order-gate",
-      "title": "DEPTH: build-time heading-order gate (new improve/headingorder.py, wired like h1check) — walk docs/**/*.html and flag any page that skips a heading level (an <h3> with no preceding <h2>, an <h4> with no preceding <h3>, etc.). A skipped level breaks the accessible document outline and the topical hierarchy search engines read. Report-only warn first; objective temp-fixture verify."
-    },
-    {
       "id": "about-maintenance-note",
       "title": "CONTENT (Grok prose, small): a concise, sourced 'How this guide is maintained' paragraph for the About/editorial-standards page — how each claim is checked against primary docs (Google Search Central, web.dev) and when pages are re-reviewed — strengthening E-E-A-T transparency. PM supplies the facts; Grok writes the paragraph; PM fact-checks and places it."
     },
@@ -252,6 +248,18 @@
       "title": "DEPTH: extend improve/metacheck.py so the existing long_title warn (rendered <title> > 60 chars) reports the length of the SITE-NAME SUFFIX separately when a page title is long mostly because of the appended \" — <site name>\" — i.e. show how many chars the brand suffix consumes so the PM can judge whether to trim the page title vs. shorten branding. Report-only, non-blocking, stdlib-only, objective fixture verify (a 47-char title + 19-char suffix = 66 warns and reports suffix=19; a short title does not warn). Dev: local Qwen extends metacheck.py.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "heading-order-post-crosslink",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: once the semantic-HTML/heading-hierarchy blog post ships, add a contextual in-body link to it from on-page-seo.md and technical-seo.md (descriptive anchors, one per page) so the post earns inbound internal links from its topic hubs and the new heading-order gate has a reader-facing explainer to point at."
+    },
+    {
+      "id": "heading-order-detail-context",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: enrich improve/headingorder.py warnings with a short heading-text snippet — capture the inner text of the offending heading (strip tags, collapse whitespace, truncate ~60 chars) and append it to the detail string, so a skipped-level warning names WHICH heading to fix rather than only the level jump. Keep stdlib-only; extend the existing fixture verify to assert the snippet appears."
     }
   ],
   "done": [
@@ -513,6 +521,13 @@
       "dev": "grok",
       "done_date": "2026-08-07",
       "note": "Published blog post \"Title Tags & Meta Descriptions\" (slug title-tags-meta-descriptions-that-earn-clicks). Grok drafted the body from a PM brief built on Google Search Central title-link + snippet docs; PM fact-checked every claim, framed length figures as device-width display heuristics (Google states no hard limit), tightened the <title> to model its own advice, and wired 3 descriptive inbound internal links (on-page-seo, common-seo-mistakes, how-search-works) + related block. Build green, all audits 0 warnings."
+    },
+    {
+      "id": "heading-order-gate",
+      "title": "DEPTH: build-time heading-order gate (new improve/headingorder.py, wired like h1check) — walk docs/**/*.html and flag any page that skips a heading level (an <h3> with no preceding <h2>, an <h4> with no preceding <h3>, etc.). A skipped level breaks the accessible document outline and the topical hierarchy search engines read. Report-only warn first; objective temp-fixture verify.",
+      "dev": "local-qwen",
+      "done_date": "2026-08-07",
+      "note": "Added improve/headingorder.py + wired a report-only heading-order gate into build.py: walks docs/**/*.html and warns when a page skips a heading level (e.g. h2->h4 skips h3), protecting the accessible document outline and topical hierarchy. Non-blocking; objective temp-fixture verify. Build green, all pages report OK (0 skips)."
     }
   ]
 }

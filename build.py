@@ -126,6 +126,14 @@ _so_mod = _ilu.module_from_spec(_so_spec)
 _so_spec.loader.exec_module(_so_mod)
 audit_social_meta = _so_mod.audit_social_meta
 
+# Post-build heading-order gate (report-only): flag any page that skips a heading level (e.g. an <h3>
+# with no preceding <h2>), which breaks the accessible document outline and the topical hierarchy search
+# engines read. Non-blocking warnings. Logic in improve/headingorder.py.
+_ho_spec = _ilu.spec_from_file_location("headingorder", os.path.join(HERE, "improve", "headingorder.py"))
+_ho_mod = _ilu.module_from_spec(_ho_spec)
+_ho_spec.loader.exec_module(_ho_mod)
+audit_heading_order = _ho_mod.audit_heading_order
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -817,6 +825,15 @@ def main():
         raise SystemExit(1)
     print(f"Social-meta audit: OK — every page's og:url is absolute and matches its canonical"
           f" ({len(so_warns)} snippet warning(s)).")
+
+    # ---------- heading-order gate (report-only): flag skipped heading levels (broken outline) ----------
+    ho_problems = audit_heading_order(OUT)
+    if ho_problems:
+        print(f"\nHeading-order audit — {len(ho_problems)} warning(s) (skipped heading level, non-blocking):")
+        for p in ho_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+    else:
+        print("Heading-order audit: OK — no page skips a heading level.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
