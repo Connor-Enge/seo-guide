@@ -34,10 +34,6 @@
       "title": "New page: a concrete technical-SEO audit checklist readers can work through"
     },
     {
-      "id": "reading-time",
-      "title": "FEATURE: compute + display reading time per page (build.py byline). NOTE for dev: keep the word-count module SIMPLE — the prior attempt failed on a fragile multi-line regex. Prefer reusing build.py's existing plain()/search_text() to get plain text, or strip syntax with a few one-line str.replace/re.sub calls (each on ONE line), then count whitespace tokens at ~220 wpm, min 1 min. Scope to reading time only (drop the auto-summary)."
-    },
-    {
       "id": "og-image",
       "title": "Generate a lightweight per-page SVG social image and wire og:image / twitter:image"
     },
@@ -232,9 +228,26 @@
       "title": "DEPTH: extend improve/socialmetacheck.py to ERROR (kind 'twitter_card_invalid') when a page's twitter:card is present but not one of the valid X/Twitter card types (summary, summary_large_image, app, player) — an invalid value makes X drop the card entirely, so this locks the site's cards to valid types. stdlib-only, objective fixture verify (a page with twitter:card=summary_large_image passes; twitter:card=banner fails; a page with no twitter:card keeps only the existing missing_twitter_card warn, no new error). Dev: local-qwen.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "reading-time-schema-wordcount",
+      "title": "DEPTH: now that reading time is a visible byline signal, expose it to machines too — add wordCount and timeRequired (ISO-8601 duration, e.g. 'PT7M') to each Article/BlogPosting JSON-LD node so search engines and readers get the same reading-length metadata. Dev: local-qwen adds a tiny helper that converts the existing reading_minutes(int) to an ISO-8601 'PT<n>M' string plus the raw word count; PM wires the two fields into node_article() in build.py. Objective fixture verify on the duration formatter (1 -> 'PT1M', 7 -> 'PT7M'); JSON-LD gate must stay green.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "reading-time-blog-index",
+      "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green."
     }
   ],
   "done": [
+    {
+      "id": "reading-time",
+      "title": "FEATURE: compute + display reading time per page (build.py byline).",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/readingtime.py — a pure, stdlib-only reading_minutes(text, wpm=220) that counts whitespace-separated word tokens in already-plain text and returns max(1, int(round(words/wpm))), so the estimate is always an integer >= 1 and empty/whitespace input floors to 1 minute. Passed the objective fixture verify on attempt 1/3 (empty -> 1; 5 words -> 1; 220/440/1100/2200 words @220wpm -> 1/2/5/10; custom wpm 200: 400->2, 600->3; never returns < 1 for 0..59 words; type is int). PM did ONLY the wiring (one import loader + one hook per byline site): load readingtime.py by path alongside the other improve/ helpers, and append ' · {reading_minutes(search_text(body))} min read' to the byline for every non-index guide page and every blog post, reusing build.py's existing search_text(body) to get the plain text (no fragile new word-count regex — the failure mode of the prior attempt). Deliberately skipped: the homepage index (a hub, not an article) and the About ProfilePage (a bio byline reads oddly with a read time). VERIFIED end-to-end: build GREEN (11 guide pages + 3 posts = 15 HTML pages); all seven build-time gates (internal-link, canonical, metadata, JSON-LD, sitemap, robots, h1, social-meta) still OK; full SEO gate GREEN on docs/index.html (exactly one <title>, one meta name=description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). Reading-time byline now renders on exactly 12 pages (9 non-index/non-profile guide pages + 3 posts) and is correctly ABSENT from the homepage and the About page (0 'min read' in docs/index.html). Estimates are honest, not padded: technical-seo ~470 words -> 2 min, glossary ~1683 words -> 8 min, the Core Web Vitals post -> 7 min — each matching the real plain-text length. HYGIENE: also reverted a broken, uncommitted improve/metacheck.py left in the working tree by a prior run's failed 'metacheck-title-suffix-dupe' attempt (it crashed the build with KeyError on a dict lookup that assumed membership); restored it to the known-good committed HEAD version so the build is green and the failed attempt stays out of this commit — metacheck-title-suffix-dupe remains in pending for a proper build.",
+      "dev": "local-qwen (readingtime.py) + PM wiring/verification",
+      "date": "2026-08-07"
+    },
     {
       "id": "back-to-top-progress-ring",
       "title": "FEATURE: enrich the back-to-top control (assets/backtotop.js) with a subtle reading-progress ring that fills 0->100% as the reader scrolls the article.",

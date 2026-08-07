@@ -126,6 +126,13 @@ _so_mod = _ilu.module_from_spec(_so_spec)
 _so_spec.loader.exec_module(_so_mod)
 audit_social_meta = _so_mod.audit_social_meta
 
+# Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
+# Logic in improve/readingtime.py.
+_rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
+_rt_mod = _ilu.module_from_spec(_rt_spec)
+_rt_spec.loader.exec_module(_rt_mod)
+reading_minutes = _rt_mod.reading_minutes
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -548,6 +555,8 @@ def main():
                 page_nodes.append(node_faq(url, faqs))
             jsonld = graph(*page_nodes)
             byline = f'Updated {meta.get("updated", today)} · {BYLINE_BY}'
+            if slug != "index":
+                byline += f' · {reading_minutes(search_text(body))} min read'
             og_type = "website" if slug == "index" else "article"
         page = render(
             title=meta["title"], description=meta["description"], url=url,
@@ -569,6 +578,7 @@ def main():
         byline = f"Published {date_pub} · {BYLINE_BY}"
         if date_mod and date_mod != date_pub:
             byline += f" · Updated {date_mod}"
+        byline += f' · {reading_minutes(search_text(body))} min read'
         crumbs = [("Home", HOME_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
         faqs = extract_faq(body)
         post_nodes = [node_org(), node_website(), node_person(),
