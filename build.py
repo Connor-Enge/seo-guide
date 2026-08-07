@@ -86,6 +86,14 @@ _jl_mod = _ilu.module_from_spec(_jl_spec)
 _jl_spec.loader.exec_module(_jl_mod)
 audit_jsonld = _jl_mod.audit_jsonld
 
+# Post-build sitemap gate: assert docs/sitemap.xml is well-formed, every <loc> is absolute and
+# resolves to a real generated file, no duplicates, and 404.html is never listed; warn (report-only)
+# on any indexable page missing from the sitemap. Logic in improve/sitemapcheck.py.
+_sm_spec = _ilu.spec_from_file_location("sitemapcheck", os.path.join(HERE, "improve", "sitemapcheck.py"))
+_sm_mod = _ilu.module_from_spec(_sm_spec)
+_sm_spec.loader.exec_module(_sm_mod)
+audit_sitemap = _sm_mod.audit_sitemap
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -705,6 +713,22 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("JSON-LD audit: OK — every page's entity graph parses with connected, absolute, consistent @ids.")
+
+    # ---------- sitemap gate: well-formed; every <loc> absolute + resolves; no dupes; no 404 listed ----------
+    sitemap_problems = audit_sitemap(OUT, BASE_URL)
+    sm_errors = [p for p in sitemap_problems if p.get("severity") == "error"]
+    sm_warns = [p for p in sitemap_problems if p.get("severity") == "warn"]
+    if sm_warns:
+        print(f"\nSitemap audit — {len(sm_warns)} warning(s) (orphan-from-sitemap, non-blocking):")
+        for p in sm_warns:
+            print(f"  [{p['kind']}] {p['loc']}  ({p['detail']})")
+    if sm_errors:
+        print(f"\nSITEMAP AUDIT FAILED — {len(sm_errors)} error(s):")
+        for p in sm_errors:
+            print(f"  [{p['kind']}] {p['loc']}  ({p['detail']})")
+        raise SystemExit(1)
+    print(f"Sitemap audit: OK — every <loc> is absolute, resolves to a real file, unique, and 404-free"
+          f" ({len(sm_warns)} orphan warning(s)).")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

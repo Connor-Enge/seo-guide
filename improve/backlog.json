@@ -156,12 +156,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "sitemap-integrity-gate",
-      "title": "DEPTH: build-time sitemap integrity gate — a stdlib-only improve/sitemapcheck.py that parses docs/sitemap.xml (must be well-formed XML), asserts every <loc> is absolute (starts with BASE_URL), resolves to a real generated file on disk (trailing-slash -> index.html, literal file -> itself), has no duplicate <loc>s, and that 404.html is NOT listed; and warns (report-only) when a canonical indexable HTML page in docs/ is absent from the sitemap (orphan-from-sitemap). Objective fixture verify (good sitemap passes; a dangling loc / duplicate / listed 404 fails); PM wires it after the JSON-LD audit.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "metacheck-desc-title-lowerbound",
       "title": "DEPTH: now that descriptions have been trimmed to <=155 chars, extend improve/metacheck.py with the OPPOSITE guard so trimming never overshoots — add report-only 'short_description' (rendered meta description < ~70 chars, too terse to earn a click) and 'short_title' (<title> under ~20 chars, wasting SERP real estate) warn kinds, measured after html.unescape like the existing checks, with an objective fixture verify (a 40-char desc and a 12-char title warn; a healthy 130-char desc / 45-char title do not). Report-only, never fail the build. Dev: local Qwen extends metacheck.py; PM re-runs the audit and acts on any real findings."
     },
@@ -188,9 +182,28 @@
       "title": "DEPTH: extend improve/jsonldcheck.py so the build fails if any /blog/ post page is missing a valid BlogPosting JSON-LD node with headline, datePublished, dateModified, and author — locks in structured-data quality as more posts ship.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "robots-integrity-gate",
+      "title": "DEPTH: build-time robots.txt integrity gate — a stdlib-only improve/robotscheck.py that reads docs/robots.txt and asserts (error) it exists, carries a 'Sitemap:' line whose URL is absolute and equals BASE_URL + '/sitemap.xml', and that no 'User-agent: *' group contains a blanket 'Disallow: /' (which would deindex the whole site); warn (report-only) if there is no explicit Allow/Disallow at all. Objective fixture verify (a healthy robots.txt passes; a missing Sitemap line / a root Disallow under * / a relative Sitemap URL each fail); PM wires it after the sitemap gate. Dev: local-qwen. Complements the new sitemapcheck.py.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "post-xml-sitemaps-2026",
+      "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
+      "stream": "B-blog",
+      "dev": "grok"
     }
   ],
   "done": [
+    {
+      "id": "sitemap-integrity-gate",
+      "title": "DEPTH: build-time sitemap integrity gate (improve/sitemapcheck.py) — parse docs/sitemap.xml, assert every <loc> is absolute + resolves to a real file, no duplicates, 404 never listed; report-only orphan-from-sitemap warnings.",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/sitemapcheck.py — a pure, stdlib-only audit_sitemap(out_dir, base_url) that parses docs/sitemap.xml with xml.etree.ElementTree (returning a lone malformed_xml error if the file is missing or not well-formed, without raising), collects every namespaced <loc> by local tag name, and per loc runs ERROR checks: nonabsolute_loc (loc not under BASE_URL), listed_404 (loc resolving to 404.html), dangling_loc (absolute loc whose resolved on-disk file is missing) using the trailing-slash->index.html resolution rule, plus duplicate_loc (one per distinct repeated value). It also emits report-only orphan_from_sitemap WARNINGS: it walks docs/ for every *.html (skipping 404.html), maps each to its canonical URL exactly like canonicalcheck.compute_expected_url, and warns when an indexable page is absent from the sitemap. PM wired exactly two things into build.py (mirroring the linkcheck/canonical/metadata/jsonld gates): load sitemapcheck.py by path, and after the JSON-LD gate run audit_sitemap(OUT, BASE_URL), printing non-blocking orphan warnings and raising SystemExit(1) on any error. PM VERIFIED end-to-end: an OBJECTIVE fixture verify passed on attempt 2/3 (real docs/ sitemap -> 0 problems [no false positives]; a clean synthetic sitemap -> 0; a broken one flags exactly duplicate_loc/dangling_loc/nonabsolute_loc/listed_404 as errors + orphan_from_sitemap as a warn; a malformed sitemap -> malformed_xml error). Build GREEN (11 guide pages + 3 posts): the gate prints 'Sitemap audit: OK — every <loc> is absolute, resolves to a real file, unique, and 404-free (0 orphan warning(s)).' Full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, one <h1>, a JSON-LD Article node that parses, sitemap.xml present). LIVE negative test proved the gate bites: on the real docs/ audit_sitemap returns []; on a copy whose sitemap gained a dangling loc, a /404.html loc, and a duplicate loc it returns exactly ['dangling_loc','duplicate_loc','listed_404']. Sitemap correctness — a currently high-impact but previously unguarded crawl/index surface — can now never silently regress: a build can no longer ship a sitemap that is malformed, lists a dangling or root-relative URL, duplicates a loc, or exposes the 404 page to crawlers.",
+      "dev": "local-qwen",
+      "date": "2026-08-07"
+    },
     {
       "id": "jsonld-graph-audit",
       "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs.",
