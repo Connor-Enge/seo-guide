@@ -1,7 +1,7 @@
 ---
 slug: index
 order: 1
-title: The Guide to SEO
+title: Search Engine Optimization, Explained
 h1: The Complete Guide to SEO
 description: SEO guide explains Google crawling and ranking, writing helpful content, fixing technical issues, earning links, and measuring SEO success accurately.
 updated: 2026-08-05

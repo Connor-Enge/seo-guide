@@ -2,10 +2,6 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
-      "id": "metacheck-title-suffix-dupe",
-      "title": "DEPTH: extend improve/metacheck.py to also warn when a page <title> is JUST the site-name suffix or repeats the brand twice (e.g. the homepage 'The Guide to SEO — The Guide to SEO'), since a doubled/near-empty title wastes the highest-value SERP real estate; add a 'redundant_title' warn kind with an objective fixture verify, then PM fixes the homepage title front-matter."
-    },
-    {
       "id": "tag-pages",
       "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
@@ -277,6 +273,30 @@
       "id": "byline-time-element",
       "title": "FEATURE: wrap the visible published/updated dates in the byline in semantic <time datetime=\"YYYY-MM-DD\"> elements so the dates are machine-parseable in the rendered HTML itself (not only inside JSON-LD), aiding assistive tech and crawlers. Dev: local-qwen adds a tiny stdlib helper time_tag(date_str, label) that returns '<time datetime=\"YYYY-MM-DD\">label</time>' (validating the date shape, passing non-date labels through untouched); PM wires it into the byline construction for guide pages and posts. Objective fixture verify on the helper (valid date -> wrapped <time> with datetime attr; a non-date string -> unchanged); build + all gates stay green, single-<h1> and JSON-LD invariants preserved.",
       "stream": "A-feature",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "metacheck-brand-in-both-title-h1",
+      "title": "DEPTH: extend improve/metacheck.py (reuse titlecheck.py) with a report-only 'title_h1_identical' warn when a page's rendered <title> segment before the brand suffix is byte-identical to its <h1> — a duplicated title/H1 wastes the chance to target complementary phrasing; measure after html.unescape, objective fixture verify (identical title-lead & h1 warn; distinct ones do not). Non-blocking. Dev: local-qwen adds a pure helper, PM wires one hook.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "titlecheck-unit-tests",
+      "title": "DEPTH: add improve/tests/test_titlecheck.py (stdlib unittest) locking redundant_title_segment's contract — doubled brand, case-insensitive dup, each separator (— – · | and spaced hyphen), internal-hyphen-not-split, single-segment/empty → None — so the new redundant-title guard can never silently regress. Dev: local-qwen writes the test file; verify = the test suite exits 0.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "metacheck-title-missing-brand",
+      "title": "DEPTH: extend improve/metacheck.py (reuse titlecheck.py) with a report-only 'title_missing_brand' warn when a page's rendered <title> does NOT end with the site-name brand suffix (the ' — <site name>' that build.py appends), so branding stays consistent across the SERP and a hand-edited front-matter title can't silently drop the brand. Derive the brand string from the same config build.py uses; measure after html.unescape; skip pages whose title is exactly the brand. Non-blocking WARN only, stdlib-only, objective fixture verify (a title ending in the brand passes; one with no brand suffix warns; the bare-brand homepage-style title does not warn). Dev: local-qwen adds a pure helper (e.g. title_has_brand_suffix(title, brand)), PM wires one hook + re-runs the audit.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "og-title-brand-consistency",
+      "title": "DEPTH: extend improve/socialmetacheck.py with a report-only 'og_title_missing_brand' warn mirroring the title-brand guard — an og:title that omits the site-name brand suffix reads inconsistently on shared cards vs. the SERP title. Reuse titlecheck.py's brand helper, measure after html.unescape, non-blocking WARN only, stdlib-only, objective fixture verify (og:title ending in the brand passes; one without warns). Dev: local-qwen.",
+      "stream": "C-depth",
       "dev": "local-qwen"
     }
   ],
@@ -568,6 +588,14 @@
       "dev": "local-qwen",
       "shipped": "2026-08-07",
       "note": "New self-contained improve/blogpostingcheck.py (audit_blog_posting) wired into build.py as an error gate; every docs/blog/<slug>/index.html must carry a complete BlogPosting node (headline, datePublished, dateModified, author). Proven via /tmp fixture acceptance test; skips the blog listing; passes on real docs/."
+    },
+    {
+      "id": "metacheck-title-suffix-dupe",
+      "title": "DEPTH: extend improve/metacheck.py to also warn when a page <title> is JUST the site-name suffix or repeats the brand twice (e.g. the homepage 'The Guide to SEO — The Guide to SEO'), since a doubled/near-empty title wastes the highest-value SERP real estate; add a 'redundant_title' warn kind with an objective fixture verify, then PM fixes the homepage title front-matter.",
+      "shipped": "2026-08-07",
+      "dev": "local-qwen (redundant_title_segment helper) + PM (homepage title fix + metacheck hook + verification/ship)",
+      "date": "2026-08-07",
+      "result": "Local Qwen dev authored improve/titlecheck.py redundant_title_segment() (splits a rendered <title> on its separators — em/en dash, spaced hyphen, middot, pipe — and returns the first segment that repeats another, case-insensitively, else None; leaves internal hyphens in a single segment untouched). PM wired a report-only 'redundant_title' warn into audit_meta() in improve/metacheck.py (fires inside the single-<title> branch, never blocks the build) and fixed the doubled homepage <title> in content/index.md front-matter (title: 'The Guide to SEO' -> 'Search Engine Optimization, Explained'), so the homepage now renders 'Search Engine Optimization, Explained — The Guide to SEO' (56 chars, single <title>) instead of the wasteful 'The Guide to SEO — The Guide to SEO'. PM finished & shipped this prior-run in-tree work after adversarial verification: OBJECTIVE check of redundant_title_segment — FIRES on 'The Guide to SEO — The Guide to SEO'->'The Guide to SEO' and 'SEO | SEO'->'SEO'; stays SILENT on the fixed homepage title, on 'On-Page SEO — The Guide to SEO', and on the single-segment internal-hyphen 'Well-Known Facts'. Build GREEN (11 guide pages + 4 posts, exit 0); all build-time gates OK (internal-link, canonical, metadata [0 snippet warnings — the homepage fix cleared the only redundant_title offender], JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, heading-order); full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). HYGIENE: removed two unwired orphan files left by an earlier abandoned external-link-marker attempt (improve/extlinks.py + assets/extlinks.css) that were referenced nowhere in build.py/templates/CSS, so they don't ship as dead code; external-link-marker stays in pending for a proper future build+wire+verify."
     }
   ]
 }

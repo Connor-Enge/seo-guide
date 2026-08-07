@@ -1,6 +1,14 @@
 import os
 import re
+import importlib.util as _ilu
 from html import unescape
+
+# Redundant-title detection lives in improve/titlecheck.py; loaded by path so it
+# works regardless of the invoking cwd or whether improve/ is on sys.path.
+_tc_spec = _ilu.spec_from_file_location("titlecheck", os.path.join(os.path.dirname(__file__), "titlecheck.py"))
+_tc_mod = _ilu.module_from_spec(_tc_spec)
+_tc_spec.loader.exec_module(_tc_mod)
+redundant_title_segment = _tc_mod.redundant_title_segment
 
 def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155):
     problems = []
@@ -22,6 +30,9 @@ def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155):
                     problems.append({'page': page, 'kind': 'multiple_title', 'severity': 'error', 'detail': f'{len(title_matches)} <title> tags'})
                 else:
                     title_text = unescape(title_matches[0]).strip()
+                    _redseg = redundant_title_segment(title_text)
+                    if _redseg:
+                        problems.append({'page': page, 'kind': 'redundant_title', 'severity': 'warn', 'detail': f'title repeats "{_redseg}"'})
                     if title_text == '':
                         problems.append({'page': page, 'kind': 'empty_title', 'severity': 'warn', 'detail': 'empty <title>'})
                     elif len(title_text) > max_title_chars:
