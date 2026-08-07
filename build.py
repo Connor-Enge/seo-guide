@@ -117,6 +117,15 @@ _h1_mod = _ilu.module_from_spec(_h1_spec)
 _h1_spec.loader.exec_module(_h1_mod)
 audit_h1 = _h1_mod.audit_h1
 
+# Post-build social-snippet gate: assert every page's Open Graph / Twitter Card metadata is coherent so
+# shares render correctly. og:url must be absolute and exactly equal to the page canonical (error); a
+# missing og:title / og:description / twitter:card is reported as a non-blocking warning.
+# Logic in improve/socialmetacheck.py.
+_so_spec = _ilu.spec_from_file_location("socialmetacheck", os.path.join(HERE, "improve", "socialmetacheck.py"))
+_so_mod = _ilu.module_from_spec(_so_spec)
+_so_spec.loader.exec_module(_so_mod)
+audit_social_meta = _so_mod.audit_social_meta
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -782,6 +791,22 @@ def main():
             print(f"  {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("H1 audit: OK — every rendered page carries exactly one <h1>.")
+
+    # ---------- social-snippet gate: og:url absolute + == canonical (error); og/twitter tags present (warn) ----------
+    social_problems = audit_social_meta(OUT)
+    so_errors = [p for p in social_problems if p.get("severity") == "error"]
+    so_warns = [p for p in social_problems if p.get("severity") == "warn"]
+    if so_warns:
+        print(f"\nSocial-meta audit — {len(so_warns)} warning(s) (Open Graph / Twitter, non-blocking):")
+        for p in so_warns:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+    if so_errors:
+        print(f"\nSOCIAL-META AUDIT FAILED — {len(so_errors)} error(s):")
+        for p in so_errors:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print(f"Social-meta audit: OK — every page's og:url is absolute and matches its canonical"
+          f" ({len(so_warns)} snippet warning(s)).")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
