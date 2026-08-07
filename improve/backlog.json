@@ -114,10 +114,6 @@
       "title": "INTERNAL LINKS: add a contextual link to the new Common SEO Mistakes page from the most relevant spot in content-quality, on-page-seo, technical-seo and link-building (descriptive anchors), so the new hub earns inbound internal links and isn't an orphan"
     },
     {
-      "id": "scrollspy-toc",
-      "title": "FEATURE: scrollspy table-of-contents — highlight the reader's current section in the existing in-article TOC as they scroll (IntersectionObserver, aria-current, progressive enhancement, reduced-motion safe, fully graceful with no JS). Tiny standalone asset via the existing {scripts} slot."
-    },
-    {
       "id": "post-eeat-2026",
       "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it — Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
     },
@@ -207,6 +203,18 @@
       "id": "example-snippets-technical",
       "title": "DEPTH/CONTENT (Grok prose, AFTER fenced-code-support ships): add a few concrete, copy-able example snippets to technical-seo.md and on-page-seo.md so the guide demonstrates rather than only describes — e.g. a minimal correct robots.txt, a <meta name=robots content=noindex> tag, a rel=canonical <link>, and a minimal valid Article JSON-LD skeleton. PM first web_fetch the exact current syntax from Google Search Central (robots.txt intro, robots meta tag, canonical, Article structured data), supplies the verified snippets in the brief, Grok writes the surrounding explanatory sentences, PM fact-checks every snippet against the sources before placing. Keeps the technical pages practical without padding.",
       "stream": "C-depth",
+      "dev": "grok"
+    },
+    {
+      "id": "h1-uniqueness-gate",
+      "title": "DEPTH: build-time heading-hierarchy gate — walk docs/**/*.html and assert every rendered page has exactly one <h1> (not only the homepage the cron spot-checks), erroring on zero or multiple, so a template/content refactor can never silently break the single-H1 rule sitewide. Stdlib-only, objective fixture verify (a page with one h1 passes; zero or two fail). Complements the metadata + JSON-LD gates.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "post-semantic-html-seo",
+      "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
+      "stream": "B-blog",
       "dev": "grok"
     }
   ],
@@ -418,6 +426,14 @@
       "date": "2026-08-07",
       "dev": "grok",
       "shipped": "content/blog/does-ai-content-hurt-seo.md — \"Does AI Content Hurt SEO? What Google Actually Rewards\", ~920 words, sourced from Google Search Central (AI-content guidance + scaled-content-abuse spam policy + Who/How/Why + E-E-A-T); 3 internal links; build green, 0 snippet warnings."
+    },
+    {
+      "id": "scrollspy-toc",
+      "title": "FEATURE: scrollspy table-of-contents — highlight the reader's current section in the in-article TOC as they scroll (IntersectionObserver, aria-current, progressive enhancement, reduced-motion safe, graceful with no JS).",
+      "status": "done",
+      "date": "2026-08-07",
+      "dev": "local-qwen",
+      "shipped": "assets/scrollspy.js (IntersectionObserver, rootMargin -75%%, aria-current + .is-current, no-op when <2 TOC sections, fully graceful no-JS) + assets/scrollspy.css (accent underline on active link, reduced-motion-aware transition). Wired via one <link> in templates/base.html and the {scripts} slot in build.py. Build green; all integrity gates pass; index SEO checks intact."
     }
   ]
 }
