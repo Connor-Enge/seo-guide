@@ -53,6 +53,14 @@ _lk_mod = _ilu.module_from_spec(_lk_spec)
 _lk_spec.loader.exec_module(_lk_mod)
 resolve_href = _lk_mod.resolve_href
 
+# Post-build integrity gate: audit every rendered internal <a href> against docs/ and fail the
+# build on a dangling internal target (soft-404) or a subpath-breaking root-relative href.
+# Logic lives in improve/linkcheck.py.
+_ck_spec = _ilu.spec_from_file_location("linkcheck", os.path.join(HERE, "improve", "linkcheck.py"))
+_ck_mod = _ilu.module_from_spec(_ck_spec)
+_ck_spec.loader.exec_module(_ck_mod)
+audit_internal_links = _ck_mod.audit_internal_links
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -629,6 +637,15 @@ def main():
         if m["slug"] != "index" and m.get("schema") != "ProfilePage"]
     open(os.path.join(OUT, "feed.xml"), "w").write(build_rss(feed_items, today))
     open(os.path.join(OUT, "feed.json"), "w").write(build_json_feed(feed_items))
+
+    # ---------- integrity gate: never ship a broken internal link / soft-404 ----------
+    problems = audit_internal_links(OUT, BASE_URL)
+    if problems:
+        print(f"\nINTERNAL-LINK AUDIT FAILED — {len(problems)} problem(s):")
+        for p in problems:
+            print(f"  [{p['kind']}] {p['page']} -> {p['href']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Internal-link audit: OK — no dangling internal links or root-relative hrefs.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

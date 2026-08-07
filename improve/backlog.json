@@ -142,19 +142,30 @@
       "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
     },
     {
-      "id": "soft-404-audit",
-      "title": "DEPTH: audit that every internal href produced by build.py resolves to a real generated docs/ path (a build.py post-build check that parses each rendered page's internal <a href> and asserts the target index.html exists), so the site can never ship a broken internal link / accidental soft-404 — print a report and optionally fail the build on a dangling link. Extend it to ALSO flag any remaining root-relative href in rendered output (regression guard for the body-link-baseurl-fix, which subpath-broke links can't be caught by a local-file-exists check)."
-    },
-    {
       "id": "canonical-selfref-audit",
       "title": "DEPTH: build-time canonical audit — assert every rendered page's rel=canonical exactly equals its own BASE_URL page URL (never root-relative, never pointing at another page), a build.py post-build check that fails the build on drift, so canonicalization can never silently regress."
     },
     {
       "id": "back-to-top",
       "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery."
+    },
+    {
+      "id": "img-alt-audit",
+      "title": "DEPTH: extend the build-time integrity gate to also assert accessibility/SEO basics on rendered <img> — every <img> must have a non-empty alt attribute (decorative images use alt=\"\") — and fail the build (or print a report) on any <img> missing an alt, so image accessibility can never silently regress. Build on the new improve/linkcheck.py audit pass style (walk docs/*.html, regex the tags), keep it stdlib-only with an objective fixture verify."
+    },
+    {
+      "id": "linkcheck-report-artifact",
+      "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     }
   ],
   "done": [
+    {
+      "id": "soft-404-audit",
+      "title": "DEPTH: build-time integrity gate — audit that every internal href in rendered docs/ resolves to a real generated path, and flag any subpath-breaking root-relative href.",
+      "changed": "Local Qwen dev authored improve/linkcheck.py from a precise PM spec, self-corrected against an objective fixture verify (creates a temp docs tree and asserts audit_internal_links(out_dir, base_url) returns exactly the two dangling forms + the one root-relative link and NOTHING else). The pure, stdlib-only helper walks docs/*.html, extracts every <a href> (single/double quotes, html-unescaped), and classifies each: skips #fragments, mailto/tel/javascript/data, protocol-relative //, and external absolutes; for INTERNAL absolutes (start with BASE_URL) it strips #frag/?query then resolves BOTH shapes — a trailing-slash path -> <path>index.html, a literal path (e.g. /assets/style.css, /feed.xml) -> the file itself — and flags kind='dangling' if the target is missing on disk; any root-relative /path (not //) is always flagged kind='root-relative' (regression guard for the body-link-baseurl-fix, which a local-file-exists check alone can't catch since those subpath-broke links 404 only on deploy). PM wired exactly two things into build.py: load linkcheck.py by path (mirroring the links/anchors/notfound helpers) and, after the whole site + feeds are written, run audit_internal_links(OUT, BASE_URL) as a post-build gate that prints a per-problem report and raise SystemExit(1) on any problem, so a broken internal link or a soft-404 can never be shipped. Validated: build GREEN (11 guide pages + 2 posts), audit reports 0 problems on the real site, full SEO gate PASS on index (title/description/canonical/JSON-LD Article/exactly one <h1>/sitemap present) and a single-<h1> + JSON-LD-parse sweep is clean across all output pages; a NEGATIVE test proved the gate bites — planting [nonexistent guide](/this-page-does-not-exist/) in a page made build.py exit 1 with '[dangling] about/index.html -> .../this-page-does-not-exist/', and removing it returned the build to green.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "body-link-baseurl-fix",
       "title": "FIX (internal links): in-body markdown links authored root-relative (/slug/) 404'd on the GitHub Pages project subpath — prefix them with BASE_URL",
