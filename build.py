@@ -150,6 +150,14 @@ _rt_mod = _ilu.module_from_spec(_rt_spec)
 _rt_spec.loader.exec_module(_rt_mod)
 reading_minutes = _rt_mod.reading_minutes
 
+# Machine-readable reading-length metadata for JSON-LD (wordCount + ISO-8601 timeRequired).
+# Logic in improve/readingmeta.py.
+_rm_spec = _ilu.spec_from_file_location("readingmeta", os.path.join(HERE, "improve", "readingmeta.py"))
+_rm_mod = _ilu.module_from_spec(_rm_spec)
+_rm_spec.loader.exec_module(_rm_mod)
+iso8601_duration = _rm_mod.iso8601_duration
+word_count = _rm_mod.word_count
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -368,13 +376,21 @@ def node_person():
     }
 
 
-def node_article(atype, headline, description, url, date_pub, date_mod):
-    return {
+def node_article(atype, headline, description, url, date_pub, date_mod, words=None, minutes=None):
+    node = {
         "@type": atype, "@id": url + "#article", "isPartOf": {"@id": SITE_ID},
         "headline": headline, "description": description, "inLanguage": "en",
         "datePublished": date_pub, "dateModified": date_mod, "mainEntityOfPage": url,
         "author": {"@id": PERSON_ID}, "publisher": {"@id": ORG_ID},
     }
+    # Expose the same reading-length signal the byline shows to humans, but to machines:
+    # wordCount + an ISO-8601 timeRequired ("PT7M"). Omitted where there is no article body
+    # to measure (e.g. the homepage hub, which carries no reading-time byline either).
+    if words is not None:
+        node["wordCount"] = words
+    if minutes is not None:
+        node["timeRequired"] = iso8601_duration(minutes)
+    return node
 
 
 def node_profile(url, date_mod):
@@ -566,9 +582,12 @@ def main():
             og_type = "profile"
         else:
             faqs = extract_faq(body)
+            art_text = search_text(body)
             page_nodes = base_nodes + [
                 node_article("Article", meta["title"], meta["description"], url,
-                             meta.get("updated", today), today),
+                             meta.get("updated", today), today,
+                             words=None if slug == "index" else word_count(art_text),
+                             minutes=None if slug == "index" else reading_minutes(art_text)),
                 node_breadcrumb(url, crumbs)]
             if faqs:
                 page_nodes.append(node_faq(url, faqs))
@@ -600,8 +619,10 @@ def main():
         byline += f' · {reading_minutes(search_text(body))} min read'
         crumbs = [("Home", HOME_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
         faqs = extract_faq(body)
+        post_text = search_text(body)
         post_nodes = [node_org(), node_website(), node_person(),
-                      node_article("BlogPosting", meta["title"], meta["description"], url, date_pub, date_mod),
+                      node_article("BlogPosting", meta["title"], meta["description"], url, date_pub, date_mod,
+                                   words=word_count(post_text), minutes=reading_minutes(post_text)),
                       node_breadcrumb(url, crumbs)]
         if faqs:
             post_nodes.append(node_faq(url, faqs))

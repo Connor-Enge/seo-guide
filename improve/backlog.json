@@ -206,12 +206,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "reading-time-schema-wordcount",
-      "title": "DEPTH: now that reading time is a visible byline signal, expose it to machines too — add wordCount and timeRequired (ISO-8601 duration, e.g. 'PT7M') to each Article/BlogPosting JSON-LD node so search engines and readers get the same reading-length metadata. Dev: local-qwen adds a tiny helper that converts the existing reading_minutes(int) to an ISO-8601 'PT<n>M' string plus the raw word count; PM wires the two fields into node_article() in build.py. Objective fixture verify on the duration formatter (1 -> 'PT1M', 7 -> 'PT7M'); JSON-LD gate must stay green.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "reading-time-blog-index",
       "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green."
     },
@@ -272,9 +266,28 @@
     {
       "id": "blog-index-descriptive-anchors",
       "title": "DEPTH: audit the /blog/ listing page — ensure each post link uses the post's real title as descriptive anchor text (never a bare 'Read more'/date) and that each card exposes the post description, so the hub passes link value to posts with keyword-rich anchors. Verify: parse docs/blog/index.html, assert every post card links with anchor text equal to the post <title>-derived headline and carries a non-empty description snippet."
+    },
+    {
+      "id": "readinglen-integrity-gate",
+      "title": "DEPTH: build-time reading-length integrity gate that protects the just-shipped wordCount/timeRequired fields — a stdlib-only check (extend improve/jsonldcheck.py or a new improve/readinglencheck.py in the walk-docs/parse-JSON-LD style) that, for every Article/BlogPosting node which carries timeRequired, asserts (error) the value matches ^PT\\d+M$ AND wordCount is a positive int AND the timeRequired minute value equals reading_minutes(wordCount-derived) i.e. the two machine fields agree with each other, so the reading-length metadata can never regress to a malformed duration, a zero/negative count, or a duration that contradicts the word count. Report-or-error severity, objective fixture verify (a node with wordCount=1443/timeRequired=PT7M passes; PT0M, a non-PT string, wordCount=0, or PT2M-vs-1443-words mismatch each fail; a node with NEITHER field is skipped). Dev: local-qwen.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "byline-time-element",
+      "title": "FEATURE: wrap the visible published/updated dates in the byline in semantic <time datetime=\"YYYY-MM-DD\"> elements so the dates are machine-parseable in the rendered HTML itself (not only inside JSON-LD), aiding assistive tech and crawlers. Dev: local-qwen adds a tiny stdlib helper time_tag(date_str, label) that returns '<time datetime=\"YYYY-MM-DD\">label</time>' (validating the date shape, passing non-date labels through untouched); PM wires it into the byline construction for guide pages and posts. Objective fixture verify on the helper (valid date -> wrapped <time> with datetime attr; a non-date string -> unchanged); build + all gates stay green, single-<h1> and JSON-LD invariants preserved.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
     }
   ],
   "done": [
+    {
+      "id": "reading-time-schema-wordcount",
+      "title": "DEPTH: now that reading time is a visible byline signal, expose it to machines too — add wordCount and timeRequired (ISO-8601 duration, e.g. 'PT7M') to each Article/BlogPosting JSON-LD node so search engines and readers get the same reading-length metadata. Dev: local-qwen adds a tiny helper that converts the existing reading_minutes(int) to an ISO-8601 'PT<n>M' string plus the raw word count; PM wires the two fields into node_article() in build.py. Objective fixture verify on the duration formatter (1 -> 'PT1M', 7 -> 'PT7M'); JSON-LD gate must stay green.",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/readingmeta.py — a pure, stdlib-only module with two functions: iso8601_duration(minutes)->'PT<n>M' (int-coerced, floored to 'PT1M' so it never emits PT0M/negatives) and word_count(text)->len(text.split()) matching the existing readingtime tokenization. It passed an OBJECTIVE fixture verify (iso8601_duration 1->'PT1M', 7->'PT7M', 10->'PT10M', 60->'PT60M', 0/-3->'PT1M'; word_count ''/'   '->0, 'one two three'->3, mixed tab/newline whitespace->3, 'hello'->1; correct return types). NOTE: the dispatch harness reported 'gave up' only because the PM's first verify script had its OWN SyntaxError (a backslash inside an f-string expression on py<3.12); the dev's module was correct and passed ALL_PASS once the verify was fixed — the deliverable was never the problem. PM did ONLY the wiring: (1) load readingmeta.py by path alongside the other improve/ helpers (import loader block, mirroring readingtime.py); (2) extend node_article() with two optional params (words, minutes) that, when provided, add wordCount (int) and timeRequired (ISO-8601 iso8601_duration(minutes)) to the Article/BlogPosting node; (3) wire both call sites to pass word_count(search_text(body)) and reading_minutes(search_text(body)) — for every non-index guide page and every blog post — deliberately OMITTING them on the homepage hub (which carries no reading-time byline either, so the machine signal stays consistent with the human one). VERIFIED end-to-end: build GREEN (11 guide pages + 4 posts); all ten build-time gates OK (internal-link, canonical, metadata, JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, heading-order); full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). New fields render correctly and HONESTLY: 13/14 Article/BlogPosting nodes now carry wordCount+timeRequired (the homepage Article intentionally omits both), and every timeRequired exactly matches the visible 'N min read' byline — e.g. the Core Web Vitals post = 1443 words / timeRequired PT7M / '7 min read', technical-seo = 598 words / PT3M / '3 min read'. Reading length is now the same signal for humans and machines and cannot silently drift from the byline.",
+      "dev": "local-qwen (readingmeta.py) + PM wiring/verification",
+      "date": "2026-08-07"
+    },
     {
       "id": "reading-time",
       "title": "FEATURE: compute + display reading time per page (build.py byline).",
