@@ -61,6 +61,14 @@ _ck_mod = _ilu.module_from_spec(_ck_spec)
 _ck_spec.loader.exec_module(_ck_mod)
 audit_internal_links = _ck_mod.audit_internal_links
 
+# Post-build canonical gate: assert every rendered page self-canonicalizes (rel=canonical exactly
+# equals its own BASE_URL page URL) so canonicalization can never silently drift. Logic lives in
+# improve/canonicalcheck.py.
+_cn_spec = _ilu.spec_from_file_location("canonicalcheck", os.path.join(HERE, "improve", "canonicalcheck.py"))
+_cn_mod = _ilu.module_from_spec(_cn_spec)
+_cn_spec.loader.exec_module(_cn_mod)
+audit_canonicals = _cn_mod.audit_canonicals
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -646,6 +654,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']} -> {p['href']}  ({p['detail']})")
         raise SystemExit(1)
     print("Internal-link audit: OK — no dangling internal links or root-relative hrefs.")
+
+    # ---------- integrity gate: every page must self-canonicalize (no canonical drift) ----------
+    canon_problems = audit_canonicals(OUT, BASE_URL)
+    if canon_problems:
+        print(f"\nCANONICAL AUDIT FAILED — {len(canon_problems)} problem(s):")
+        for p in canon_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Canonical audit: OK — every page self-canonicalizes to its own URL.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

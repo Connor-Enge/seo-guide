@@ -142,10 +142,6 @@
       "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
     },
     {
-      "id": "canonical-selfref-audit",
-      "title": "DEPTH: build-time canonical audit — assert every rendered page's rel=canonical exactly equals its own BASE_URL page URL (never root-relative, never pointing at another page), a build.py post-build check that fails the build on drift, so canonicalization can never silently regress."
-    },
-    {
       "id": "back-to-top",
       "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery."
     },
@@ -156,9 +152,24 @@
     {
       "id": "linkcheck-report-artifact",
       "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
+    },
+    {
+      "id": "title-desc-length-audit",
+      "title": "DEPTH: extend the build-time gate to sanity-check on-SERP metadata — for every rendered page assert exactly one <title> and one meta name=description, and warn (report, don't fail) when a title exceeds ~60 chars / ~600px or a description exceeds ~155 chars / ~920px, or when either is empty/duplicated across pages, so titles/descriptions never silently regress into truncation or duplication. New stdlib-only improve/metacheck.py mirroring the linkcheck/canonicalcheck audit style with an objective fixture verify; PM wires the report call after the canonical gate."
+    },
+    {
+      "id": "jsonld-graph-audit",
+      "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs. Objective fixture verify (good graph passes, a graph with a root-relative @id or a missing core node fails); PM wires the gate after the canonical audit."
     }
   ],
   "done": [
+    {
+      "id": "canonical-selfref-audit",
+      "title": "DEPTH: build-time canonical audit — assert every rendered page's rel=canonical exactly equals its own BASE_URL page URL (never root-relative, never pointing at another page), a build.py post-build check that fails the build on drift, so canonicalization can never silently regress.",
+      "changed": "Local Qwen dev authored improve/canonicalcheck.py from a precise PM spec and passed the objective fixture verify on attempt 1/3. The pure, stdlib-only audit_canonicals(out_dir, base_url) walks docs/**/*.html and, for each page, computes the EXPECTED self-referential canonical from its own on-disk path: a directory index (index.html) -> BASE_URL + '/<dir>/' (root index -> BASE_URL + '/'), and a literal file (e.g. 404.html) -> BASE_URL + '/404.html' — an edge case the PM verified in the real output, where docs/404.html carries a literal-file canonical, not a directory-index one. It extracts every <link ... rel=canonical ...> tag (robust to attribute order + single/double quotes), html-unescapes the href, and returns a problem dict {page,kind,detail} for kind='missing' (0 canonical tags), 'duplicate' (>1), or 'mismatch' (the single href != the computed self URL); returns [] when clean. The objective verify (/tmp/verify_canonical.py) builds a temp docs tree with correct root/dir/nested/404 canonicals plus one drifted, one missing, and one duplicated page and asserts the function flags EXACTLY those three with the right kinds and zero false positives on the correct pages. PM wired exactly two things into build.py (mirroring the linkcheck.py gate): load canonicalcheck.py by path, and after the existing internal-link audit run audit_canonicals(OUT, BASE_URL) as a post-build gate that prints a per-problem report and raise SystemExit(1) on any drift. Validated: build GREEN (11 guide pages + 2 posts); canonical audit reports 0 problems across the real site; full SEO gate GREEN on index (one <title>, one meta description, one rel=canonical, JSON-LD Article, exactly one <h1>, sitemap.xml present) and a single-<h1> + JSON-LD-parse sweep is CLEAN across all 16 output pages. NEGATIVE test proved the gate bites: planting a drifted canonical (about/ -> /WRONG/) in docs/about/index.html made audit_canonicals return exactly [('about/index.html','mismatch')], and restoring the file returned it to 0 problems.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "soft-404-audit",
       "title": "DEPTH: build-time integrity gate — audit that every internal href in rendered docs/ resolves to a real generated path, and flag any subpath-breaking root-relative href.",
