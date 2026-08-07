@@ -15,6 +15,27 @@ Technical SEO makes sure nothing stops a great page from being crawled, indexed,
 - Set a **canonical** URL on every page to consolidate duplicates.
 - Return correct status codes: `200` for live pages, `301` for permanent moves, `404`/`410` for gone.
 
+Place robots.txt at your site root to control what Googlebot crawls and to point it to your sitemap. It does not control indexing.
+
+```txt
+User-agent: *
+Allow: /
+
+Sitemap: https://www.example.com/sitemap.xml
+```
+
+Use a rel=canonical link to name the one preferred URL for duplicate or similar pages. Include a self-referential canonical on the canonical page itself.
+
+```html
+<link rel="canonical" href="https://www.example.com/dresses/green-dress">
+```
+
+Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not block it in robots.txt.
+
+```html
+<meta name="robots" content="noindex">
+```
+
 ## Mobile & HTTPS
 Google indexes the **mobile** version of your site first, so it must be fully usable on a phone. Serve everything over **HTTPS** — security is a baseline expectation.
 
@@ -29,6 +50,25 @@ Fast, stable pages win ties and keep users from bouncing. A lean, no-JavaScript 
 
 ## Structured data
 Add **JSON-LD** structured data (schema.org) so Google can understand entities and show rich results — `Article`, `BreadcrumbList`, `FAQPage`, `Product`, and more. Every page here ships Article + BreadcrumbList markup, and pages with a FAQ (like this one) add FAQPage. Validate it with Google's Rich Results Test.
+
+Add Article JSON-LD to help Google understand the page and potentially enable rich results.
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Title of the article",
+  "datePublished": "2024-01-05T08:00:00+08:00",
+  "dateModified": "2024-02-05T09:20:00+08:00",
+  "author": [{
+    "@type": "Person",
+    "name": "Jane Doe",
+    "url": "https://example.com/profile/janedoe123"
+  }]
+}
+</script>
+```
 
 ## FAQ
 

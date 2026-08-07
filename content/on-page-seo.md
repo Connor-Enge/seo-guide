@@ -15,6 +15,13 @@ The `<title>` is your single most important on-page element and the headline in 
 ## Meta descriptions
 Google may rewrite it, but a clear ~150-character description acts as ad copy that improves click-through. Summarize the page and give a reason to click. Never duplicate descriptions across pages.
 
+Your title and meta description control what searchers see in results. Keep the title unique and front-loaded, and write a compelling ~150-character description that earns the click.
+
+```html
+<title>Keyword Research for SEO: A Beginner's Guide</title>
+<meta name="description" content="Find the keywords your audience actually searches for, judge intent and difficulty, and turn them into pages that rank.">
+```
+
 ## Headings and structure
 Use **one `<h1>`** stating the page's subject, then `<h2>`/`<h3>` to structure sections logically. Good heading hierarchy helps readers scan and helps Google understand the page's outline.
 
@@ -23,6 +30,13 @@ Keep URLs short, lowercase, hyphenated, and descriptive: `/keyword-research/` be
 
 ## Images
 Compress them, use modern formats, set explicit `width`/`height` to avoid layout shift, and write **descriptive alt text** (accessibility and image search both benefit).
+
+Set explicit width and height on images to reserve space and prevent layout shift. Use descriptive alt text for accessibility and image search.
+
+```html
+<img src="/images/keyword-report.png" width="1200" height="675"
+     alt="Search Console performance report showing clicks and impressions rising over twelve months">
+```
 
 ## Internal links
 Link related pages to each other with **descriptive anchor text**. Internal links spread authority through your site, help Google discover pages, and keep readers moving. This guide cross-links every section on purpose.

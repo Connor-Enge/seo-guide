@@ -41,11 +41,20 @@
   <nav class="breadcrumb" aria-label="Breadcrumb"><ol><li><a href="https://connor-enge.github.io/seo-guide/">Home</a></li><li><span aria-current="page">Technical SEO</span></li></ol></nav>
   <article>
     <h1>Technical SEO — Crawlability, Speed &amp; Structured Data</h1>
-    <p class="meta">Updated 2026-08-05 · by <a class="author" rel="author" href="https://connor-enge.github.io/seo-guide/about/">Connor Enge</a> · 2 min read</p>
+    <p class="meta">Updated 2026-08-05 · by <a class="author" rel="author" href="https://connor-enge.github.io/seo-guide/about/">Connor Enge</a> · 3 min read</p>
     <nav class="toc" aria-label="On this page"><p>On this page</p><ul><li><a href="#crawlability-indexability">Crawlability &amp; indexability</a></li><li><a href="#mobile-https">Mobile &amp; HTTPS</a></li><li><a href="#core-web-vitals">Core Web Vitals</a></li><li><a href="#structured-data">Structured data</a></li><li><a href="#faq">FAQ</a></li></ul></nav>
     <p>Technical SEO makes sure nothing stops a great page from being crawled, indexed, and enjoyed.</p>
 <h2 id="crawlability-indexability">Crawlability &amp; indexability<a class="hanchor" href="#crawlability-indexability" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
 <ul><li>Submit an <strong>XML sitemap</strong> and reference it in <code>robots.txt</code> (this very site does both).</li><li>Use <code>robots.txt</code> to guide crawlers, and <code>noindex</code> to keep thin pages out of the index — but never accidentally block pages you want ranked.</li><li>Set a <strong>canonical</strong> URL on every page to consolidate duplicates.</li><li>Return correct status codes: <code>200</code> for live pages, <code>301</code> for permanent moves, <code>404</code>/<code>410</code> for gone.</li></ul>
+<p>Place robots.txt at your site root to control what Googlebot crawls and to point it to your sitemap. It does not control indexing.</p>
+<pre><code class="language-txt">User-agent: *
+Allow: /
+
+Sitemap: https://www.example.com/sitemap.xml</code></pre>
+<p>Use a rel=canonical link to name the one preferred URL for duplicate or similar pages. Include a self-referential canonical on the canonical page itself.</p>
+<pre><code class="language-html">&lt;link rel="canonical" href="https://www.example.com/dresses/green-dress"&gt;</code></pre>
+<p>Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not block it in robots.txt.</p>
+<pre><code class="language-html">&lt;meta name="robots" content="noindex"&gt;</code></pre>
 <h2 id="mobile-https">Mobile &amp; HTTPS<a class="hanchor" href="#mobile-https" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
 <p>Google indexes the <strong>mobile</strong> version of your site first, so it must be fully usable on a phone. Serve everything over <strong>HTTPS</strong> — security is a baseline expectation.</p>
 <h2 id="core-web-vitals">Core Web Vitals<a class="hanchor" href="#core-web-vitals" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
@@ -54,6 +63,21 @@
 <p>Fast, stable pages win ties and keep users from bouncing. A lean, no-JavaScript static site (like this one) passes these almost by default.</p>
 <h2 id="structured-data">Structured data<a class="hanchor" href="#structured-data" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
 <p>Add <strong>JSON-LD</strong> structured data (schema.org) so Google can understand entities and show rich results — <code>Article</code>, <code>BreadcrumbList</code>, <code>FAQPage</code>, <code>Product</code>, and more. Every page here ships Article + BreadcrumbList markup, and pages with a FAQ (like this one) add FAQPage. Validate it with Google's Rich Results Test.</p>
+<p>Add Article JSON-LD to help Google understand the page and potentially enable rich results.</p>
+<pre><code class="language-html">&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": "Title of the article",
+  "datePublished": "2024-01-05T08:00:00+08:00",
+  "dateModified": "2024-02-05T09:20:00+08:00",
+  "author": [{
+    "@type": "Person",
+    "name": "Jane Doe",
+    "url": "https://example.com/profile/janedoe123"
+  }]
+}
+&lt;/script&gt;</code></pre>
 <h2 id="faq">FAQ<a class="hanchor" href="#faq" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
 <h3>What's the difference between robots.txt and noindex?</h3>
 <p><code>robots.txt</code> controls crawling — whether Google fetches a URL at all. <code>noindex</code> controls indexing — whether a fetched page can appear in results. The catch: if you block a page in <code>robots.txt</code>, Google can't crawl it to see the <code>noindex</code>, so use <code>noindex</code> (not a crawl block) when you want a page kept out of search.</p>

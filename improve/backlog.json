@@ -186,12 +186,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "example-snippets-technical",
-      "title": "DEPTH/CONTENT (Grok prose, AFTER fenced-code-support ships): add a few concrete, copy-able example snippets to technical-seo.md and on-page-seo.md so the guide demonstrates rather than only describes — e.g. a minimal correct robots.txt, a <meta name=robots content=noindex> tag, a rel=canonical <link>, and a minimal valid Article JSON-LD skeleton. PM first web_fetch the exact current syntax from Google Search Central (robots.txt intro, robots meta tag, canonical, Article structured data), supplies the verified snippets in the brief, Grok writes the surrounding explanatory sentences, PM fact-checks every snippet against the sources before placing. Keeps the technical pages practical without padding.",
-      "stream": "C-depth",
-      "dev": "grok"
-    },
-    {
       "id": "post-semantic-html-seo",
       "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -238,6 +232,18 @@
     {
       "id": "reading-time-blog-index",
       "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green."
+    },
+    {
+      "id": "code-fence-integrity-gate",
+      "title": "DEPTH: build-time code-fence safety gate — a stdlib-only improve/fencedcodecheck.py walks docs/**/*.html and asserts (error) that no instructional example snippet ever leaks as a REAL tag: inside any <pre><code> block there must be no unescaped <script>, <meta>, <link>, or <img> (they must appear html-escaped as &lt;...&gt;), so a fenced example can never inject real markup, duplicate a page's meta description, or add a second JSON-LD node. Objective fixture verify: a page whose code block shows an escaped &lt;script&gt; passes; a crafted page with a real <script> inside <pre><code> fails. Wire it into build.py after the H1 gate; protects the copy-able snippets just shipped.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "sitemap-example-snippet",
+      "title": "DEPTH/CONTENT (Grok prose): extend the new copy-able snippets — add a minimal valid XML sitemap example (a <urlset> with one <url>/<loc>/<lastmod>) as a fenced code block to technical-seo.md's crawlability section, so the guide demonstrates sitemap syntax alongside the robots.txt/canonical/noindex/JSON-LD examples it now shows. PM first web_fetch Google Search Central 'Build and submit a sitemap' for the exact current element syntax and lastmod format, supplies the verified snippet, Grok writes the one connective sentence, PM fact-checks before placing. Ties to the pending post-xml-sitemaps-2026 post.",
+      "stream": "C-depth",
+      "dev": "grok"
     }
   ],
   "done": [
@@ -483,6 +489,14 @@
       "title": "DEPTH: build-time social-snippet integrity gate — a stdlib-only improve/socialmetacheck.py that walks docs/**/*.html and asserts every page carries og:title, og:description, og:url and twitter:card, warns when og:description is missing/empty or diverges sharply in length from the page meta description (social shares render badly otherwise), and errors only if og:url is root-relative or mismatches the page's canonical. Objective fixture verify (a clean page passes; a page missing og:description warns; a root-relative og:url fails); PM wires it after the metadata audit.",
       "shipped": "Local Qwen dev (via dispatch.py) built improve/socialmetacheck.py: audit_social_meta(out_dir) walks docs/**/*.html with html.parser and, for every page, ERRORS when a page has a rel=canonical but og:url is missing (og_url_missing), root-relative (og_url_relative), or absolute-but-not-equal to the canonical (og_url_canonical_mismatch), and WARNS (report-only) when og:title / og:description / twitter:card is missing. PM wired it into build.py after the H1 gate with an importlib block + a print/raise gate. Objective fixture verify (/tmp/verify_social.py): clean page -> zero problems; missing og:description -> warn only; root-relative og:url, canonical mismatch, and missing og:url each -> the right error. Passed on attempt 1/3. Full build stays green and the audit reports OK with 0 warnings across all rendered pages, so social shares (Open Graph / Twitter Card) can never silently regress.",
       "dev": "local-qwen",
+      "date": "2026-08-07"
+    },
+    {
+      "id": "example-snippets-technical",
+      "title": "DEPTH/CONTENT (Grok prose, AFTER fenced-code-support ships): add a few concrete, copy-able example snippets to technical-seo.md and on-page-seo.md so the guide demonstrates rather than only describes — e.g. a minimal correct robots.txt, a <meta name=robots content=noindex> tag, a rel=canonical <link>, and a minimal valid Article JSON-LD skeleton. PM first web_fetch the exact current syntax from Google Search Central (robots.txt intro, robots meta tag, canonical, Article structured data), supplies the verified snippets in the brief, Grok writes the surrounding explanatory sentences, PM fact-checks every snippet against the sources before placing. Keeps the technical pages practical without padding.",
+      "stream": "C-depth",
+      "dev": "grok+PM-verified-snippets",
+      "shipped": "Grok (via `openclaw infer model run --model xai/grok-4.3`) wrote the connective explanatory prose; PM supplied and placed source-verified copy-able snippets (fenced code) fact-checked against Google Search Central: technical-seo.md gained a minimal robots.txt, a rel=canonical <link>, a <meta name=robots content=noindex>, and a minimal Article JSON-LD skeleton; on-page-seo.md gained a <title>+<meta name=description> <head> example and an <img> with width/height + descriptive alt. All example tags render html-escaped inside <pre><code> (verified: 0 real <script>/<meta>/<img> leaks, exactly 1 real meta description per page), leveraging the just-shipped fenced-code renderer. Build green; all integrity gates (sitemap/robots/H1/social-meta/structured-data) pass; index SEO checks intact.",
       "date": "2026-08-07"
     }
   ]
