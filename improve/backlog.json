@@ -35,7 +35,7 @@
     },
     {
       "id": "reading-time",
-      "title": "Compute + display reading time and a one-line summary per page (build.py feature)"
+      "title": "FEATURE: compute + display reading time per page (build.py byline). NOTE for dev: keep the word-count module SIMPLE — the prior attempt failed on a fragile multi-line regex. Prefer reusing build.py's existing plain()/search_text() to get plain text, or strip syntax with a few one-line str.replace/re.sub calls (each on ONE line), then count whitespace tokens at ~220 wpm, min 1 min. Scope to reading time only (drop the auto-summary)."
     },
     {
       "id": "og-image",
@@ -206,16 +206,18 @@
       "dev": "grok"
     },
     {
-      "id": "h1-uniqueness-gate",
-      "title": "DEPTH: build-time heading-hierarchy gate — walk docs/**/*.html and assert every rendered page has exactly one <h1> (not only the homepage the cron spot-checks), erroring on zero or multiple, so a template/content refactor can never silently break the single-H1 rule sitewide. Stdlib-only, objective fixture verify (a page with one h1 passes; zero or two fail). Complements the metadata + JSON-LD gates.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-semantic-html-seo",
       "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
       "dev": "grok"
+    },
+    {
+      "id": "heading-order-gate",
+      "title": "DEPTH: build-time heading-order gate (new improve/headingorder.py, wired like h1check) — walk docs/**/*.html and flag any page that skips a heading level (an <h3> with no preceding <h2>, an <h4> with no preceding <h3>, etc.). A skipped level breaks the accessible document outline and the topical hierarchy search engines read. Report-only warn first; objective temp-fixture verify."
+    },
+    {
+      "id": "about-maintenance-note",
+      "title": "CONTENT (Grok prose, small): a concise, sourced 'How this guide is maintained' paragraph for the About/editorial-standards page — how each claim is checked against primary docs (Google Search Central, web.dev) and when pages are re-reviewed — strengthening E-E-A-T transparency. PM supplies the facts; Grok writes the paragraph; PM fact-checks and places it."
     }
   ],
   "done": [
@@ -434,6 +436,13 @@
       "date": "2026-08-07",
       "dev": "local-qwen",
       "shipped": "assets/scrollspy.js (IntersectionObserver, rootMargin -75%%, aria-current + .is-current, no-op when <2 TOC sections, fully graceful no-JS) + assets/scrollspy.css (accent underline on active link, reduced-motion-aware transition). Wired via one <link> in templates/base.html and the {scripts} slot in build.py. Build green; all integrity gates pass; index SEO checks intact."
+    },
+    {
+      "id": "h1-uniqueness-gate",
+      "title": "DEPTH: build-time heading-hierarchy gate — walk docs/**/*.html and assert every rendered page has exactly one <h1> (not only the homepage the cron spot-checks), erroring on zero or multiple, so a template/content refactor can never silently break the single-H1 rule sitewide. Stdlib-only, objective fixture verify (a page with one h1 passes; zero or two fail). Complements the metadata + JSON-LD gates.",
+      "shipped": "Added improve/h1check.py + build.py gate: build fails if any rendered docs/**/*.html page has != 1 <h1>. All 15 current pages pass.",
+      "dev": "local-qwen",
+      "date": "2026-08-07"
     }
   ]
 }

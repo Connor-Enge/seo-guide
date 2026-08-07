@@ -102,6 +102,14 @@ _rb_mod = _ilu.module_from_spec(_rb_spec)
 _rb_spec.loader.exec_module(_rb_mod)
 audit_robots = _rb_mod.audit_robots
 
+# Post-build heading gate: assert every rendered page carries exactly one <h1> — a page with zero or
+# multiple <h1>s dilutes the primary-topic signal and breaks the accessible heading outline.
+# Logic in improve/h1check.py.
+_h1_spec = _ilu.spec_from_file_location("h1check", os.path.join(HERE, "improve", "h1check.py"))
+_h1_mod = _ilu.module_from_spec(_h1_spec)
+_h1_spec.loader.exec_module(_h1_mod)
+audit_h1 = _h1_mod.audit_h1
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -753,6 +761,15 @@ def main():
         raise SystemExit(1)
     print("Robots audit: OK — robots.txt present, Sitemap: is absolute and matches the sitemap URL,"
           " and no blanket Disallow: / under User-agent: *.")
+
+    # ---------- heading gate: every rendered page must carry exactly one <h1> ----------
+    h1_problems = audit_h1(OUT)
+    if h1_problems:
+        print(f"\nH1 AUDIT FAILED — {len(h1_problems)} page(s) without exactly one <h1>:")
+        for p in h1_problems:
+            print(f"  {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("H1 audit: OK — every rendered page carries exactly one <h1>.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
