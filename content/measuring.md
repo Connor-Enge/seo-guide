@@ -5,7 +5,7 @@ title: Measuring SEO
 h1: Measuring SEO — Search Console, Analytics & Iteration
 description: SEO is a loop. Learn the core tools and metrics to track results, find opportunities, and keep improving.
 updated: 2026-08-05
-related: keyword-research, technical-seo, how-search-works
+related: keyword-research, technical-seo, how-search-works, audit-checklist
 ---
 You can't improve what you don't measure. SEO is a loop: publish, measure, refine, repeat.
 

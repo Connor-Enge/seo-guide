@@ -22,10 +22,6 @@
       "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
     {
-      "id": "audit-checklist",
-      "title": "New page: a concrete technical-SEO audit checklist readers can work through"
-    },
-    {
       "id": "og-image",
       "title": "Generate a lightweight per-page SVG social image and wire og:image / twitter:image"
     },
@@ -298,6 +294,14 @@
       "title": "DEPTH: extend improve/socialmetacheck.py with a report-only 'og_title_missing_brand' warn mirroring the title-brand guard — an og:title that omits the site-name brand suffix reads inconsistently on shared cards vs. the SERP title. Reuse titlecheck.py's brand helper, measure after html.unescape, non-blocking WARN only, stdlib-only, objective fixture verify (og:title ending in the brand passes; one without warns). Dev: local-qwen.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "audit-checklist-interactive",
+      "title": "FEATURE (local dev): progressive-enhancement JS that turns the audit checklist's bold lead-in items into persistable checkboxes (localStorage) with a visible progress count — no-JS readers still see full prose; wired via one <script> in the article scripts slot."
+    },
+    {
+      "id": "audit-checklist-crosslink-inbody",
+      "title": "INTERNAL LINKS: add contextual in-body links to /audit-checklist/ from the technical-seo and measuring page bodies (descriptive anchors), complementing the related-reading block."
     }
   ],
   "done": [
@@ -596,6 +600,12 @@
       "dev": "local-qwen (redundant_title_segment helper) + PM (homepage title fix + metacheck hook + verification/ship)",
       "date": "2026-08-07",
       "result": "Local Qwen dev authored improve/titlecheck.py redundant_title_segment() (splits a rendered <title> on its separators — em/en dash, spaced hyphen, middot, pipe — and returns the first segment that repeats another, case-insensitively, else None; leaves internal hyphens in a single segment untouched). PM wired a report-only 'redundant_title' warn into audit_meta() in improve/metacheck.py (fires inside the single-<title> branch, never blocks the build) and fixed the doubled homepage <title> in content/index.md front-matter (title: 'The Guide to SEO' -> 'Search Engine Optimization, Explained'), so the homepage now renders 'Search Engine Optimization, Explained — The Guide to SEO' (56 chars, single <title>) instead of the wasteful 'The Guide to SEO — The Guide to SEO'. PM finished & shipped this prior-run in-tree work after adversarial verification: OBJECTIVE check of redundant_title_segment — FIRES on 'The Guide to SEO — The Guide to SEO'->'The Guide to SEO' and 'SEO | SEO'->'SEO'; stays SILENT on the fixed homepage title, on 'On-Page SEO — The Guide to SEO', and on the single-segment internal-hyphen 'Well-Known Facts'. Build GREEN (11 guide pages + 4 posts, exit 0); all build-time gates OK (internal-link, canonical, metadata [0 snippet warnings — the homepage fix cleared the only redundant_title offender], JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, heading-order); full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). HYGIENE: removed two unwired orphan files left by an earlier abandoned external-link-marker attempt (improve/extlinks.py + assets/extlinks.css) that were referenced nowhere in build.py/templates/CSS, so they don't ship as dead code; external-link-marker stays in pending for a proper future build+wire+verify."
+    },
+    {
+      "id": "audit-checklist",
+      "title": "New page: a concrete technical-SEO audit checklist readers can work through",
+      "date": "2026-08-07",
+      "dev": "grok"
     }
   ]
 }

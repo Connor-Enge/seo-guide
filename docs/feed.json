@@ -201,6 +201,21 @@
       ]
     },
     {
+      "id": "https://connor-enge.github.io/seo-guide/audit-checklist/",
+      "url": "https://connor-enge.github.io/seo-guide/audit-checklist/",
+      "title": "SEO Audit Checklist",
+      "summary": "A practical, prioritized technical SEO audit checklist — crawlability, indexing, Core Web Vitals, on-page, structured data, and monitoring, with fixes.",
+      "content_text": "A practical, prioritized technical SEO audit checklist — crawlability, indexing, Core Web Vitals, on-page, structured data, and monitoring, with fixes.",
+      "date_published": "2026-08-07T00:00:00Z",
+      "date_modified": "2026-08-07T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/common-seo-mistakes/",
       "url": "https://connor-enge.github.io/seo-guide/common-seo-mistakes/",
       "title": "Common SEO Mistakes",
