@@ -134,6 +134,15 @@ _ho_mod = _ilu.module_from_spec(_ho_spec)
 _ho_spec.loader.exec_module(_ho_mod)
 audit_heading_order = _ho_mod.audit_heading_order
 
+# Post-build blog structured-data gate: every published post (docs/blog/<slug>/index.html) must carry a
+# valid BlogPosting JSON-LD node with a non-empty headline, datePublished, dateModified, and author, so
+# rich-result eligibility can never silently regress as more posts ship. Error severity — fails the build.
+# Logic in improve/blogpostingcheck.py.
+_bp_spec = _ilu.spec_from_file_location("blogpostingcheck", os.path.join(HERE, "improve", "blogpostingcheck.py"))
+_bp_mod = _ilu.module_from_spec(_bp_spec)
+_bp_spec.loader.exec_module(_bp_mod)
+audit_blog_posting = _bp_mod.audit_blog_posting
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -770,6 +779,16 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("JSON-LD audit: OK — every page's entity graph parses with connected, absolute, consistent @ids.")
+
+    # ---------- blog structured-data gate: every post carries a complete BlogPosting node ----------
+    blogposting_problems = audit_blog_posting(OUT, BASE_URL)
+    if blogposting_problems:
+        print(f"\nBLOGPOSTING AUDIT FAILED — {len(blogposting_problems)} problem(s):")
+        for p in blogposting_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("BlogPosting audit: OK — every blog post carries a complete BlogPosting node"
+          " (headline, datePublished, dateModified, author).")
 
     # ---------- sitemap gate: well-formed; every <loc> absolute + resolves; no dupes; no 404 listed ----------
     sitemap_problems = audit_sitemap(OUT, BASE_URL)
