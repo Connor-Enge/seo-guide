@@ -150,8 +150,16 @@
       "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     },
     {
-      "id": "jsonld-graph-audit",
-      "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs. Objective fixture verify (good graph passes, a graph with a root-relative @id or a missing core node fails); PM wires the gate after the canonical audit."
+      "id": "jsonld-ref-integrity",
+      "title": "DEPTH: extend improve/jsonldcheck.py with a dangling-@id-reference check — collect every node @id defined in a page's @graph, then assert every reference object ({'@id': X} appearing as a property value such as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage) points at an @id actually defined in that SAME page's graph, so a byline/publisher/isPartOf reference can never dangle after a refactor. Error severity, no new wiring (it lives inside audit_jsonld). Objective fixture verify: a graph whose Article.author={'@id':...} has no matching Person node fails; a fully-connected graph passes.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "sitemap-integrity-gate",
+      "title": "DEPTH: build-time sitemap integrity gate — a stdlib-only improve/sitemapcheck.py that parses docs/sitemap.xml (must be well-formed XML), asserts every <loc> is absolute (starts with BASE_URL), resolves to a real generated file on disk (trailing-slash -> index.html, literal file -> itself), has no duplicate <loc>s, and that 404.html is NOT listed; and warns (report-only) when a canonical indexable HTML page in docs/ is absent from the sitemap (orphan-from-sitemap). Objective fixture verify (good sitemap passes; a dangling loc / duplicate / listed 404 fails); PM wires it after the JSON-LD audit.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     },
     {
       "id": "metacheck-desc-title-lowerbound",
@@ -183,6 +191,13 @@
     }
   ],
   "done": [
+    {
+      "id": "jsonld-graph-audit",
+      "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs.",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/jsonldcheck.py — a pure, stdlib-only audit_jsonld(out_dir, base_url) that walks docs/**/*.html, extracts every <script type=application/ld+json> block and json.loads it (flagging kind='invalid_json' severity=error on any parse failure), flattens @graph / bare-object / list payloads into a node list, and for each page that carries JSON-LD asserts: (a) every top-level node whose @id or url is present is ABSOLUTE (startswith BASE_URL) else nonabsolute_id / nonabsolute_url (error) — the regression guard against root-relative entity URLs on the /seo-guide/ subpath deploy; (b) the graph contains at least one Organization, one WebSite and one Person node else missing_organization / missing_website / missing_person (error); and (c) sitewide consistency — it records each page's Organization/WebSite/Person @id, takes the most-common value as the canonical, and flags inconsistent_<type>_id (error) on any page whose core-entity @id drifts from it, so the connected entity graph can never silently fragment across pages. Pages with no JSON-LD are skipped (the 404 page carries none, so it is correctly ignored). PM wired exactly two things into build.py (mirroring the linkcheck/canonical/metadata gates): load jsonldcheck.py by path and, after the metadata audit, run audit_jsonld(OUT, BASE_URL) as a post-build gate that prints a per-problem report and raise SystemExit(1) on any problem. This finished and shipped a prior run's uncommitted in-progress work (the earlier committed jsonldcheck.py had a broken canonical-id computation comparing an int to a string; the dev's rewrite fixes it with a clean collections.Counter most_common). PM VERIFIED end-to-end: build GREEN (11 guide pages + 3 posts, 15 pages total incl. 404), the new gate prints 'JSON-LD audit: OK — every page's entity graph parses with connected, absolute, consistent @ids'; full SEO gate GREEN on docs/index.html (exactly one <title>, one meta name=description, one rel=canonical, exactly one <h1>, a JSON-LD Article node that parses, sitemap.xml present); an OBJECTIVE fixture verify passed (two clean consistent-@id pages return 0 problems — no false positives — while a page missing its Person node + carrying a root-relative WebSite @id + a drifted Organization @id, plus a page with malformed JSON, are flagged with EXACTLY missing_person / nonabsolute_id / inconsistent_organization_id / invalid_json); and a LIVE negative test proved the gate bites — copying the real docs/ and deleting the Person node from about/index.html's @graph made audit_jsonld return exactly [('about/index.html','missing_person')], while the untouched copy returned 0 problems. Structured-data quality is now locked in: the entity graph can never silently fragment, drift to a bad URL, or ship malformed JSON-LD without failing the build.",
+      "dev": "local-qwen",
+      "date": "2026-08-07"
+    },
     {
       "id": "back-to-top",
       "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery.",

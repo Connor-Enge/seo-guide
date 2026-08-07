@@ -78,6 +78,14 @@ _mc_mod = _ilu.module_from_spec(_mc_spec)
 _mc_spec.loader.exec_module(_mc_mod)
 audit_meta = _mc_mod.audit_meta
 
+# Build-time structured-data integrity gate: every page that carries JSON-LD must parse and keep a
+# connected Organization + WebSite + Person entity graph with stable, absolute, sitewide-consistent
+# @ids, so the entity graph can never silently fragment or drift. Logic in improve/jsonldcheck.py.
+_jl_spec = _ilu.spec_from_file_location("jsonldcheck", os.path.join(HERE, "improve", "jsonldcheck.py"))
+_jl_mod = _ilu.module_from_spec(_jl_spec)
+_jl_spec.loader.exec_module(_jl_mod)
+audit_jsonld = _jl_mod.audit_jsonld
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -688,6 +696,15 @@ def main():
         raise SystemExit(1)
     print(f"Metadata audit: OK — every page has exactly one <title> and one meta description"
           f" ({len(meta_warns)} snippet warning(s)).")
+
+    # ---------- structured-data gate: JSON-LD must parse; entity graph must stay connected ----------
+    jsonld_problems = audit_jsonld(OUT, BASE_URL)
+    if jsonld_problems:
+        print(f"\nJSON-LD AUDIT FAILED — {len(jsonld_problems)} problem(s):")
+        for p in jsonld_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("JSON-LD audit: OK — every page's entity graph parses with connected, absolute, consistent @ids.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

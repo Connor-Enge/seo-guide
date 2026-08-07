@@ -1,67 +1,58 @@
 import os
 import re
 import json
+from collections import Counter
 
 def audit_jsonld(out_dir, base_url):
     problems = []
-    pattern = r'<script[^>]*type=[\"\']application/ld\\+json[\"\'][^>]*>(.*?)</script>'
-    
+    id_maps = {"Organization": {}, "WebSite": {}, "Person": {}}
+
+    def has_type(node, T):
+        tt = node.get("@type")
+        return tt == T or (isinstance(tt, list) and T in tt)
+
+    def is_absolute(v):
+        return isinstance(v, str) and v.startswith(base_url)
+
     for root, _, files in os.walk(out_dir):
         for file in files:
-            if file.endswith('.html'):
-                page_id = os.path.relpath(os.path.join(root, file), out_dir).replace(os.sep, '/')
-                with open(os.path.join(root, file), 'r', encoding='utf-8') as f:
+            if file.endswith(".html"):
+                fullpath = os.path.join(root, file)
+                page = os.path.relpath(fullpath, out_dir).replace(os.sep, "/")
+                with open(fullpath, "r", encoding="utf-8") as f:
                     content = f.read()
-                    matches = re.findall(pattern, content, re.IGNORECASE | re.DOTALL)
-                    if not matches:
-                        continue
-                    nodes = []
-                    for match in matches:
-                        try:
-                            payload = json.loads(match)
-                        except json.JSONDecodeError as err:
-                            problems.append({'page': page_id, 'kind': 'invalid_json', 'severity': 'error', 'detail': str(err)})
-                            continue
-                        if isinstance(payload, dict) and '@graph' in payload:
-                            nodes.extend(payload['@graph'])
+                matches = re.findall(r'<script[^>]*type=["\']application/ld\+json["\'][^>]*>(.*?)</script>', content, re.IGNORECASE | re.DOTALL)
+                nodes = []
+                for match in matches:
+                    try:
+                        payload = json.loads(match)
+                        if isinstance(payload, dict) and "@graph" in payload:
+                            nodes.extend([n for n in payload["@graph"] if isinstance(n, dict)])
                         elif isinstance(payload, dict):
                             nodes.append(payload)
                         elif isinstance(payload, list):
-                            nodes.extend(payload)
-                    
-                    if not nodes:
-                        continue
-                    
-                    core_types = ['Organization', 'WebSite', 'Person']
-                    for core_type in core_types:
-                        if any(node.get('@type') == core_type or (isinstance(node.get('@type'), list) and core_type in node['@type']) for node in nodes):
-                            continue
-                        problems.append({'page': page_id, 'kind': f'missing_{core_type.lower()}', 'severity': 'error', 'detail': f'Missing {core_type}'})
-                    
+                            nodes.extend([n for n in payload if isinstance(n, dict)])
+                    except json.JSONDecodeError as e:
+                        problems.append({"page": page, "kind": "invalid_json", "severity": "error", "detail": str(e)})
+                if not nodes:
+                    continue
+                for node in nodes:
+                    if node.get("@id") is not None and not is_absolute(node["@id"]):
+                        problems.append({"page": page, "kind": "nonabsolute_id", "severity": "error", "detail": node["@id"]})
+                    if node.get("url") is not None and not is_absolute(node["url"]):
+                        problems.append({"page": page, "kind": "nonabsolute_url", "severity": "error", "detail": node["url"]})
+                for T, kind in [("Organization", "missing_organization"), ("WebSite", "missing_website"), ("Person", "missing_person")]:
+                    if not any(has_type(n, T) for n in nodes):
+                        problems.append({"page": page, "kind": kind, "severity": "error", "detail": "missing " + T})
+                for T in ["Organization", "WebSite", "Person"]:
                     for node in nodes:
-                        if '@id' in node and isinstance(node['@id'], str):
-                            if not node['@id'].startswith(base_url) or node['@id'].startswith('/'):
-                                problems.append({'page': page_id, 'kind': 'nonabsolute_id', 'severity': 'error', 'detail': f'Non-absolute @id: {node["@id"]}'})
-                        if 'url' in node and isinstance(node['url'], str):
-                            if not node['url'].startswith(base_url) or node['url'].startswith('/'):
-                                problems.append({'page': page_id, 'kind': 'nonabsolute_url', 'severity': 'error', 'detail': f'Non-absolute url: {node["url"]}'})
-    
-    absolute_ids = {}
-    for problem in problems:
-        if problem['kind'] in ['missing_organization', 'missing_website', 'missing_person']:
-            continue
-        if isinstance(problem['detail'], str) and problem['detail'].startswith(base_url) and not problem['detail'].startswith('/'):
-            core_type = problem['kind'].replace('nonabsolute_', '').replace('_id', '')
-            if core_type not in absolute_ids:
-                absolute_ids[core_type] = {}
-            absolute_ids[core_type][problem['page']] = problem['detail']
-    
-    for core_type, page_ids in absolute_ids.items():
-        canonical_id = sorted(page_ids.values()).count(max(set(page_ids.values()), key=page_ids.values().count))
-        if canonical_id != 1:
-            canonical_id = min(sorted(page_ids.values()))
-        for page_id, id_value in page_ids.items():
-            if id_value != canonical_id:
-                problems.append({'page': page_id, 'kind': f'inconsistent_{core_type.lower()}_id', 'severity': 'error', 'detail': f'Inconsistent {core_type} id: {id_value}, expected {canonical_id}'})
-    
+                        if has_type(node, T) and isinstance(node.get("@id"), str) and is_absolute(node["@id"]):
+                            id_maps[T][page] = node["@id"]
+                            break
+    for T in ["Organization", "WebSite", "Person"]:
+        if len(id_maps[T]) > 1:
+            canonical = Counter(id_maps[T].values()).most_common(1)[0][0]
+            for page, idval in id_maps[T].items():
+                if idval != canonical:
+                    problems.append({"page": page, "kind": "inconsistent_" + T.lower() + "_id", "severity": "error", "detail": idval + " (expected " + canonical + ")"})
     return problems
