@@ -146,10 +146,6 @@
       "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
     },
     {
-      "id": "back-to-top",
-      "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery."
-    },
-    {
       "id": "img-alt-audit",
       "title": "DEPTH: extend the build-time integrity gate to also assert accessibility/SEO basics on rendered <img> — every <img> must have a non-empty alt attribute (decorative images use alt=\"\") — and fail the build (or print a report) on any <img> missing an alt, so image accessibility can never silently regress. Build on the new improve/linkcheck.py audit pass style (walk docs/*.html, regex the tags), keep it stdlib-only with an objective fixture verify."
     },
@@ -168,9 +164,24 @@
     {
       "id": "og-twitter-meta-audit",
       "title": "DEPTH: build-time social-snippet integrity gate — a stdlib-only improve/socialmetacheck.py that walks docs/**/*.html and asserts every page carries og:title, og:description, og:url and twitter:card, warns when og:description is missing/empty or diverges sharply in length from the page meta description (social shares render badly otherwise), and errors only if og:url is root-relative or mismatches the page's canonical. Objective fixture verify (a clean page passes; a page missing og:description warns; a root-relative og:url fails); PM wires it after the metadata audit."
+    },
+    {
+      "id": "back-to-top-progress-ring",
+      "title": "FEATURE: enrich the new back-to-top control (assets/backtotop.js) with a subtle reading-progress ring — a thin conic-gradient/SVG arc around the circular button that fills from 0->100% as the reader scrolls the article, computed from scrollY vs (scrollHeight - innerHeight), updated inside the SAME rAF-throttled update() so it stays CWV-cheap; reduced-motion just snaps the value with no transition, and it stays fully absent with no JS. Keep it a self-contained edit to the one asset (whole-file rewrite via dispatch), no build.py surgery. Objective verify: node --check passes and the file references scrollHeight + a progress style (conic-gradient or stroke-dashoffset) plus the existing rAF/reduced-motion guards."
+    },
+    {
+      "id": "post-page-experience-2026",
+      "title": "BLOG POST (Grok prose): 'Page experience in 2026 — what actually counts beyond Core Web Vitals'. Angle: Google folded the standalone Page Experience ranking system into its core 'helpful content' guidance, so page experience is a set of signals (Core Web Vitals, HTTPS, mobile-friendliness, no intrusive interstitials) evaluated holistically, not a single boost. Substantial + sourced: PM first web_fetch Google Search Central 'Understanding page experience in Google Search results' and the Core Web Vitals / INP docs to supply exact current facts (INP replaced FID in March 2024; the three CWV metrics + thresholds; that helpful-content is now a core-ranking signal not a separate system), Grok drafts from that brief, PM fact-checks every claim against the sources before publishing, adds tags + related:, and internally links to the existing Core Web Vitals and technical-seo pages. Respect the ~1 post / 4h cadence."
     }
   ],
   "done": [
+    {
+      "id": "back-to-top",
+      "title": "FEATURE: progressive-enhancement 'Back to top' control that fades in after the reader scrolls past the first viewport on long pages — keyboard-focusable, reduced-motion-aware, fully hidden/absent with no JS. Tiny standalone asset via the existing {scripts} slot; no build.py surgery.",
+      "changed": "Local Qwen dev (qwen2.5-coder:7b via dispatch.py) authored the whole self-contained asset assets/backtotop.js from a precise PM spec and passed the objective verify on attempt 1/3. The verify (/tmp/verify_backtotop.py) is a hard gate: file non-trivial, `node --check` valid JS, and required-behavior tokens present — createElement + a real <button> with an accessible name, an rAF-throttled scroll listener, matchMedia('(prefers-reduced-motion: reduce)') awareness, a scroll-to-top mechanism, self-injected <style> (no separate CSS file), and NO external refs (no import/require/http/https/fetch/cdn). What shipped: a defer-loaded IIFE that returns early if document.body is absent (progressive enhancement — the no-JS HTML contains no button at all, verified: 0/16 static pages contain class=\"to-top\"), creates one type=button aria-label='Back to top' control, injects a <style> that themes off the site's CSS custom properties (--card/--line/--accent-ink/--shadow with light/dark fallbacks), reveals the button (class is-visible) only once window.scrollY > window.innerHeight (so it never shows on short pages), throttles the passive scroll handler with a ticking flag + requestAnimationFrame (CWV-cheap), and on click scrolls to top with behavior 'smooth' or 'auto' under reduced-motion, then moves keyboard focus toward the top (a.skip / header .brand / #main, try/catch guarded). PM wiring was exactly one line: appended a second <script defer src=BASE/assets/backtotop.js> to the render() default scripts in build.py (alongside search-focus.js) so it ships site-wide; the existing assets copytree carries the file into docs/. Validated: build GREEN (11 guide pages + 2 posts, BUILD_EXIT=0); all three build-time audits (internal-link, canonical, metadata) still OK; full SEO gate GREEN on docs/index.html (exactly one <title>, one meta name=description, one rel=canonical, JSON-LD @type Article, exactly one <h1>, sitemap.xml present); all 16/16 rendered HTML pages reference backtotop.js; 0/16 contain the button in static HTML (confirming it is absent without JS); and node --check on the shipped docs/assets/backtotop.js passes.",
+      "dev": "local-qwen",
+      "date": "2026-08-07"
+    },
     {
       "id": "trim-long-meta-descriptions",
       "title": "DEPTH: the metadata audit flagged 5 pages whose rendered meta description exceeded ~155 chars (index 176, blog index 156, core-web-vitals post 174, internal-linking post 173, glossary 172) and risked SERP truncation — rewrite each to a compelling <=155-char description that keeps the primary keyword up front; re-run the audit until it reports 0 long_description warnings.",
