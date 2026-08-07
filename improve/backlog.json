@@ -18,10 +18,6 @@
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
     },
     {
-      "id": "post-title-meta-ctr",
-      "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples"
-    },
-    {
       "id": "blog-related-posts",
       "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)"
     },
@@ -244,6 +240,18 @@
       "title": "DEPTH/CONTENT (Grok prose): extend the new copy-able snippets — add a minimal valid XML sitemap example (a <urlset> with one <url>/<loc>/<lastmod>) as a fenced code block to technical-seo.md's crawlability section, so the guide demonstrates sitemap syntax alongside the robots.txt/canonical/noindex/JSON-LD examples it now shows. PM first web_fetch Google Search Central 'Build and submit a sitemap' for the exact current element syntax and lastmod format, supplies the verified snippet, Grok writes the one connective sentence, PM fact-checks before placing. Ties to the pending post-xml-sitemaps-2026 post.",
       "stream": "C-depth",
       "dev": "grok"
+    },
+    {
+      "id": "post-url-structure-seo",
+      "title": "BLOG POST (Grok prose): URL structure for SEO in 2026 — readable descriptive paths, words over IDs, hyphens vs underscores, lowercase + consistency, avoiding needless parameters/deep nesting, and why changing URLs needs 301s. PM first web_fetch Google Search Central \"Keep a simple URL structure\" / URL structure best-practices + the redirects doc to supply exact current facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to technical-seo and on-page-seo. Respect the ~1 post / 4h cadence.",
+      "stream": "B-blog",
+      "dev": "grok"
+    },
+    {
+      "id": "title-suffix-length-guard",
+      "title": "DEPTH: extend improve/metacheck.py so the existing long_title warn (rendered <title> > 60 chars) reports the length of the SITE-NAME SUFFIX separately when a page title is long mostly because of the appended \" — <site name>\" — i.e. show how many chars the brand suffix consumes so the PM can judge whether to trim the page title vs. shorten branding. Report-only, non-blocking, stdlib-only, objective fixture verify (a 47-char title + 19-char suffix = 66 warns and reports suffix=19; a short title does not warn). Dev: local Qwen extends metacheck.py.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -498,6 +506,13 @@
       "dev": "grok+PM-verified-snippets",
       "shipped": "Grok (via `openclaw infer model run --model xai/grok-4.3`) wrote the connective explanatory prose; PM supplied and placed source-verified copy-able snippets (fenced code) fact-checked against Google Search Central: technical-seo.md gained a minimal robots.txt, a rel=canonical <link>, a <meta name=robots content=noindex>, and a minimal Article JSON-LD skeleton; on-page-seo.md gained a <title>+<meta name=description> <head> example and an <img> with width/height + descriptive alt. All example tags render html-escaped inside <pre><code> (verified: 0 real <script>/<meta>/<img> leaks, exactly 1 real meta description per page), leveraging the just-shipped fenced-code renderer. Build green; all integrity gates (sitemap/robots/H1/social-meta/structured-data) pass; index SEO checks intact.",
       "date": "2026-08-07"
+    },
+    {
+      "id": "post-title-meta-ctr",
+      "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples",
+      "dev": "grok",
+      "done_date": "2026-08-07",
+      "note": "Published blog post \"Title Tags & Meta Descriptions\" (slug title-tags-meta-descriptions-that-earn-clicks). Grok drafted the body from a PM brief built on Google Search Central title-link + snippet docs; PM fact-checked every claim, framed length figures as device-width display heuristics (Google states no hard limit), tightened the <title> to model its own advice, and wired 3 descriptive inbound internal links (on-page-seo, common-seo-mistakes, how-search-works) + related block. Build green, all audits 0 warnings."
     }
   ]
 }
