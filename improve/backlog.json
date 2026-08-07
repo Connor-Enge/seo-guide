@@ -184,19 +184,32 @@
       "dev": "local-qwen"
     },
     {
-      "id": "robots-integrity-gate",
-      "title": "DEPTH: build-time robots.txt integrity gate — a stdlib-only improve/robotscheck.py that reads docs/robots.txt and asserts (error) it exists, carries a 'Sitemap:' line whose URL is absolute and equals BASE_URL + '/sitemap.xml', and that no 'User-agent: *' group contains a blanket 'Disallow: /' (which would deindex the whole site); warn (report-only) if there is no explicit Allow/Disallow at all. Objective fixture verify (a healthy robots.txt passes; a missing Sitemap line / a root Disallow under * / a relative Sitemap URL each fail); PM wires it after the sitemap gate. Dev: local-qwen. Complements the new sitemapcheck.py.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-xml-sitemaps-2026",
       "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
       "dev": "grok"
+    },
+    {
+      "id": "sitemap-lastmod-honesty",
+      "title": "DEPTH: extend improve/sitemapcheck.py with a report-only 'lastmod' honesty warn — if every <lastmod> in docs/sitemap.xml is identical (e.g. all equal to the build date), warn that Google discounts sitemaps whose lastmod is always 'today', so the freshness signal stays trustworthy as more pages ship. Non-blocking warn only, stdlib-only, objective fixture verify (a sitemap with mixed lastmods passes; one where all lastmods are the same date warns). Ties to the just-shipped sitemap/robots gates and the pending post-xml-sitemaps-2026 post.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "noindex-sitemap-conflict",
+      "title": "DEPTH: build-time noindex/sitemap contradiction gate — walk docs/**/*.html, and for any page that emits <meta name=\"robots\" content=\"...noindex...\">, assert (error) its canonical URL does NOT also appear in docs/sitemap.xml, because telling Google 'index this' (sitemap) and 'don't index this' (noindex) at once is a self-contradictory signal it flags. Reuse the sitemap <loc> set already parsed by sitemapcheck.py; stdlib-only; objective fixture verify (a normal indexable page passes; a noindex page listed in the sitemap fails; a noindex page ABSENT from the sitemap passes). Complements the robots + sitemap integrity gates.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     }
   ],
   "done": [
+    {
+      "id": "robots-integrity-gate",
+      "title": "DEPTH: build-time robots.txt integrity gate — a stdlib-only improve/robotscheck.py that reads docs/robots.txt and asserts (error) it exists, carries a 'Sitemap:' line whose URL is absolute and equals BASE_URL + '/sitemap.xml', and that no 'User-agent: *' group contains a blanket 'Disallow: /' (which would deindex the whole site); warn (report-only) if there is no explicit Allow/Disallow at all. Objective fixture verify (a healthy robots.txt passes; a missing Sitemap line / a root Disallow under * / a relative Sitemap URL each fail); PM wires it after the sitemap gate. Dev: local-qwen. Complements the new sitemapcheck.py.",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/robotscheck.py — a pure, stdlib-only audit_robots(out_dir, base_url) that parses docs/robots.txt line-by-line (ignoring comments/blank/malformed lines), tracks User-agent grouping, and returns a list of {kind,loc,detail,severity} problems: errors for a missing file, no Sitemap: directive, a relative Sitemap URL, a Sitemap URL != BASE_URL/sitemap.xml, or a blanket 'Disallow: /' under 'User-agent: *' (which would deindex the whole site); a report-only warn when no Allow/Disallow rule is present at all. PM adversarially verified the logic against 8 objective fixtures (healthy pass; missing/relative/mismatched sitemap; blanket disallow under *; disallow-/ under a NON-* group correctly NOT flagged; missing file; no-rules warn — ALL_PASS), then wired the single audit_robots() call into build.py's main() right after the sitemap gate (the import was already present but the gate was never invoked — a dead check left by a prior run). Build stays green; docs/robots.txt passes; index.html retains its title/description/canonical/Article-JSON-LD/single-h1 invariants.",
+      "dev": "local-qwen (logic) + PM wiring/verification",
+      "date": "2026-08-07"
+    },
     {
       "id": "sitemap-integrity-gate",
       "title": "DEPTH: build-time sitemap integrity gate (improve/sitemapcheck.py) — parse docs/sitemap.xml, assert every <loc> is absolute + resolves to a real file, no duplicates, 404 never listed; report-only orphan-from-sitemap warnings.",

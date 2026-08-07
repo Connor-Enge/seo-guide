@@ -94,6 +94,14 @@ _sm_mod = _ilu.module_from_spec(_sm_spec)
 _sm_spec.loader.exec_module(_sm_mod)
 audit_sitemap = _sm_mod.audit_sitemap
 
+# Post-build robots.txt gate: assert docs/robots.txt exists, carries an absolute Sitemap: line equal to
+# BASE_URL + '/sitemap.xml', and that no 'User-agent: *' group blanket-disallows the whole site (Disallow: /).
+# Logic in improve/robotscheck.py.
+_rb_spec = _ilu.spec_from_file_location("robotscheck", os.path.join(HERE, "improve", "robotscheck.py"))
+_rb_mod = _ilu.module_from_spec(_rb_spec)
+_rb_spec.loader.exec_module(_rb_mod)
+audit_robots = _rb_mod.audit_robots
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -729,6 +737,22 @@ def main():
         raise SystemExit(1)
     print(f"Sitemap audit: OK — every <loc> is absolute, resolves to a real file, unique, and 404-free"
           f" ({len(sm_warns)} orphan warning(s)).")
+
+    # ---------- robots.txt gate: exists, absolute Sitemap: == BASE_URL/sitemap.xml, no blanket Disallow under * ----------
+    robots_problems = audit_robots(OUT, BASE_URL)
+    rb_errors = [p for p in robots_problems if p.get("severity") == "error"]
+    rb_warns = [p for p in robots_problems if p.get("severity") == "warn"]
+    if rb_warns:
+        print(f"\nRobots audit — {len(rb_warns)} warning(s) (non-blocking):")
+        for p in rb_warns:
+            print(f"  [{p['kind']}] {p['loc']}  ({p['detail']})")
+    if rb_errors:
+        print(f"\nROBOTS AUDIT FAILED — {len(rb_errors)} error(s):")
+        for p in rb_errors:
+            print(f"  [{p['kind']}] {p['loc']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Robots audit: OK — robots.txt present, Sitemap: is absolute and matches the sitemap URL,"
+          " and no blanket Disallow: / under User-agent: *.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
