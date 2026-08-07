@@ -2,6 +2,14 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
+      "id": "trim-long-meta-descriptions",
+      "title": "DEPTH: the new metadata audit flags 5 pages whose rendered meta description exceeds ~155 chars (index 176, blog index 156, core-web-vitals post 174, internal-linking post 173, glossary 172) and risks SERP truncation — have GROK rewrite each to a compelling <=155-char description that keeps the primary keyword up front; PM edits only the front-matter `description:` fields and re-runs the audit until it reports 0 long_description warnings."
+    },
+    {
+      "id": "metacheck-title-suffix-dupe",
+      "title": "DEPTH: extend improve/metacheck.py to also warn when a page <title> is JUST the site-name suffix or repeats the brand twice (e.g. the homepage 'The Guide to SEO — The Guide to SEO'), since a doubled/near-empty title wastes the highest-value SERP real estate; add a 'redundant_title' warn kind with an objective fixture verify, then PM fixes the homepage title front-matter."
+    },
+    {
       "id": "tag-pages",
       "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
@@ -154,15 +162,18 @@
       "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     },
     {
-      "id": "title-desc-length-audit",
-      "title": "DEPTH: extend the build-time gate to sanity-check on-SERP metadata — for every rendered page assert exactly one <title> and one meta name=description, and warn (report, don't fail) when a title exceeds ~60 chars / ~600px or a description exceeds ~155 chars / ~920px, or when either is empty/duplicated across pages, so titles/descriptions never silently regress into truncation or duplication. New stdlib-only improve/metacheck.py mirroring the linkcheck/canonicalcheck audit style with an objective fixture verify; PM wires the report call after the canonical gate."
-    },
-    {
       "id": "jsonld-graph-audit",
       "title": "DEPTH: build-time structured-data integrity gate — a stdlib-only improve/jsonldcheck.py that, for every rendered page, parses each application/ld+json block (must parse), asserts the @graph contains an Organization, WebSite and Person node with the SAME stable @id used sitewide, and that every node's @id/url is absolute (starts with BASE_URL, never root-relative), so the entity graph can never silently fragment or drift to bad URLs. Objective fixture verify (good graph passes, a graph with a root-relative @id or a missing core node fails); PM wires the gate after the canonical audit."
     }
   ],
   "done": [
+    {
+      "id": "title-desc-length-audit",
+      "title": "DEPTH: extend the build-time gate to sanity-check on-SERP metadata — for every rendered page assert exactly one <title> and one meta name=description, and warn (report, don't fail) when a title exceeds ~60 chars or a description exceeds ~155 chars, or when either is empty/duplicated across pages, so titles/descriptions never silently regress into truncation or duplication.",
+      "changed": "Local Qwen dev authored improve/metacheck.py from a precise PM spec and passed the objective fixture verify on attempt 2/3. The pure, stdlib-only audit_meta(out_dir, max_title_chars=60, max_desc_chars=155) mirrors the canonicalcheck/linkcheck audit style: walk docs/**/*.html, page id = relpath (forward slashes), read UTF-8, use re + html.unescape. For each page it counts <title> tags and <meta name=\"description\" content=...> tags and returns a list of problem dicts {page,kind,severity,detail}. STRUCTURAL errors (severity='error', fail the build): missing_title / multiple_title (0 or >1 <title>), missing_description / multiple_description. SNIPPET-QUALITY warnings (severity='warn', report-only): empty_title, long_title (>60 chars), empty_description, long_description (>155 chars), and cross-page duplicate_title / duplicate_description (same non-empty text on 2+ pages, one warn per involved page listing the others). Length is measured AFTER html.unescape so entity-encoded chars (&#x27; &amp;) count as one char, matching real SERP rendering. Pages with missing/multiple title (or description) are excluded from that field's length/empty/duplicate checks. The objective verify (/tmp/verify_meta.py) builds a temp docs tree exercising every kind plus two fully-clean pages and asserts audit_meta returns EXACTLY the expected 12 (page,kind) problems with the right severity per kind and zero false positives on the clean pages. PM wired exactly two things into build.py (mirroring the canonical gate): load metacheck.py by path, and after the canonical audit run audit_meta(OUT) as a post-build gate that always prints the warnings, prints+fails (SystemExit 1) on any severity='error', and otherwise prints an OK line with the warning count. Validated: build GREEN (11 guide pages + 2 posts, BUILD_EXIT=0); the metadata audit surfaced 5 REAL long_description warnings on the live site (index 176, blog index 156, core-web-vitals post 174, internal-linking post 173, glossary 172 chars) without blocking the build — an actionable finding that spawned the trim-long-meta-descriptions backlog item; full SEO gate GREEN on index (one <title>, one meta description, one rel=canonical, JSON-LD Article, exactly one <h1>, sitemap.xml present) and a single-<h1> + JSON-LD-parse sweep is CLEAN across all output pages.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
     {
       "id": "canonical-selfref-audit",
       "title": "DEPTH: build-time canonical audit — assert every rendered page's rel=canonical exactly equals its own BASE_URL page URL (never root-relative, never pointing at another page), a build.py post-build check that fails the build on drift, so canonicalization can never silently regress.",

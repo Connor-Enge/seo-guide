@@ -69,6 +69,15 @@ _cn_mod = _ilu.module_from_spec(_cn_spec)
 _cn_spec.loader.exec_module(_cn_mod)
 audit_canonicals = _cn_mod.audit_canonicals
 
+# Post-build metadata audit: every page must have exactly one <title> and one meta description
+# (structural errors fail the build); over-length / empty / cross-page-duplicate titles or
+# descriptions are reported as warnings so on-SERP snippets never silently regress. Logic lives
+# in improve/metacheck.py.
+_mc_spec = _ilu.spec_from_file_location("metacheck", os.path.join(HERE, "improve", "metacheck.py"))
+_mc_mod = _ilu.module_from_spec(_mc_spec)
+_mc_spec.loader.exec_module(_mc_mod)
+audit_meta = _mc_mod.audit_meta
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -663,6 +672,22 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("Canonical audit: OK — every page self-canonicalizes to its own URL.")
+
+    # ---------- metadata gate: exactly one title/description per page; report snippet-quality warnings ----------
+    meta_problems = audit_meta(OUT)
+    meta_errors = [p for p in meta_problems if p.get("severity") == "error"]
+    meta_warns = [p for p in meta_problems if p.get("severity") == "warn"]
+    if meta_warns:
+        print(f"\nMetadata audit — {len(meta_warns)} warning(s) (snippet quality, non-blocking):")
+        for p in meta_warns:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+    if meta_errors:
+        print(f"\nMETADATA AUDIT FAILED — {len(meta_errors)} error(s):")
+        for p in meta_errors:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print(f"Metadata audit: OK — every page has exactly one <title> and one meta description"
+          f" ({len(meta_warns)} snippet warning(s)).")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
