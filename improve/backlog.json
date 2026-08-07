@@ -262,12 +262,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "byline-time-element",
-      "title": "FEATURE: wrap the visible published/updated dates in the byline in semantic <time datetime=\"YYYY-MM-DD\"> elements so the dates are machine-parseable in the rendered HTML itself (not only inside JSON-LD), aiding assistive tech and crawlers. Dev: local-qwen adds a tiny stdlib helper time_tag(date_str, label) that returns '<time datetime=\"YYYY-MM-DD\">label</time>' (validating the date shape, passing non-date labels through untouched); PM wires it into the byline construction for guide pages and posts. Objective fixture verify on the helper (valid date -> wrapped <time> with datetime attr; a non-date string -> unchanged); build + all gates stay green, single-<h1> and JSON-LD invariants preserved.",
-      "stream": "A-feature",
-      "dev": "local-qwen"
-    },
-    {
       "id": "metacheck-brand-in-both-title-h1",
       "title": "DEPTH: extend improve/metacheck.py (reuse titlecheck.py) with a report-only 'title_h1_identical' warn when a page's rendered <title> segment before the brand suffix is byte-identical to its <h1> — a duplicated title/H1 wastes the chance to target complementary phrasing; measure after html.unescape, objective fixture verify (identical title-lead & h1 warn; distinct ones do not). Non-blocking. Dev: local-qwen adds a pure helper, PM wires one hook.",
       "stream": "C-depth",
@@ -310,9 +304,28 @@
       "title": "DEPTH: extend the image gate (or a sibling helper improve/imgdimcheck.py) with a report-only 'img_missing_dimensions' warn when a content <img> lacks explicit width AND height attributes — reserving intrinsic size prevents layout shift (helps CLS / Core Web Vitals). Warn-only, stdlib-only, skip the decorative brand-mark if it already sets width/height. Objective fixture verify: an <img> with width+height passes, one missing both warns. Dev: local-qwen.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "byline-time-gate",
+      "title": "DEPTH: build-time gate that protects the new semantic-<time> byline — a stdlib-only improve/timecheck.py walks docs/**/*.html and asserts (error) that every rendered <time> element carries a non-empty datetime attribute matching ^\\d{4}-\\d{2}-\\d{2}$ (zero-padded ISO), so a byline date can never regress to <time datetime=\"\"> or a malformed value. Objective fixture verify (a <time datetime=\"2026-08-07\"> passes; <time datetime=\"\"> and <time datetime=\"2026-8-7\"> fail; a page with no <time> is skipped). Report-or-error severity; PM wires one call in build.py after the heading-order gate.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "post-lastmodified-freshness",
+      "title": "BLOG POST (Grok prose): 'dateModified & content freshness — does updating a page actually help SEO in 2026?'. Angle: Google uses freshness as a query-dependent signal, honest lastmod/dateModified matters (don't fake-bump dates), meaningful updates > cosmetic edits, and how visible <time> bylines + accurate JSON-LD dateModified reinforce each other. PM first web_fetch Google Search Central guidance on dates (structured data 'Article' date fields, 'how Google determines the date of a page') + the freshness/QDF context to supply exact current facts; Grok drafts from that brief; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and the measuring page. Ties to the just-shipped <time> byline feature. Respect the ~1 post / 4h cadence.",
+      "stream": "B-blog",
+      "dev": "grok"
     }
   ],
   "done": [
+    {
+      "id": "byline-time-element",
+      "title": "FEATURE: wrap the visible published/updated dates in the byline in semantic <time datetime=\"YYYY-MM-DD\"> elements so the dates are machine-parseable in the rendered HTML itself (not only inside JSON-LD), aiding assistive tech and crawlers.",
+      "changed": "Local Qwen dev (via dispatch.py) authored improve/timetag.py — a pure, stdlib-only time_tag(date_str, label) that validates date_str with a STRICT round-trip (datetime.strptime(date_str,'%Y-%m-%d') AND d.strftime('%Y-%m-%d')==date_str) so only a real, zero-padded YYYY-MM-DD counts; on success it returns '<time datetime=\"{date_str}\">{label}</time>' with the label passed through verbatim (not HTML-escaped), and on any failure (wrong shape, non-zero-padded like '2026-8-7', no-separator '20260807', impossible '2026-13-40', empty, or non-date text) it returns label UNCHANGED. It passed an OBJECTIVE fixture verify (/tmp/verify_timetag.py: valid date wraps with a datetime attr and verbatim label; each invalid form returns the label untouched; label never escaped) — ALL_PASS on attempt 1/3 after the PM tightened the spec to require the zero-padding round-trip (Python's strptime otherwise accepts '2026-8-7', which is NOT a valid HTML datetime). PM did ONLY the wiring: (1) load timetag.py by path alongside the other improve/ helpers (import loader block mirroring readingtime.py/readingmeta.py); (2) wrap the date token at all four byline/date sites in build.py — the About ProfilePage 'Updated' date, the guide-page (incl. homepage) 'Updated' date, the blog-post 'Published' and 'Updated' dates, and each /blog/ index card's 'Published' date. VERIFIED end-to-end: build GREEN (11 guide pages + 4 posts); all ELEVEN build-time gates OK (internal-link, canonical, metadata, JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, image-alt, heading-order); full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). 20 semantic <time datetime> elements now render sitewide with ZERO empty/malformed datetime attrs — e.g. the homepage byline 'Updated <time datetime=\"2026-08-05\">2026-08-05</time> · by ...', the About page, every guide page, all four blog-post bylines, and all four /blog/ index cards. Publish/update dates are now machine-parseable in the rendered HTML itself, not only inside JSON-LD.",
+      "dev": "local-qwen (timetag.py) + PM wiring/verification",
+      "date": "2026-08-07"
+    },
     {
       "id": "reading-time-schema-wordcount",
       "title": "DEPTH: now that reading time is a visible byline signal, expose it to machines too — add wordCount and timeRequired (ISO-8601 duration, e.g. 'PT7M') to each Article/BlogPosting JSON-LD node so search engines and readers get the same reading-length metadata. Dev: local-qwen adds a tiny helper that converts the existing reading_minutes(int) to an ISO-8601 'PT<n>M' string plus the raw word count; PM wires the two fields into node_article() in build.py. Objective fixture verify on the duration formatter (1 -> 'PT1M', 7 -> 'PT7M'); JSON-LD gate must stay green.",

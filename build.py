@@ -166,6 +166,14 @@ _rm_spec.loader.exec_module(_rm_mod)
 iso8601_duration = _rm_mod.iso8601_duration
 word_count = _rm_mod.word_count
 
+# Semantic-<time> byline helper: wrap a YYYY-MM-DD date in <time datetime="..."> so the
+# visible published/updated dates are machine-parseable in the rendered HTML (not only in
+# JSON-LD). Non-date labels pass through untouched. Logic in improve/timetag.py.
+_tt_spec = _ilu.spec_from_file_location("timetag", os.path.join(HERE, "improve", "timetag.py"))
+_tt_mod = _ilu.module_from_spec(_tt_spec)
+_tt_spec.loader.exec_module(_tt_mod)
+time_tag = _tt_mod.time_tag
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -586,7 +594,7 @@ def main():
         if meta.get("schema") == "ProfilePage":
             updated = meta.get("updated", today)
             jsonld = graph(*base_nodes, node_profile(url, updated), node_breadcrumb(url, crumbs))
-            byline = f'Maintained by {html.escape(AUTHOR)} · Updated {updated}'
+            byline = f'Maintained by {html.escape(AUTHOR)} · Updated {time_tag(updated, updated)}'
             og_type = "profile"
         else:
             faqs = extract_faq(body)
@@ -600,7 +608,8 @@ def main():
             if faqs:
                 page_nodes.append(node_faq(url, faqs))
             jsonld = graph(*page_nodes)
-            byline = f'Updated {meta.get("updated", today)} · {BYLINE_BY}'
+            _upd = meta.get("updated", today)
+            byline = f'Updated {time_tag(_upd, _upd)} · {BYLINE_BY}'
             if slug != "index":
                 byline += f' · {reading_minutes(search_text(body))} min read'
             og_type = "website" if slug == "index" else "article"
@@ -621,9 +630,9 @@ def main():
         url = post_url(slug)
         date_pub = meta.get("date", today)
         date_mod = meta.get("updated", date_pub)
-        byline = f"Published {date_pub} · {BYLINE_BY}"
+        byline = f"Published {time_tag(date_pub, date_pub)} · {BYLINE_BY}"
         if date_mod and date_mod != date_pub:
-            byline += f" · Updated {date_mod}"
+            byline += f" · Updated {time_tag(date_mod, date_mod)}"
         byline += f' · {reading_minutes(search_text(body))} min read'
         crumbs = [("Home", HOME_URL), (BLOG_TITLE, BLOG_URL), (meta["title"], url)]
         faqs = extract_faq(body)
@@ -648,7 +657,7 @@ def main():
         items = "".join(
             '<li><h2><a href="%s">%s</a></h2><p class="meta">Published %s</p><p>%s</p></li>' % (
                 post_url(m["slug"]), html.escape(m["title"]),
-                html.escape(m.get("date", "")), html.escape(m["description"]))
+                time_tag(m.get("date", ""), html.escape(m.get("date", ""))), html.escape(m["description"]))
             for m, _ in posts)
         blog_content = f"<p>{BLOG_DESC}</p><ul class=\"post-list\">{items}</ul>"
     else:
