@@ -1,9 +1,9 @@
 {
-  "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume \u2014 never degrade the site, never pad, always keep the build green.",
+  "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
       "id": "tag-pages",
-      "title": "FEATURE: tags/categories \u2014 front-matter tags generate tag pages that list related content, cross-linked"
+      "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
     {
       "id": "dark-mode",
@@ -14,16 +14,12 @@
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
     },
     {
-      "id": "404-page",
-      "title": "FEATURE: custom 404 page with helpful links + the search box"
-    },
-    {
       "id": "post-ai-content",
       "title": "BLOG POST: does AI content hurt SEO? What Google's scaled-content-abuse policy actually says, and how to stay on the right side"
     },
     {
       "id": "post-title-meta-ctr",
-      "title": "BLOG POST: writing title tags & meta descriptions that earn clicks \u2014 why Google rewrites them, practical pixel/length limits, and before/after examples"
+      "title": "BLOG POST: writing title tags & meta descriptions that earn clicks — why Google rewrites them, practical pixel/length limits, and before/after examples"
     },
     {
       "id": "blog-related-posts",
@@ -31,7 +27,7 @@
     },
     {
       "id": "local-seo",
-      "title": "New section: Local SEO \u2014 Google Business Profile, NAP consistency, reviews, local pack, local schema"
+      "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
     {
       "id": "audit-checklist",
@@ -55,11 +51,11 @@
     },
     {
       "id": "ecommerce-seo",
-      "title": "New section: E-commerce SEO \u2014 product schema, faceted navigation, canonical strategy"
+      "title": "New section: E-commerce SEO — product schema, faceted navigation, canonical strategy"
     },
     {
       "id": "international-seo",
-      "title": "New section: International SEO \u2014 hreflang, ccTLD vs subfolder, duplicate-language handling"
+      "title": "New section: International SEO — hreflang, ccTLD vs subfolder, duplicate-language handling"
     },
     {
       "id": "homepage-depth",
@@ -67,7 +63,7 @@
     },
     {
       "id": "accessibility",
-      "title": "Accessibility pass: landmarks, aria labels, focus styles, color contrast \u2014 helps UX + SEO"
+      "title": "Accessibility pass: landmarks, aria labels, focus styles, color contrast — helps UX + SEO"
     },
     {
       "id": "internal-link-audit",
@@ -79,27 +75,23 @@
     },
     {
       "id": "post-structured-data-2026",
-      "title": "BLOG POST: which structured data still earns rich results in 2026 \u2014 what Google retired (FAQ/HowTo for most sites) vs. still shows (Article, Breadcrumb, Product, Video\u2026), how to choose the types worth implementing, and a Rich Results Test workflow; source to Google Search Central's search-gallery + deprecation posts"
+      "title": "BLOG POST: which structured data still earns rich results in 2026 — what Google retired (FAQ/HowTo for most sites) vs. still shows (Article, Breadcrumb, Product, Video…), how to choose the types worth implementing, and a Rich Results Test workflow; source to Google Search Central's search-gallery + deprecation posts"
     },
     {
       "id": "feed-full-content",
-      "title": "FEATURE: full-content feeds \u2014 extend feed.xml with <content:encoded> (CDATA-wrapped rendered HTML) and feed.json items with content_html, so subscribers get the whole article, not just the summary; keep the summary fields too. Build on the existing feed_items pipeline in build.py."
+      "title": "FEATURE: full-content feeds — extend feed.xml with <content:encoded> (CDATA-wrapped rendered HTML) and feed.json items with content_html, so subscribers get the whole article, not just the summary; keep the summary fields too. Build on the existing feed_items pipeline in build.py."
     },
     {
       "id": "post-search-console",
-      "title": "BLOG POST: a practical Google Search Console workflow \u2014 which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation."
+      "title": "BLOG POST: a practical Google Search Console workflow — which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation."
     },
     {
       "id": "related-auto-fallback",
-      "title": "FEATURE: auto-populate the Related-reading block from shared front-matter topics/tags when a page has no manual `related:` field, so every page always ships genuine descriptive internal links even before hand-curation \u2014 build on the existing related_registry + related_block pipeline in build.py."
-    },
-    {
-      "id": "post-internal-linking",
-      "title": "BLOG POST: internal linking & topic clusters \u2014 how pillar pages and descriptive-anchor internal links build topical authority and get new pages crawled and ranked; contrast good vs. over-optimized anchor text; source to Google Search Central's link best-practices + 'Make your links crawlable' docs."
+      "title": "FEATURE: auto-populate the Related-reading block from shared front-matter topics/tags when a page has no manual `related:` field, so every page always ships genuine descriptive internal links even before hand-curation — build on the existing related_registry + related_block pipeline in build.py."
     },
     {
       "id": "heading-h3-anchors",
-      "title": "FEATURE: extend the new deep-link permalinks to ### subheadings \u2014 give <h3> stable ids and a hover \u00b6 permalink (reuse improve/anchors.py's helper), and nest those subsections under their parent <h2> in the on-page TOC so deeper sections are linkable and navigable."
+      "title": "FEATURE: extend the new deep-link permalinks to ### subheadings — give <h3> stable ids and a hover ¶ permalink (reuse improve/anchors.py's helper), and nest those subsections under their parent <h2> in the on-page TOC so deeper sections are linkable and navigable."
     },
     {
       "id": "pdf-print-button",
@@ -123,55 +115,77 @@
     },
     {
       "id": "scrollspy-toc",
-      "title": "FEATURE: scrollspy table-of-contents \u2014 highlight the reader's current section in the existing in-article TOC as they scroll (IntersectionObserver, aria-current, progressive enhancement, reduced-motion safe, fully graceful with no JS). Tiny standalone asset via the existing {scripts} slot."
+      "title": "FEATURE: scrollspy table-of-contents — highlight the reader's current section in the existing in-article TOC as they scroll (IntersectionObserver, aria-current, progressive enhancement, reduced-motion safe, fully graceful with no JS). Tiny standalone asset via the existing {scripts} slot."
     },
     {
       "id": "post-eeat-2026",
-      "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it \u2014 Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
+      "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it — Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
     },
     {
       "id": "breadcrumb-collapse-mobile",
-      "title": "FEATURE: on very narrow screens, keep the breadcrumb single-line by truncating long middle labels with ellipsis (CSS only, full label kept in title/aria) so the trail never wraps awkwardly \u2014 pure enhancement of the new assets/breadcrumb.css."
+      "title": "FEATURE: on very narrow screens, keep the breadcrumb single-line by truncating long middle labels with ellipsis (CSS only, full label kept in title/aria) so the trail never wraps awkwardly — pure enhancement of the new assets/breadcrumb.css."
     },
     {
       "id": "post-breadcrumbs-site-structure",
-      "title": "BLOG POST: breadcrumbs & site structure for SEO \u2014 why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
+      "title": "BLOG POST: breadcrumbs & site structure for SEO — why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
     },
     {
       "id": "external-link-marker",
-      "title": "FEATURE: annotate outbound external links \u2014 build.py post-processor adds rel=\"noopener\" (no target change) and a class to <a> whose host differs from the site host, plus a small CSS \u2197 'leaves this site' indicator, so readers can see which links are external references. No-JS, pure HTML/CSS. Dev: a build.py helper that rewrites anchors + a tiny assets CSS rule; verify parses the host and asserts internal links are untouched."
+      "title": "FEATURE: annotate outbound external links — build.py post-processor adds rel=\"noopener\" (no target change) and a class to <a> whose host differs from the site host, plus a small CSS ↗ 'leaves this site' indicator, so readers can see which links are external references. No-JS, pure HTML/CSS. Dev: a build.py helper that rewrites anchors + a tiny assets CSS rule; verify parses the host and asserts internal links are untouched."
     },
     {
       "id": "post-robots-noindex",
-      "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag \u2014 crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
+      "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
+    },
+    {
+      "id": "404-suggest-search",
+      "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
+    },
+    {
+      "id": "soft-404-audit",
+      "title": "DEPTH: audit that every internal href produced by build.py resolves to a real generated docs/ path (a build.py post-build check that parses each rendered page's internal <a href> and asserts the target index.html exists), so the site can never ship a broken internal link / accidental soft-404 — print a report and optionally fail the build on a dangling link."
     }
   ],
   "done": [
     {
+      "id": "404-page",
+      "title": "FEATURE: custom 404 page with helpful links + the search box",
+      "changed": "Local Qwen dev authored improve/notfound.py from a precise PM spec, self-corrected against an objective verify (imports the module by path and asserts: four non-empty authored micro-copy constants NF_TITLE/NF_DESCRIPTION/NF_H1/NF_BYLINE; notfound_content(base_url, cards) returns a substantial HTML string with a role=search form whose action is exactly base_url+'/search/', an id=nf-q input with a matching for=nf-q label and name=q, every (title, description, url) card rendered and html-escaped, reuse of the existing .searchform and .related/.related-list classes, ampersands escaped, and no stray '{'/'}' or hardcoded index.html). The helper builds the inner content of a friendly 404 page: an intro, an on-site search box, and a 'Popular pages' card grid. PM wired it into build.py: load notfound.py by path (mirroring the breadcrumb/anchors helpers), build nf_cards from every non-index guide page + the Blog + Search, render with NF_TITLE/NF_H1/NF_BYLINE + a Home breadcrumb, and write docs/404.html directly (not a directory index) so GitHub Pages serves it for unknown paths under the project. Reuses existing CSS (.searchform, .related, .related-list) so NO new stylesheet was needed; no JS required. The page carries no JSON-LD/canonical weight that matters because GitHub Pages returns it with an HTTP 404 status (so it is never indexed) and it is deliberately kept OUT of sitemap.xml. Validated: build green (11 guide pages + 2 posts), full SEO gate GREEN across index + all output pages (title/description/canonical/JSON-LD Article, single-<h1> sweep, JSON-LD parses sitewide), and 404.html specifically verified: exactly one <h1>, the search form + link cards present, any JSON-LD parses, and it does NOT appear in sitemap.xml.",
+      "dev": "local-qwen",
+      "date": "2026-08-06"
+    },
+    {
+      "id": "post-internal-linking",
+      "title": "BLOG POST: internal linking & topic clusters — how pillar pages and descriptive-anchor internal links build topical authority and get new pages crawled and ranked; contrast good vs. over-optimized anchor text; source to Google Search Central's link best-practices + 'Make your links crawlable' docs.",
+      "changed": "Grok authored the post body in a prior run from a PM brief sourced to Google Search Central's link best-practices + 'Make your links crawlable' docs (content/blog/internal-linking-and-topic-clusters.md, 2026-08-06); it was left uncommitted when that run ended. This run's build correctly incorporates it (blog index, sitemap, feeds, search index all regenerated to include it) and the SEO gate passes on the rendered post, so it is now committed to keep source and docs/ consistent. Retired from pending.",
+      "dev": "grok",
+      "date": "2026-08-06"
+    },
+    {
       "id": "search-slash-shortcut",
       "title": "FEATURE: press-'/' keyboard shortcut to focus the header search box from any page (progressive enhancement; ignore when typing in an input/textarea/contenteditable; visible focus ring; no-JS safe). Tiny standalone asset wired via the existing {scripts} slot.",
-      "changed": "Local Qwen dev authored assets/search-focus.js from a precise PM spec, self-corrected against an objective verify (node --check + greps asserting: single document 'keydown' listener, modifier-key guard ctrl/meta/alt, editable-target guard INPUT/TEXTAREA/SELECT/isContentEditable, e.key==='/' only, preventDefault + focus + guarded select, and that it targets the header '.hsearch input[type=search]'). The delivered IIFE (17 lines, zero deps, no globals, no timers) lets a reader press '/' anywhere to jump to the header search \u2014 like GitHub/GitLab \u2014 while never hijacking '/' typed inside a field. PM wired ONE hook: render() now prepends the script tag to every page's {scripts} slot (the /search/ page still appends its own search.js after it). Pure progressive enhancement \u2014 the header search form works identically with no JS. Also removed an earlier run's orphan, buggy assets/scrollspy.js (it unobserved each section on first intersection, so the highlight fired once then died, and it was never wired) so it couldn't be committed; scrollspy-toc stays in pending for a proper rebuild. Validated: build green (11 guide pages + 1 post), full SEO gate GREEN across all 14 output pages \u2014 index title/description/canonical/JSON-LD Article, single-<h1> sweep, JSON-LD parses sitewide, and search-focus.js copied to docs/assets + referenced on all 14 pages.",
+      "changed": "Local Qwen dev authored assets/search-focus.js from a precise PM spec, self-corrected against an objective verify (node --check + greps asserting: single document 'keydown' listener, modifier-key guard ctrl/meta/alt, editable-target guard INPUT/TEXTAREA/SELECT/isContentEditable, e.key==='/' only, preventDefault + focus + guarded select, and that it targets the header '.hsearch input[type=search]'). The delivered IIFE (17 lines, zero deps, no globals, no timers) lets a reader press '/' anywhere to jump to the header search — like GitHub/GitLab — while never hijacking '/' typed inside a field. PM wired ONE hook: render() now prepends the script tag to every page's {scripts} slot (the /search/ page still appends its own search.js after it). Pure progressive enhancement — the header search form works identically with no JS. Also removed an earlier run's orphan, buggy assets/scrollspy.js (it unobserved each section on first intersection, so the highlight fired once then died, and it was never wired) so it couldn't be committed; scrollspy-toc stays in pending for a proper rebuild. Validated: build green (11 guide pages + 1 post), full SEO gate GREEN across all 14 output pages — index title/description/canonical/JSON-LD Article, single-<h1> sweep, JSON-LD parses sitewide, and search-focus.js copied to docs/assets + referenced on all 14 pages.",
       "dev": "local-qwen",
       "date": "2026-08-06"
     },
     {
       "id": "sitemap-lastmod",
-      "title": "FEATURE: emit <lastmod> in sitemap.xml from each page/post `updated` front-matter date (W3C/ISO-8601), so crawlers get accurate per-URL freshness signals instead of a bare url list \u2014 build on the existing sitemap generator in build.py.",
-      "changed": "Verified already implemented \u2014 build.py's sitemap generator already emits <lastmod>{mod}</lastmod> per <url>, with `mod` sourced from each page/post `updated` front-matter (falling back to `date`/today). No change needed; retired from pending to keep the backlog honest.",
+      "title": "FEATURE: emit <lastmod> in sitemap.xml from each page/post `updated` front-matter date (W3C/ISO-8601), so crawlers get accurate per-URL freshness signals instead of a bare url list — build on the existing sitemap generator in build.py.",
+      "changed": "Verified already implemented — build.py's sitemap generator already emits <lastmod>{mod}</lastmod> per <url>, with `mod` sourced from each page/post `updated` front-matter (falling back to `date`/today). No change needed; retired from pending to keep the backlog honest.",
       "dev": "n/a (pre-existing)",
       "date": "2026-08-06"
     },
     {
       "id": "heading-anchor-links",
-      "title": "FEATURE: no-JS heading deep-links \u2014 scroll-offset so anchor jumps clear the sticky header, + a hover/focus \u00b6 permalink on each section heading for sharing/deep-linking.",
-      "changed": "Local Qwen dev authored BOTH artifacts from PM specs, each self-corrected against an objective verify script: (1) improve/anchors.py \u2014 a heading_html(slug, inner_html) helper returning `<h2 id=slug>\u2026<a class=hanchor href=#slug aria-label='Permalink to this section'><span aria-hidden>\u00b6</span></a></h2>` (attribute-escapes the slug, places inner HTML verbatim); (2) assets/anchors.css \u2014 sets html{scroll-padding-top:9rem} (\u21925rem at the \u2265680px breakpoint) so EVERY in-page anchor jump (TOC, breadcrumb, ?q= deep-scroll, :target) clears the sticky glass header instead of landing under it (a real sitewide defect: there was previously no scroll-padding-top anywhere), plus the permalink styling (opacity:0 by default; revealed on h2:hover / :focus-within / .hanchor:focus; accent tint on hover; var(--muted)/var(--accent-ink) so it adapts to dark mode; prefers-reduced-motion guard). PM wired three one-line hooks: load anchors.py by path in build.py (mirroring the breadcrumb helper), swap the h2 render to call heading_html(), and add the <link> for anchors.css in base.html. Every guide page, blog post and the /search/ page now deep-links correctly and every section heading is shareable. Validated: build green (11 guide pages + 1 post), full SEO gate PASS across all 14 output pages \u2014 index title/description/canonical/JSON-LD Article, single-<h1> sweep, all JSON-LD parses sitewide, anchors.css linked+copied on every page, and every <h2 id> carries exactly one matching href=#id permalink (h2 count == hanchor count on every page).",
+      "title": "FEATURE: no-JS heading deep-links — scroll-offset so anchor jumps clear the sticky header, + a hover/focus ¶ permalink on each section heading for sharing/deep-linking.",
+      "changed": "Local Qwen dev authored BOTH artifacts from PM specs, each self-corrected against an objective verify script: (1) improve/anchors.py — a heading_html(slug, inner_html) helper returning `<h2 id=slug>…<a class=hanchor href=#slug aria-label='Permalink to this section'><span aria-hidden>¶</span></a></h2>` (attribute-escapes the slug, places inner HTML verbatim); (2) assets/anchors.css — sets html{scroll-padding-top:9rem} (→5rem at the ≥680px breakpoint) so EVERY in-page anchor jump (TOC, breadcrumb, ?q= deep-scroll, :target) clears the sticky glass header instead of landing under it (a real sitewide defect: there was previously no scroll-padding-top anywhere), plus the permalink styling (opacity:0 by default; revealed on h2:hover / :focus-within / .hanchor:focus; accent tint on hover; var(--muted)/var(--accent-ink) so it adapts to dark mode; prefers-reduced-motion guard). PM wired three one-line hooks: load anchors.py by path in build.py (mirroring the breadcrumb helper), swap the h2 render to call heading_html(), and add the <link> for anchors.css in base.html. Every guide page, blog post and the /search/ page now deep-links correctly and every section heading is shareable. Validated: build green (11 guide pages + 1 post), full SEO gate PASS across all 14 output pages — index title/description/canonical/JSON-LD Article, single-<h1> sweep, all JSON-LD parses sitewide, anchors.css linked+copied on every page, and every <h2 id> carries exactly one matching href=#id permalink (h2 count == hanchor count on every page).",
       "dev": "local-qwen",
       "date": "2026-08-06"
     },
     {
       "id": "onsite-search",
-      "title": "FEATURE: client-side on-site search \u2014 build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)",
-      "changed": "Shipped end-to-end on-site search. Local Qwen dev authored assets/search.js \u2014 a dependency-free progressive-enhancement script that fetches the build-time search-index.json and turns the static list into a live client-side filter (term-AND matching, title/tag-weighted ranking, ?q= deep-link support, aria-live result count, XSS-escaped output, graceful fallback on fetch error). PM wired build.py: a search_text() helper that flattens page/post body markdown into indexable plain text, ONE search_items list that drives BOTH docs/search-index.json (compact, 11 items) and the static no-JS browsable list on a new /search/ page (so index and list can never drift), plus the header .hsearch box (base.html) and a {scripts} template slot. Local Qwen also authored the search CSS block (header box, results cards, .visually-hidden a11y label, responsive 2-up grid, empty state). Zero JS required to use the page \u2014 it renders the full list and every page/article is reachable; JS only enhances it. Validated: build green (9 pages + 1 post), all index SEO checks + single-h1 sweep pass, search-index.json valid, /search/ has canonical+title+desc+single-h1+no-JS list, search.js passes node --check, JSON-LD valid sitewide, sitemap includes /search/.",
+      "title": "FEATURE: client-side on-site search — build a JSON index at build time + a tiny no-dependency search box filtering titles/descriptions (no server)",
+      "changed": "Shipped end-to-end on-site search. Local Qwen dev authored assets/search.js — a dependency-free progressive-enhancement script that fetches the build-time search-index.json and turns the static list into a live client-side filter (term-AND matching, title/tag-weighted ranking, ?q= deep-link support, aria-live result count, XSS-escaped output, graceful fallback on fetch error). PM wired build.py: a search_text() helper that flattens page/post body markdown into indexable plain text, ONE search_items list that drives BOTH docs/search-index.json (compact, 11 items) and the static no-JS browsable list on a new /search/ page (so index and list can never drift), plus the header .hsearch box (base.html) and a {scripts} template slot. Local Qwen also authored the search CSS block (header box, results cards, .visually-hidden a11y label, responsive 2-up grid, empty state). Zero JS required to use the page — it renders the full list and every page/article is reachable; JS only enhances it. Validated: build green (9 pages + 1 post), all index SEO checks + single-h1 sweep pass, search-index.json valid, /search/ has canonical+title+desc+single-h1+no-JS list, search.js passes node --check, JSON-LD valid sitewide, sitemap includes /search/.",
       "dev": "local-qwen",
       "date": "2026-08-06"
     },
@@ -192,19 +206,19 @@
     {
       "id": "related-block",
       "title": "Add a 'Related' block to each section linking 2-3 genuinely relevant pages with descriptive anchors",
-      "changed": "Added a build.py Related-reading feature: a `related:` front-matter field (comma-separated keys \u2014 a guide slug, or a post keyed 'blog/<slug>') resolves against a build-time related_registry to render an accessible <nav class=related aria-label='Related reading'> block of descriptive internal links (target title as anchor + its description as context), appended after content on both guide pages and blog posts. Skips unknown keys, self-links, and dupes; emits nothing when nothing resolves (so the hub homepage stays clean). Curated genuine topical relations across all 7 section pages + the CWV post \u2014 notably technical-seo \u2192 the Core Web Vitals blog post, giving that new post an inbound internal link from an established, topically-relevant page (helps discovery/ranking). Pure HTML/CSS, zero JS \u2014 keeps the no-JS/CWV-first identity \u2014 with card styling matching the pager (2-up grid \u2265680px). The site now practices the descriptive-anchor internal linking that on-page-seo.md preaches. Validated: build green (9 pages + 1 post), index SEO checks + single-h1 sweep across all pages pass, related nav renders with correct links and no self-links, homepage has no block.",
+      "changed": "Added a build.py Related-reading feature: a `related:` front-matter field (comma-separated keys — a guide slug, or a post keyed 'blog/<slug>') resolves against a build-time related_registry to render an accessible <nav class=related aria-label='Related reading'> block of descriptive internal links (target title as anchor + its description as context), appended after content on both guide pages and blog posts. Skips unknown keys, self-links, and dupes; emits nothing when nothing resolves (so the hub homepage stays clean). Curated genuine topical relations across all 7 section pages + the CWV post — notably technical-seo → the Core Web Vitals blog post, giving that new post an inbound internal link from an established, topically-relevant page (helps discovery/ranking). Pure HTML/CSS, zero JS — keeps the no-JS/CWV-first identity — with card styling matching the pager (2-up grid ≥680px). The site now practices the descriptive-anchor internal linking that on-page-seo.md preaches. Validated: build green (9 pages + 1 post), index SEO checks + single-h1 sweep across all pages pass, related nav renders with correct links and no self-links, homepage has no block.",
       "date": "2026-08-06"
     },
     {
       "id": "logo-favicon-wiring",
-      "title": "FEATURE: surface the new /assets/logo.svg as the visible site identity \u2014 a header brand mark, plus favicon + web-manifest links, so the Organization logo is also the on-page and browser-tab identity (currently it only exists in JSON-LD)",
-      "changed": "Wired the existing assets/logo.svg (previously used ONLY in JSON-LD) as the real site identity across all 11 pages: (1) an SVG favicon <link rel=icon type=image/svg+xml> so browser tabs and Google's mobile-SERP favicon slot now show the mark; (2) a build-generated docs/site.webmanifest (name/short_name/description, start_url+scope baked to BASE_URL so they can't drift on the /seo-guide/ subpath deploy, display=standalone, theme_color #0b6bcb matching the existing meta theme-color + logo background, background_color #fff, SVG icon) linked via <link rel=manifest> for Android/PWA installability; (3) a visible header brand mark \u2014 replaced the fake 22px CSS gradient ::before square with an actual <img class=brand-mark src=logo.svg width/height=26 alt='' aria-hidden> (dimensions set \u2192 zero CLS), styled with matching radius+shadow. Kept the design dependency-free and no-JS (SVG-first; no rasterizer needed). Deferred the raster apple-touch-icon/ICO to a follow-up since build.py is intentionally stdlib-only and no SVG rasterizer is installed. Validated: build green (9 pages + 1 post), favicon+manifest links present sitewide, site.webmanifest is valid JSON, brand <img> renders, index SEO checks + JSON-LD @graph intact.",
+      "title": "FEATURE: surface the new /assets/logo.svg as the visible site identity — a header brand mark, plus favicon + web-manifest links, so the Organization logo is also the on-page and browser-tab identity (currently it only exists in JSON-LD)",
+      "changed": "Wired the existing assets/logo.svg (previously used ONLY in JSON-LD) as the real site identity across all 11 pages: (1) an SVG favicon <link rel=icon type=image/svg+xml> so browser tabs and Google's mobile-SERP favicon slot now show the mark; (2) a build-generated docs/site.webmanifest (name/short_name/description, start_url+scope baked to BASE_URL so they can't drift on the /seo-guide/ subpath deploy, display=standalone, theme_color #0b6bcb matching the existing meta theme-color + logo background, background_color #fff, SVG icon) linked via <link rel=manifest> for Android/PWA installability; (3) a visible header brand mark — replaced the fake 22px CSS gradient ::before square with an actual <img class=brand-mark src=logo.svg width/height=26 alt='' aria-hidden> (dimensions set → zero CLS), styled with matching radius+shadow. Kept the design dependency-free and no-JS (SVG-first; no rasterizer needed). Deferred the raster apple-touch-icon/ICO to a follow-up since build.py is intentionally stdlib-only and no SVG rasterizer is installed. Validated: build green (9 pages + 1 post), favicon+manifest links present sitewide, site.webmanifest is valid JSON, brand <img> renders, index SEO checks + JSON-LD @graph intact.",
       "date": "2026-08-06"
     },
     {
       "id": "rss-feed",
       "title": "FEATURE: generate an RSS 2.0 feed (docs/feed.xml) of posts + pages; link it in <head> and the footer",
-      "changed": "Added a single feed_items pipeline in build.py driving TWO syndication feeds from one source so they can't drift: docs/feed.xml (RSS 2.0, atom:self link, dc:creator, RFC-822 pubDates, per-post <category> from tags) and docs/feed.json (JSON Feed 1.1 with icon/authors/tags/date_published). Feed lists the blog post (newest first) then evergreen content pages (excludes the homepage + the ProfilePage About). Wired both as rel=alternate in <head> sitewide and added footer 'Subscribe: RSS \u00b7 JSON' links. Validated: index SEO checks pass, feed.xml well-formed XML, feed.json valid JSON Feed 1.1 (8 items), build green.",
+      "changed": "Added a single feed_items pipeline in build.py driving TWO syndication feeds from one source so they can't drift: docs/feed.xml (RSS 2.0, atom:self link, dc:creator, RFC-822 pubDates, per-post <category> from tags) and docs/feed.json (JSON Feed 1.1 with icon/authors/tags/date_published). Feed lists the blog post (newest first) then evergreen content pages (excludes the homepage + the ProfilePage About). Wired both as rel=alternate in <head> sitewide and added footer 'Subscribe: RSS · JSON' links. Validated: index SEO checks pass, feed.xml well-formed XML, feed.json valid JSON Feed 1.1 (8 items), build green.",
       "date": "2026-08-05"
     },
     {
@@ -222,13 +236,13 @@
     {
       "id": "post-cwv-2026",
       "title": "BLOG POST: passing Core Web Vitals in 2026",
-      "changed": "Published the inaugural post 'How to Pass Core Web Vitals in 2026' \u2014 a ~1500-word field guide (LCP/INP/CLS thresholds at p75, field-vs-lab, concrete per-metric fixes, an order-of-operations, FAQ + FAQPage schema), sourced from web.dev (Vitals/LCP/INP/CLS guides) and Google Search Central, cross-linked to technical-seo and content-quality.",
+      "changed": "Published the inaugural post 'How to Pass Core Web Vitals in 2026' — a ~1500-word field guide (LCP/INP/CLS thresholds at p75, field-vs-lab, concrete per-metric fixes, an order-of-operations, FAQ + FAQPage schema), sourced from web.dev (Vitals/LCP/INP/CLS guides) and Google Search Central, cross-linked to technical-seo and content-quality.",
       "date": "2026-08-05"
     },
     {
       "id": "org-entity-graph",
       "title": "FEATURE: Organization + WebSite + Person entity graph with stable @ids",
-      "changed": "Refactored build.py to emit ONE connected JSON-LD @graph per page instead of separate blocks: every page now carries full Organization (name, url, description, logo ImageObject, sameAs, founder\u2192Person), WebSite (url/name/alternateName/description/inLanguage, publisher\u2192Org), and Person (@id, knowsAbout, sameAs) nodes, with each page-level Article/BlogPosting/ProfilePage/Blog/Breadcrumb/FAQ referencing author/publisher/isPartOf/mainEntity by @id \u2014 so every reference resolves within its own page (robust vs. cross-page refs). Replaced the bare '{Organization,name}' publisher stub sitewide. Added a hand-built 112\u00d7112 assets/logo.svg (accent badge + magnifier + rising bars) as the Organization logo. Validated: single well-formed @graph per page, all @id refs resolve, all required index SEO checks pass, build green.",
+      "changed": "Refactored build.py to emit ONE connected JSON-LD @graph per page instead of separate blocks: every page now carries full Organization (name, url, description, logo ImageObject, sameAs, founder→Person), WebSite (url/name/alternateName/description/inLanguage, publisher→Org), and Person (@id, knowsAbout, sameAs) nodes, with each page-level Article/BlogPosting/ProfilePage/Blog/Breadcrumb/FAQ referencing author/publisher/isPartOf/mainEntity by @id — so every reference resolves within its own page (robust vs. cross-page refs). Replaced the bare '{Organization,name}' publisher stub sitewide. Added a hand-built 112×112 assets/logo.svg (accent badge + magnifier + rising bars) as the Organization logo. Validated: single well-formed @graph per page, all @id refs resolve, all required index SEO checks pass, build green.",
       "date": "2026-08-05"
     },
     {
@@ -240,28 +254,28 @@
     {
       "id": "mobile-first-redesign",
       "title": "Mobile-first premium redesign",
-      "changed": "Rewrote assets/style.css: fluid mobile-first type, glass sticky header with brand mark + horizontal-scroll nav, gradient H1 + accent H2 markers, hover-lift cards/pager, refined dark mode. No-JS, build green, SEO intact. (Done by Claude \u2014 Grok runs 402'd on the subscription.)",
+      "changed": "Rewrote assets/style.css: fluid mobile-first type, glass sticky header with brand mark + horizontal-scroll nav, gradient H1 + accent H2 markers, hover-lift cards/pager, refined dark mode. No-JS, build green, SEO intact. (Done by Claude — Grok runs 402'd on the subscription.)",
       "date": "2026-08-05"
     },
     {
       "id": "common-mistakes",
-      "title": "New page: Common SEO Mistakes \u2014 10 mistakes (people-first vs SE-first, keyword stuffing, thin/scaled content, intent mismatch, weak/duplicate titles, robots-vs-noindex de-indexing, CWV-as-whole-strategy, bought links, orphan pages, not measuring) + FAQ + FAQPage/Article/Breadcrumb JSON-LD; cross-linked to every guide section",
+      "title": "New page: Common SEO Mistakes — 10 mistakes (people-first vs SE-first, keyword stuffing, thin/scaled content, intent mismatch, weak/duplicate titles, robots-vs-noindex de-indexing, CWV-as-whole-strategy, bought links, orphan pages, not measuring) + FAQ + FAQPage/Article/Breadcrumb JSON-LD; cross-linked to every guide section",
       "dev": "grok",
       "date": "2026-08-06"
     },
     {
       "id": "glossary",
       "title": "New page: SEO glossary of key terms (crawl budget, canonical, SERP, E-E-A-T, etc.), cross-linked from first mentions",
-      "changed": "Shipped the SEO Glossary cornerstone page (/glossary/, 27 plain-language term definitions \u2014 crawling, indexing, canonical, E-E-A-T, Core Web Vitals, hreflang, nofollow/noindex, rich results, structured data, topic clusters, etc.), each definition cross-linked to the relevant deep-dive guide (on-page, technical, keyword-research, content-quality, how-search-works, link-building) with descriptive anchors. The page carries full front-matter (title/h1/description/tags/updated + related: nav) and is fully integrated by build.py: it's in the nav, sitemap, on-site search index, and RSS/JSON feeds; single connected JSON-LD @graph per page intact. PM finalized a prior dev run that had left the page uncommitted alongside a BROKEN, unwired glossary_links.py auto-linker (its outer i+=1 dropped the <code>/<a>/<h*> tag that terminated each text run, corrupting HTML) \u2014 removed that helper, rebuilt, and verified. Validated: build green (11 guide pages + 1 post), full SEO gate PASS (index+glossary title/description/canonical/single-h1, glossary in sitemap+search-index, single-h1 sweep sitewide, all JSON-LD parses sitewide, sitemap/feed.xml well-formed, feed.json valid, 27 term sections rendered). The safe, correct auto-crosslinker remains queued as glossary-crosslink.",
+      "changed": "Shipped the SEO Glossary cornerstone page (/glossary/, 27 plain-language term definitions — crawling, indexing, canonical, E-E-A-T, Core Web Vitals, hreflang, nofollow/noindex, rich results, structured data, topic clusters, etc.), each definition cross-linked to the relevant deep-dive guide (on-page, technical, keyword-research, content-quality, how-search-works, link-building) with descriptive anchors. The page carries full front-matter (title/h1/description/tags/updated + related: nav) and is fully integrated by build.py: it's in the nav, sitemap, on-site search index, and RSS/JSON feeds; single connected JSON-LD @graph per page intact. PM finalized a prior dev run that had left the page uncommitted alongside a BROKEN, unwired glossary_links.py auto-linker (its outer i+=1 dropped the <code>/<a>/<h*> tag that terminated each text run, corrupting HTML) — removed that helper, rebuilt, and verified. Validated: build green (11 guide pages + 1 post), full SEO gate PASS (index+glossary title/description/canonical/single-h1, glossary in sitemap+search-index, single-h1 sweep sitewide, all JSON-LD parses sitewide, sitemap/feed.xml well-formed, feed.json valid, 27 term sections rendered). The safe, correct auto-crosslinker remains queued as glossary-crosslink.",
       "dev": "grok",
       "date": "2026-08-06"
     },
     {
       "id": "breadcrumb-ui",
-      "title": "FEATURE: render a visible breadcrumb trail (Home \u203a Section) matching the existing BreadcrumbList JSON-LD \u2014 current page unlinked, descriptive anchors, small accessible nav element",
+      "title": "FEATURE: render a visible breadcrumb trail (Home › Section) matching the existing BreadcrumbList JSON-LD — current page unlinked, descriptive anchors, small accessible nav element",
       "date": "2026-08-06",
       "dev": "local-qwen",
-      "note": "Visible accessible breadcrumb trail (Home \u203a Section \u203a Current) mirroring BreadcrumbList JSON-LD; render helper improve/breadcrumb.py + assets/breadcrumb.css, wired into template + all render sites; current page unlinked with aria-current=page; suppressed on homepage. Built by local-qwen; PM wired."
+      "note": "Visible accessible breadcrumb trail (Home › Section › Current) mirroring BreadcrumbList JSON-LD; render helper improve/breadcrumb.py + assets/breadcrumb.css, wired into template + all render sites; current page unlinked with aria-current=page; suppressed on homepage. Built by local-qwen; PM wired."
     }
   ]
 }

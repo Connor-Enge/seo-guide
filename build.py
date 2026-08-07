@@ -38,6 +38,14 @@ _an_mod = _ilu.module_from_spec(_an_spec)
 _an_spec.loader.exec_module(_an_mod)
 heading_html = _an_mod.heading_html
 
+# Custom 404 page content (helpful links + search). Copy lives in improve/notfound.py.
+_nf_spec = _ilu.spec_from_file_location("notfound", os.path.join(HERE, "improve", "notfound.py"))
+_nf_mod = _ilu.module_from_spec(_nf_spec)
+_nf_spec.loader.exec_module(_nf_mod)
+notfound_content = _nf_mod.notfound_content
+NF_TITLE, NF_DESCRIPTION, NF_H1, NF_BYLINE = (
+    _nf_mod.NF_TITLE, _nf_mod.NF_DESCRIPTION, _nf_mod.NF_H1, _nf_mod.NF_BYLINE)
+
 # The canonical origin. When Connor enables GitHub Pages this is the live URL; swap for a custom domain later.
 BASE_URL = "https://connor-enge.github.io/seo-guide"
 BLOG_URL = BASE_URL + "/blog/"
@@ -562,6 +570,18 @@ def main():
         content=search_content, jsonld=search_jsonld,
         breadcrumb=breadcrumb_block([("Home", HOME_URL), ("Search", SEARCH_URL)]),
         scripts='<script defer src="%s/assets/search.js"></script>' % BASE_URL))
+
+    # ---------- custom 404 (GitHub Pages serves docs/404.html for unknown paths) ----------
+    # Doubles as a mini-directory: every section + the blog + on-site search, plus a search box.
+    nf_cards = [(m["title"], m["description"], page_url(m["slug"]))
+                for m, _ in pages if m["slug"] != "index"]
+    nf_cards.append((BLOG_TITLE, BLOG_DESC, BLOG_URL))
+    nf_cards.append(("Search the guide", "Find any page or article on the site.", SEARCH_URL))
+    nf_url = BASE_URL + "/404.html"
+    open(os.path.join(OUT, "404.html"), "w").write(render(
+        title=NF_TITLE, description=NF_DESCRIPTION, url=nf_url, og_type="website",
+        h1=NF_H1, byline=NF_BYLINE, content=notfound_content(BASE_URL, nf_cards),
+        breadcrumb=breadcrumb_block([("Home", HOME_URL), (NF_TITLE, nf_url)])))
 
     # ---------- sitemap + robots ----------
     entries = [(page_url(m["slug"]), today, "1.0" if m["slug"] == "index" else "0.8") for m, _ in pages]

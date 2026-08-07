@@ -15,6 +15,26 @@
   ],
   "items": [
     {
+      "id": "https://connor-enge.github.io/seo-guide/blog/internal-linking-and-topic-clusters/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/internal-linking-and-topic-clusters/",
+      "title": "Internal Linking and Topic Clusters",
+      "summary": "How internal links help Google find and rank your pages, how to write anchor text that actually works, and how the pillar-and-cluster model maps onto Google's real guidance.",
+      "content_text": "How internal links help Google find and rank your pages, how to write anchor text that actually works, and how the pillar-and-cluster model maps onto Google's real guidance.",
+      "date_published": "2026-08-06T00:00:00Z",
+      "date_modified": "2026-08-06T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "internal-linking",
+        "on-page-seo",
+        "site-structure"
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
       "url": "https://connor-enge.github.io/seo-guide/blog/passing-core-web-vitals-2026/",
       "title": "How to Pass Core Web Vitals in 2026",
