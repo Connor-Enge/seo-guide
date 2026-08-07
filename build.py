@@ -143,6 +143,14 @@ _bp_mod = _ilu.module_from_spec(_bp_spec)
 _bp_spec.loader.exec_module(_bp_mod)
 audit_blog_posting = _bp_mod.audit_blog_posting
 
+# Post-build image-accessibility gate: every rendered <img> must carry an alt attribute (alt="" is
+# allowed for decorative images); a completely missing alt hurts accessibility and image SEO. Error
+# severity — fails the build so image a11y can never silently regress. Logic in improve/imgaltcheck.py.
+_ia_spec = _ilu.spec_from_file_location("imgaltcheck", os.path.join(HERE, "improve", "imgaltcheck.py"))
+_ia_mod = _ilu.module_from_spec(_ia_spec)
+_ia_spec.loader.exec_module(_ia_mod)
+audit_img_alt = _ia_mod.audit_img_alt
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -867,6 +875,15 @@ def main():
         raise SystemExit(1)
     print(f"Social-meta audit: OK — every page's og:url is absolute and matches its canonical"
           f" ({len(so_warns)} snippet warning(s)).")
+
+    # ---------- image-accessibility gate: every rendered <img> must carry an alt attribute ----------
+    img_alt_problems = audit_img_alt(OUT)
+    if img_alt_problems:
+        print(f"\nIMG-ALT AUDIT FAILED — {len(img_alt_problems)} <img> tag(s) missing an alt attribute:")
+        for p in img_alt_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Image-alt audit: OK — every rendered <img> carries an alt attribute (alt=\"\" allowed for decorative).")
 
     # ---------- heading-order gate (report-only): flag skipped heading levels (broken outline) ----------
     ho_problems = audit_heading_order(OUT)

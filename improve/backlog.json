@@ -118,10 +118,6 @@
       "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
     },
     {
-      "id": "img-alt-audit",
-      "title": "DEPTH: extend the build-time integrity gate to also assert accessibility/SEO basics on rendered <img> — every <img> must have a non-empty alt attribute (decorative images use alt=\"\") — and fail the build (or print a report) on any <img> missing an alt, so image accessibility can never silently regress. Build on the new improve/linkcheck.py audit pass style (walk docs/*.html, regex the tags), keep it stdlib-only with an objective fixture verify."
-    },
-    {
       "id": "linkcheck-report-artifact",
       "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     },
@@ -302,6 +298,18 @@
     {
       "id": "audit-checklist-crosslink-inbody",
       "title": "INTERNAL LINKS: add contextual in-body links to /audit-checklist/ from the technical-seo and measuring page bodies (descriptive anchors), complementing the related-reading block."
+    },
+    {
+      "id": "img-alt-quality-warn",
+      "title": "DEPTH: extend improve/imgaltcheck.py with a report-only 'alt_too_long' warn (severity 'warn') when a rendered <img>'s alt text exceeds ~125 characters — overly long alt hurts screen-reader UX and is a weak signal; keep the existing missing-alt as an error. Build.py should print warns non-blocking (mirror the meta/sitemap warn pattern) and only fail on errors. Objective fixture verify: a 200-char alt warns, a 40-char alt and alt='' do not, a missing alt still errors. Dev: local-qwen extends the helper; PM adjusts the gate block to split errors vs warns.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "img-dimensions-warn",
+      "title": "DEPTH: extend the image gate (or a sibling helper improve/imgdimcheck.py) with a report-only 'img_missing_dimensions' warn when a content <img> lacks explicit width AND height attributes — reserving intrinsic size prevents layout shift (helps CLS / Core Web Vitals). Warn-only, stdlib-only, skip the decorative brand-mark if it already sets width/height. Objective fixture verify: an <img> with width+height passes, one missing both warns. Dev: local-qwen.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -606,6 +614,13 @@
       "title": "New page: a concrete technical-SEO audit checklist readers can work through",
       "date": "2026-08-07",
       "dev": "grok"
+    },
+    {
+      "id": "img-alt-audit",
+      "title": "DEPTH: extend the build-time integrity gate to also assert accessibility/SEO basics on rendered <img> — every <img> must have a non-empty alt attribute (decorative images use alt=\"\") — and fail the build (or print a report) on any <img> missing an alt, so image accessibility can never silently regress. Build on the new improve/linkcheck.py audit pass style (walk docs/*.html, regex the tags), keep it stdlib-only with an objective fixture verify.",
+      "dev": "local-qwen",
+      "date": "2026-08-07",
+      "note": "Build-time image-accessibility gate: improve/imgaltcheck.py audit_img_alt() fails the build on any rendered <img> missing an alt attribute (alt=\"\" allowed for decorative). Wired into build.py after the BlogPosting gate. Built by local-qwen (2 attempts); PM wired one import block + one gate call."
     }
   ]
 }
