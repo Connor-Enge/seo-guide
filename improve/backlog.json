@@ -186,10 +186,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "reading-time-blog-index",
-      "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green."
-    },
-    {
       "id": "code-fence-integrity-gate",
       "title": "DEPTH: build-time code-fence safety gate — a stdlib-only improve/fencedcodecheck.py walks docs/**/*.html and asserts (error) that no instructional example snippet ever leaks as a REAL tag: inside any <pre><code> block there must be no unescaped <script>, <meta>, <link>, or <img> (they must appear html-escaped as &lt;...&gt;), so a fenced example can never inject real markup, duplicate a page's meta description, or add a second JSON-LD node. Objective fixture verify: a page whose code block shows an escaped &lt;script&gt; passes; a crafted page with a real <script> inside <pre><code> fails. Wire it into build.py after the H1 gate; protects the copy-able snippets just shipped.",
       "stream": "C-depth",
@@ -330,6 +326,18 @@
     {
       "id": "related-key-integrity-warn",
       "title": "DEPTH (local-qwen): build-time related-key integrity warn — a stdlib-only improve/relatedkeycheck.py that, given the known page/post slug registry, reports (warn, non-blocking) any front-matter related: key that does NOT resolve to a real guide slug or blog/<slug>, so a typo in a related: reference is surfaced instead of being silently dropped by related_block(). Objective fixture verify: a related list containing a bogus key warns; an all-valid list passes. Wire after the metadata audit; report-only, never fail the build.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "reading-time-related-cards",
+      "title": "FEATURE: show the same 'N min read' token on the auto 'Related articles' post cards (improve/relatedposts.py related_posts_block) that the blog index now shows, so readers gauge length before clicking a related post too. Thread each card's reading minutes through post_cards in build.py (already computed at build time) into the block; reuse the exact ' · N min read' formatting for visual consistency. Dev: local-qwen extends relatedposts.py to accept/render an optional minutes per card; PM wires the minutes into the post_cards data. Objective fixture verify: a card given minutes renders the token, a card given 0/None omits it, and unrelated posts still never appear.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "blog-index-reading-time-gate",
+      "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
       "stream": "C-depth",
       "dev": "local-qwen"
     }
@@ -663,6 +671,12 @@
       "title": "BLOG POST (Grok prose): 'Page experience in 2026 — what actually counts beyond Core Web Vitals'. Angle: Google folded the standalone Page Experience ranking system into its core 'helpful content' guidance, so page experience is a set of signals (Core Web Vitals, HTTPS, mobile-friendliness, no intrusive interstitials) evaluated holistically, not a single boost. Substantial + sourced: PM first web_fetch Google Search Central 'Understanding page experience in Google Search results' and the Core Web Vitals / INP docs to supply exact current facts (INP replaced FID in March 2024; the three CWV metrics + thresholds; that helpful-content is now a core-ranking signal not a separate system), Grok drafts from that brief, PM fact-checks every claim against the sources before publishing, adds tags + related:, and internally links to the existing Core Web Vitals and technical-seo pages. Respect the ~1 post / 4h cadence.",
       "dev": "grok",
       "date": "2026-08-07"
+    },
+    {
+      "id": "reading-time-blog-index",
+      "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green.",
+      "date": "2026-08-07",
+      "dev": "local-qwen (improve/blogindex.py post_list_item helper) + PM (build.py import + one wiring call, verification/ship)"
     }
   ]
 }

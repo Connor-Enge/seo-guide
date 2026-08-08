@@ -51,6 +51,13 @@ _rp_mod = _ilu.module_from_spec(_rp_spec)
 _rp_spec.loader.exec_module(_rp_mod)
 related_posts_block = _rp_mod.related_posts_block
 
+# Blog-index post card: title link + meta line (published date · reading time) + description.
+# Logic in improve/blogindex.py.
+_bi_spec = _ilu.spec_from_file_location("blogindex", os.path.join(HERE, "improve", "blogindex.py"))
+_bi_mod = _ilu.module_from_spec(_bi_spec)
+_bi_spec.loader.exec_module(_bi_mod)
+post_list_item = _bi_mod.post_list_item
+
 # Custom 404 page content (helpful links + search). Copy lives in improve/notfound.py.
 _nf_spec = _ilu.spec_from_file_location("notfound", os.path.join(HERE, "improve", "notfound.py"))
 _nf_mod = _ilu.module_from_spec(_nf_spec)
@@ -669,10 +676,11 @@ def main():
     # ---------- blog index ----------
     if posts:
         items = "".join(
-            '<li><h2><a href="%s">%s</a></h2><p class="meta">Published %s</p><p>%s</p></li>' % (
-                post_url(m["slug"]), html.escape(m["title"]),
-                time_tag(m.get("date", ""), html.escape(m.get("date", ""))), html.escape(m["description"]))
-            for m, _ in posts)
+            post_list_item(
+                post_url(m["slug"]), m["title"],
+                time_tag(m.get("date", ""), html.escape(m.get("date", ""))),
+                m["description"], reading_minutes(search_text(b)))
+            for m, b in posts)
         blog_content = f"<p>{BLOG_DESC}</p><ul class=\"post-list\">{items}</ul>"
     else:
         blog_content = f"<p>{BLOG_DESC}</p><p>Articles are on the way.</p>"
