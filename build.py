@@ -189,6 +189,15 @@ _bp_mod = _ilu.module_from_spec(_bp_spec)
 _bp_spec.loader.exec_module(_bp_mod)
 audit_blog_posting = _bp_mod.audit_blog_posting
 
+# Post-build related-posts integrity gate: the sibling "Related articles" nav must appear on exactly
+# the posts that share >=1 front-matter tag with another post, and never on a post with no tag overlap,
+# so the shared-tag internal links can never silently regress after a refactor. Error severity.
+# Logic in improve/relatedpostscheck.py.
+_rpc_spec = _ilu.spec_from_file_location("relatedpostscheck", os.path.join(HERE, "improve", "relatedpostscheck.py"))
+_rpc_mod = _ilu.module_from_spec(_rpc_spec)
+_rpc_spec.loader.exec_module(_rpc_mod)
+audit_related_posts = _rpc_mod.audit_related_posts
+
 # Post-build image-accessibility gate: every rendered <img> must carry an alt attribute (alt="" is
 # allowed for decorative images); a completely missing alt hurts accessibility and image SEO. Error
 # severity — fails the build so image a11y can never silently regress. Logic in improve/imgaltcheck.py.
@@ -196,6 +205,14 @@ _ia_spec = _ilu.spec_from_file_location("imgaltcheck", os.path.join(HERE, "impro
 _ia_mod = _ilu.module_from_spec(_ia_spec)
 _ia_spec.loader.exec_module(_ia_mod)
 audit_img_alt = _ia_mod.audit_img_alt
+
+# Post-build image-dimension gate (report-only): a rendered <img> without intrinsic width/height
+# attributes lets the browser reserve no space until the image loads, causing cumulative layout
+# shift (CLS) — a Core Web Vitals / page-experience signal. Warn only. Logic in improve/imgdimensioncheck.py.
+_id_spec = _ilu.spec_from_file_location("imgdimensioncheck", os.path.join(HERE, "improve", "imgdimensioncheck.py"))
+_id_mod = _ilu.module_from_spec(_id_spec)
+_id_spec.loader.exec_module(_id_mod)
+audit_img_dimensions = _id_mod.audit_img_dimensions
 
 # Post-build contradiction gate: a page must not tell Google both "don't index" (meta robots noindex)
 # and "index this" (its canonical URL listed in the sitemap) at once — a self-contradictory signal.
@@ -937,6 +954,16 @@ def main():
     print("BlogPosting audit: OK — every blog post carries a complete BlogPosting node"
           " (headline, datePublished, dateModified, author).")
 
+    # ---------- related-posts gate: shared-tag sibling links appear on exactly the posts that should carry them ----------
+    relatedposts_problems = audit_related_posts(OUT, post_cards, post_url)
+    if relatedposts_problems:
+        print(f"\nRELATED-POSTS AUDIT FAILED — {len(relatedposts_problems)} problem(s):")
+        for p in relatedposts_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Related-posts audit: OK — every post sharing a tag with another post carries the related-posts"
+          " nav, and no zero-overlap post does.")
+
     # ---------- sitemap gate: well-formed; every <loc> absolute + resolves; no dupes; no 404 listed ----------
     sitemap_problems = audit_sitemap(OUT, BASE_URL)
     sm_errors = [p for p in sitemap_problems if p.get("severity") == "error"]
@@ -1029,6 +1056,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("Image-alt audit: OK — every rendered <img> carries an alt attribute (alt=\"\" allowed for decorative).")
+
+    # ---------- image-dimension audit (report-only): flag <img> missing width/height (CLS risk) ----------
+    img_dim_problems = audit_img_dimensions(OUT)
+    if img_dim_problems:
+        print(f"\nImage-dimension audit — {len(img_dim_problems)} warning(s) (<img> missing width/height, layout-shift/CLS risk, non-blocking):")
+        for p in img_dim_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+    else:
+        print("Image-dimension audit: OK — every rendered <img> carries width and height (no layout-shift risk).")
 
     # ---------- heading-order gate (report-only): flag skipped heading levels (broken outline) ----------
     ho_problems = audit_heading_order(OUT)
