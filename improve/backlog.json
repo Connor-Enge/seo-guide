@@ -263,7 +263,9 @@
     },
     {
       "id": "audit-checklist-interactive",
-      "title": "FEATURE (local dev): progressive-enhancement JS that turns the audit checklist's bold lead-in items into persistable checkboxes (localStorage) with a visible progress count — no-JS readers still see full prose; wired via one <script> in the article scripts slot."
+      "title": "FEATURE (local dev): progressive-enhancement JS that turns the audit checklist's bold lead-in items into persistable checkboxes (localStorage) with a visible progress count — no-JS readers still see full prose; wired via one <script> in the article scripts slot.",
+      "note": "PRIOR ATTEMPT (2026-08-07) was authored but DISCARDED as broken — the next spec MUST fix all three defects: (1) collect the <p> ITEMS (a <p> whose firstElementChild is a <strong>), NOT the <strong> nodes themselves, so the checkbox and the 'aic-done' class land on the <p> and the '.aic-done > strong' line-through actually matches; (2) keep ALL state (the item->id map) inside ONE closure so helper functions like saveState never reference an out-of-scope variable — the prior file threw ReferenceError on `itemIds` on every checkbox toggle; (3) the site is served under BASE_URL '/seo-guide', so the page gate must use location.pathname.replace(/\\/+$/,'').endsWith('/audit-checklist'), NOT strict === '/audit-checklist' (which never matches the live path, so the prior script no-oped entirely on the deployed site). Give it a DOM-level verify (jsdom or a headless load) instead of static greps — plain greps passed all three bugs through.",
+      "dev": "local-qwen"
     },
     {
       "id": "audit-checklist-crosslink-inbody",
@@ -336,13 +338,26 @@
       "dev": "local-qwen"
     },
     {
-      "id": "code-scroll-affordance",
-      "title": "FEATURE: horizontal-scroll affordance on wide code blocks — a pure-CSS right-edge fade/shadow that appears only when a <pre> overflows horizontally (background-attachment:local gradient trick, no JS), so on mobile readers can tell a snippet scrolls sideways instead of assuming it's truncated. Must be reduced-motion-safe (static gradient, no animation), theme-variable colored for light+dark, and must not interfere with the top-left language badge or top-right copy button. Dev: local-qwen adds a small block to a new assets file (or extends codelang.css); objective verify asserts the overflow gradient rule targets pre and uses background-attachment:local.",
+      "id": "codescroll-cascade-gate",
+      "title": "DEPTH: build-time cascade-order gate protecting the just-shipped code scroll-shadow — a stdlib-only improve/cascadeordercheck.py walks docs/**/*.html and asserts (error) that on every page the assets/codescroll.css <link> appears AFTER the assets/style.css <link> in the rendered <head>, because codescroll.css overrides `pre { background }` and only wins if it loads later; a future template reorder that moved it before style.css would silently revert the affordance (style.css's plain `pre{background:var(--soft)}` would win) with no other symptom. Objective fixture verify: a head with style.css then codescroll.css passes; the reverse order fails; a head missing codescroll.css entirely is skipped (nothing to protect). Wire one call into build.py after the heading-order gate.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "wide-table-scroll",
+      "title": "FEATURE: make wide markdown tables mobile-safe — a pure-CSS rule (new assets/tablescroll.css, linked after style.css) that lets a content <table> scroll horizontally within the article column on narrow viewports instead of overflowing the layout, reusing the SAME right-edge scroll-shadow cue shipped in codescroll.css so readers can tell a table scrolls sideways. Approach: give article tables a scroll container behavior (e.g. `main article table { display:block; overflow-x:auto; max-width:100%; }` plus the three-layer background/`background-attachment: local, scroll, scroll` shadow trick, theme-aware via var(--soft), dark-mode block). No JS, no animation/transition (reduced-motion safe). Objective verify: the rule targets `table`, uses overflow-x:auto, uses background-attachment incl. local, references var(--soft), has a prefers-color-scheme:dark block, and contains no animation/transition/@keyframes. Confirm at build time that the site actually has a rendered <table> to benefit (skip shipping if none).",
       "stream": "A-feature",
       "dev": "local-qwen"
     }
   ],
   "done": [
+    {
+      "id": "code-scroll-affordance",
+      "title": "FEATURE: horizontal-scroll affordance on wide code blocks — a pure-CSS right-edge fade/shadow that appears only when a <pre> overflows horizontally (background-attachment gradient trick, no JS).",
+      "changed": "Local Qwen dev (via dispatch.py) authored the self-contained assets/codescroll.css on attempt 1/3 (ALL_PASS against an objective verify). It applies the classic pure-CSS scrolling-shadow trick to `pre`: a three-layer background — (1) an opaque cover gradient in the panel color `linear-gradient(to left, var(--soft) 55%, transparent)` pinned `right center` at 24px×100%, (2) a shadow `radial-gradient(farthest-side at 100% 50%, rgba(15,23,42,.18), transparent)` pinned `right center` at 12px×100%, and (3) the solid `var(--soft)` base fill — with `background-attachment: local, scroll, scroll`. Because the opaque cover scrolls WITH the content (local) while the shadow is fixed to the visible right edge (scroll), the fade appears ONLY while hidden content remains to the right and vanishes at the far-right end / when a snippet doesn't overflow at all — a truthful mobile 'scrolls sideways' cue. A `@media (prefers-color-scheme:dark)` block re-declares the same layered background with a dark-tuned shadow rgba(0,0,0,.55). Fully static (NO JS/animation/transition/keyframes = reduced-motion safe) and it never touches the language badge (pre[data-lang]::before) or the copy button (.copy-code). PM did ONLY the wiring: added one <link> to assets/codescroll.css in templates/base.html placed AFTER style.css so its `pre { background }` override wins the cascade (verified line 29 > line 24 in the rendered <head>) while style.css's border/radius/padding/overflow:auto on `pre` are preserved. PM ADVERSARIAL PRE-FLIGHT: this run began by catching an unrelated uncommitted orphan — assets/audit-checklist.js from a prior 'audit-checklist-interactive' run — and DISCARDED it because it was genuinely broken (its selector collected <strong> nodes instead of the <p> items; saveState() referenced an init()-scoped `itemIds` and threw ReferenceError on every toggle; and its page gate used strict === '/audit-checklist' which never matches the real /seo-guide/audit-checklist path, so it no-oped on the live site); the audit-checklist-interactive item was re-queued with those three fixes noted. VERIFIED end-to-end: build GREEN (12 guide pages + 5 posts = 20 HTML pages, BUILD_EXIT=0); all eleven build-time gates OK (internal-link, canonical, metadata, JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, image-alt, heading-order); full SEO gate GREEN on docs/index.html (exactly one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present); codescroll.css copied byte-identical into docs/assets/ and referenced on 20/20 rendered pages.",
+      "dev": "local-qwen (codescroll.css) + PM wiring/verification",
+      "date": "2026-08-07"
+    },
     {
       "id": "byline-time-element",
       "title": "FEATURE: wrap the visible published/updated dates in the byline in semantic <time datetime=\"YYYY-MM-DD\"> elements so the dates are machine-parseable in the rendered HTML itself (not only inside JSON-LD), aiding assistive tech and crawlers.",
