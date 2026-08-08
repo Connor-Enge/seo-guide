@@ -50,7 +50,7 @@ Google measures real-world user experience with Core Web Vitals. Aim for:
 Fast, stable pages win ties and keep users from bouncing. A lean, no-JavaScript static site (like this one) passes these almost by default.
 
 ## Structured data
-Add **JSON-LD** structured data (schema.org) so Google can understand entities and show rich results — `Article`, `BreadcrumbList`, `FAQPage`, `Product`, and more. Every page here ships Article + BreadcrumbList markup, and pages with a FAQ (like this one) add FAQPage. Validate it with Google's Rich Results Test.
+Add **JSON-LD** structured data (schema.org) so Google can understand entities and show rich results — `Article`, `BreadcrumbList`, `FAQPage`, `Product`, and more. Every page here ships Article + BreadcrumbList markup, and pages with a FAQ (like this one) add FAQPage. A physical or service-area business should also add [`LocalBusiness` structured data](/local-seo/#structured-data-for-local-businesses) with its name, address, and phone. Validate it with Google's Rich Results Test.
 
 Add Article JSON-LD to help Google understand the page and potentially enable rich results.
 

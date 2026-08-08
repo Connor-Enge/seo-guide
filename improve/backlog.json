@@ -99,7 +99,8 @@
       "id": "twitter-card-enum",
       "title": "DEPTH: extend improve/socialmetacheck.py to ERROR (kind 'twitter_card_invalid') when a page's twitter:card is present but not one of the valid X/Twitter card types (summary, summary_large_image, app, player) — an invalid value makes X drop the card entirely, so this locks the site's cards to valid types. stdlib-only, objective fixture verify (a page with twitter:card=summary_large_image passes; twitter:card=banner fails; a page with no twitter:card keeps only the existing missing_twitter_card warn, no new error). Dev: local-qwen.",
       "stream": "C-depth",
-      "dev": "local-qwen"
+      "dev": "local-qwen",
+      "note_pm": "First local-qwen attempt (2026-08-08) failed 3x: the whole-file rewrite could not faithfully reproduce the stateful MetaTagParser(HTMLParser) subclass (parse_starttag crashed). Next attempt: dispatch a NEW tiny self-contained helper module improve/twittercardcheck.py that regex-scans rendered HTML for <meta name=\"twitter:card\" content=\"X\"> and returns a twitter_card_invalid error when X not in {summary,summary_large_image,app,player}; PM wires one gate block into build.py. Avoids re-deriving the existing parser."
     },
     {
       "id": "sitemap-example-snippet",
@@ -531,6 +532,18 @@
     {
       "id": "fragment-encoded-id-audit",
       "title": "DEPTH: report-only WARN in fragmentcheck for fragments that only resolve after case-fold or trailing-space trim — surface 'near-miss' anchors (e.g. #Section vs id=section) that browsers won't match, so hand-authored deep-links get caught before they silently fail. Non-blocking warn kind 'fragment-case-mismatch'."
+    },
+    {
+      "id": "twittercardcheck-standalone",
+      "title": "DEPTH: ship improve/twittercardcheck.py (NEW self-contained regex-based module, local-qwen) that scans rendered docs/**/*.html for <meta name=twitter:card content=X> and returns an ERROR (kind twitter_card_invalid) when X is not one of {summary,summary_large_image,app,player} — invalid values make X drop the card entirely. stdlib-only, regex over the raw HTML (do NOT subclass HTMLParser), objective fixture verify (banner->error; summary_large_image->pass; no tag->no error). PM wires one gate block into build.py after the social-meta gate. Supersedes the failed whole-file twitter-card-enum path.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "deorphan-glossary-audit-checklist",
+      "title": "DEPTH (pm-wired internal links): the Glossary and Audit-Checklist pages each have only 1 inbound contextual link. Add 2-3 genuine descriptive-anchor in-body links to each from thematically matching spots (e.g. link 'glossary'/specific terms from measuring & keyword-research; link the audit checklist from technical-seo and common-seo-mistakes where a 'run an audit' step is described). Verify each target renders to a live URL and build stays green.",
+      "stream": "C-depth",
+      "dev": "pm-wired internal links"
     }
   ],
   "done": [
@@ -1148,6 +1161,12 @@
       "title": "DEPTH: build-time gate improve/fragmentcheck.py that validates in-page fragment anchors. For every rendered internal <a href> under BASE_URL that carries a '#id', load the target page in docs/ and fail (error) if no element on that page has a matching id=. Closes the gap where linkcheck.py strips the fragment (.split('#')[0]) and never confirms the anchor resolves — relevant now that the pillar→Common-SEO-Mistakes deep-links (the site's first fragment internal links) shipped. stdlib-only (regex-scan ids/hrefs, no external deps), skip pure '#' and cross-origin hrefs; objective fixture verify (an href to /common-seo-mistakes/#using-duplicate-or-generic-title-tags passes when that id exists; an href to a bogus #no-such-id fails). PM wires one call into build.py after linkcheck.",
       "result": "SHIPPED 2026-08-08 (dev: local-qwen built improve/fragmentcheck.py in a prior run + pm-wired this run). Build-time error gate: every internal '#id' link (same-page or BASE_URL page + #frag) must resolve to a real id=/name= anchor on its target page; reserved '#'/'#top' and cross-origin/unknown-target hrefs skipped. Closes the linkcheck fragment-strip gap, locking the site's TOC/heading-permalink/pillar->section deep-links. Verified: 0 false positives on current docs; fixture-tested teeth (flags bogus same-page + cross-page frags, passes valid ones).",
       "done_date": "2026-08-08"
+    },
+    {
+      "id": "deorphan-local-seo",
+      "shipped": "2026-08-08",
+      "dev": "pm-wired internal links",
+      "note": "De-orphaned the Local SEO pillar (was 0 inbound contextual links). Added 2 net-new descriptive-anchor in-body inbound links: how-search-works.md ('trigger [local packs](/local-seo/)' in the results-features paragraph) and technical-seo.md structured-data section (a LocalBusiness pointer deep-linking /local-seo/#structured-data-for-local-businesses). Both render to live URLs, fragment resolves, build green + all SEO checks pass."
     }
   ]
 }

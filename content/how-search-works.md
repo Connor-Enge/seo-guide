@@ -32,7 +32,7 @@ When a user enters a query, Google selects and orders results from the index acc
 
 ## Serving
 
-Google assembles the final results page after ranking is complete. The same query produces different results depending on the user’s location, language, and device. A search for local businesses therefore shows different listings in different cities. The search features that appear also vary with query intent; a request for repair shops tends to trigger local packs, while a product query is more likely to display images.
+Google assembles the final results page after ranking is complete. The same query produces different results depending on the user’s location, language, and device. A search for local businesses therefore shows different listings in different cities. The search features that appear also vary with query intent; a request for repair shops tends to trigger [local packs](/local-seo/), while a product query is more likely to display images.
 
 A page can be indexed yet fail to appear for a given query because its content does not match that query, its quality signals are weak, or a robots meta rule prevents serving. Because results are personalized, any rank-tracking data you collect is directional rather than absolute.
 
