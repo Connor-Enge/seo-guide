@@ -86,12 +86,6 @@
       "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
     },
     {
-      "id": "jsonld-ref-integrity",
-      "title": "DEPTH: extend improve/jsonldcheck.py with a dangling-@id-reference check — collect every node @id defined in a page's @graph, then assert every reference object ({'@id': X} appearing as a property value such as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage) points at an @id actually defined in that SAME page's graph, so a byline/publisher/isPartOf reference can never dangle after a refactor. Error severity, no new wiring (it lives inside audit_jsonld). Objective fixture verify: a graph whose Article.author={'@id':...} has no matching Person node fails; a fully-connected graph passes.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "metacheck-desc-title-lowerbound",
       "title": "DEPTH: now that descriptions have been trimmed to <=155 chars, extend improve/metacheck.py with the OPPOSITE guard so trimming never overshoots — add report-only 'short_description' (rendered meta description < ~70 chars, too terse to earn a click) and 'short_title' (<title> under ~20 chars, wasting SERP real estate) warn kinds, measured after html.unescape like the existing checks, with an objective fixture verify (a 40-char desc and a 12-char title warn; a healthy 130-char desc / 45-char title do not). Report-only, never fail the build. Dev: local Qwen extends metacheck.py; PM re-runs the audit and acts on any real findings."
     },
@@ -436,6 +430,18 @@
       "title": "FEATURE/gate: build-time thin-content guard — new improve/thincontentcheck.py (stdlib-only, walk-docs style) that computes each guide page's rendered MAIN word count (strip nav/footer/toc/related) and emits a report-only 'thin_content' WARN when a non-index article falls below ~350 words, so thin pillar pages get flagged for expansion before they erode topical authority. Report-only, never fail the build. Objective fixture verify (a 120-word main warns; an 800-word main does not). PM wires one call in build.py's audit phase. dev: local-qwen.",
       "stream": "A-feature",
       "dev": "local-qwen"
+    },
+    {
+      "id": "jsonld-ref-type-compat",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: now that no @id reference can dangle, extend improve/jsonldrefcheck.py so a RESOLVED reference's target node @type is compatible with the referring property — author -> Person or Organization, publisher -> Organization, isPartOf -> WebSite/WebPage/CollectionPage/Blog, mainEntityOfPage -> WebPage. Error severity (a byline that resolves to a WebSite node is still wrong for rich results). Reuse the existing node/defined-id collection; stdlib-only; objective fixture verify (author -> Person passes; author -> WebSite fails; publisher -> Organization passes; publisher -> Person fails). Dev: local-qwen."
+    },
+    {
+      "id": "html-lang-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate that every rendered docs/**/*.html carries a non-empty, well-formed <html lang=\"..\"> attribute (BCP-47-ish: matches ^[a-z]{2,3}(-[A-Za-z0-9]+)*$) — a missing/blank lang harms accessibility (screen-reader pronunciation) and is a language signal for search. New improve/htmllangcheck.py in the walk-docs/regex style, stdlib-only, error severity, objective fixture verify (<html lang=\"en\"> passes; <html> with no lang and <html lang=\"\"> each fail). PM wires one call in build.py."
     }
   ],
   "done": [
@@ -902,6 +908,14 @@
       "dev": "grok",
       "stream": "C-depth",
       "date": "2026-08-08"
+    },
+    {
+      "id": "jsonld-ref-integrity",
+      "title": "DEPTH: extend improve/jsonldcheck.py with a dangling-@id-reference check — collect every node @id defined in a page's @graph, then assert every reference object ({'@id': X} appearing as a property value such as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage) points at an @id actually defined in that SAME page's graph, so a byline/publisher/isPartOf reference can never dangle after a refactor. Error severity, no new wiring (it lives inside audit_jsonld). Objective fixture verify: a graph whose Article.author={'@id':...} has no matching Person node fails; a fully-connected graph passes.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "date": "2026-08-08",
+      "note": "Shipped: improve/jsonldrefcheck.py (audit_jsonld_refs) wired into build.py; error-severity gate — every untyped {\"@id\"} reference used as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage must resolve to a node defined in the same page @graph. Fixture-verified (dangling author ref fails; fully-connected graph passes); build green."
     }
   ]
 }

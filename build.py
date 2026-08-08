@@ -205,6 +205,15 @@ _fc_mod = _ilu.module_from_spec(_fc_spec)
 _fc_spec.loader.exec_module(_fc_mod)
 audit_fenced_code = _fc_mod.audit_fenced_code
 
+# Post-build JSON-LD reference-integrity gate: within each page, every entity-reference object
+# ({"@id": X} used as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage) must resolve to a
+# node actually defined on that page, so a byline/publisher/isPartOf reference can never dangle after
+# a refactor and silently break rich-result eligibility. Error severity. Logic in improve/jsonldrefcheck.py.
+_jr_spec = _ilu.spec_from_file_location("jsonldrefcheck", os.path.join(HERE, "improve", "jsonldrefcheck.py"))
+_jr_mod = _ilu.module_from_spec(_jr_spec)
+_jr_spec.loader.exec_module(_jr_mod)
+audit_jsonld_refs = _jr_mod.audit_jsonld_refs
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -889,6 +898,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("JSON-LD audit: OK — every page's entity graph parses with connected, absolute, consistent @ids.")
+
+    # ---------- JSON-LD reference-integrity gate: no dangling author/publisher/isPartOf @id refs ----------
+    jsonldref_problems = audit_jsonld_refs(OUT, BASE_URL)
+    if jsonldref_problems:
+        print(f"\nJSON-LD REFERENCE AUDIT FAILED — {len(jsonldref_problems)} dangling reference(s):")
+        for p in jsonldref_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("JSON-LD reference audit: OK — every author/publisher/isPartOf/about/mainEntity reference resolves to a defined node.")
 
     # ---------- blog structured-data gate: every post carries a complete BlogPosting node ----------
     blogposting_problems = audit_blog_posting(OUT, BASE_URL)
