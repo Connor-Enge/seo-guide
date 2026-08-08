@@ -176,12 +176,6 @@
       "dev": "grok"
     },
     {
-      "id": "related-blocks-spacing",
-      "title": "FEATURE: cohesive footer spacing when a blog post carries BOTH the curated 'Related reading' block and the new auto 'Related articles' block — currently they stack as two separately-bordered sections. Add a small no-JS, reduced-motion/contrast-safe CSS rule (adjacent-sibling: .related + .related-posts) that tightens the second block's top margin/border so the two related sections read as one cohesive footer unit. Dev: local-qwen adds one scoped rule to assets/style.css; verify asserts the '.related + .related-posts' selector is present and the light/dark tokens are untouched.",
-      "stream": "A-feature",
-      "dev": "local-qwen"
-    },
-    {
       "id": "pageexp-inbound-links",
       "title": "INTERNAL LINKS: give the new 'Page Experience in 2026' post inbound links from its topic hubs — add one contextual in-body link (descriptive anchor) to /blog/page-experience-beyond-core-web-vitals/ from the technical-seo page (Core Web Vitals section) and from the passing-core-web-vitals-2026 post, so the new post isn't an orphan. One link per page.",
       "stream": "C-depth",
@@ -559,6 +553,18 @@
       "stream": "A-feature",
       "dev": "local-qwen",
       "title": "FEATURE: show the same ' N min read' meta token on the CURATED 'Related reading' block (build.py related_block) that the auto 'Related articles' cards now show, so both footer link blocks give consistent length cues. PM threads each related target's precomputed reading minutes (from the related_registry, already built at build time) into related_block; local-qwen extends the block renderer to emit '<p class=\"meta\">N min read</p>' when a target has a positive minutes value and omit it otherwise (guide hubs/homepage with no reading time show no token). Objective fixture verify: a target with minutes renders the token, a target with 0/None omits it, existing descriptive anchors/structure unchanged. Ties to reading-time-related-cards."
+    },
+    {
+      "id": "related-list-3col-wide",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: on very wide viewports the auto/related footer uses horizontal space poorly (2 columns max). Add one scoped @media (min-width:~64rem) rule in a NEW self-contained CSS asset that expands .related-list to 3 columns (grid-template-columns:1fr 1fr 1fr) so a 3-card related block reads across the full width on large screens while staying 1/2-col on mobile/tablet. Pure CSS, no JS, no token changes, no :root. Dev: local-qwen writes the asset; PM wires one <link> in templates/base.html."
+    },
+    {
+      "id": "post-pagination-faceted-nav",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'Pagination & faceted navigation for SEO in 2026 — rel=next/prev is gone, so how do you handle paginated series and filter URLs?'. Angle: Google no longer uses rel=next/prev; use self-referencing canonicals on each paginated page; avoid index bloat from facet/filter URL combinations; when to noindex vs canonicalize vs robots-block facets; the role of a crawlable 'View all' page; keep internal links to deep pages. PM first web_fetch Google Search Central pagination + faceted-navigation (ecommerce) docs to supply exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and ecommerce-seo. Respect the ~1 post / 4h cadence."
     }
   ],
   "done": [
@@ -1223,6 +1229,14 @@
       "dev": "local-qwen (built improve/relatedposts.py) + pm-wired (minutes into post_cards in build.py)",
       "done_date": "2026-08-08",
       "result": "Auto 'Related articles' cards now show a '<p class=\"meta\">N min read</p>' token from each post's computed reading_minutes; 0/None/absent omits it; unrelated posts still excluded; related-posts marker + integrity gate intact; build green + all SEO checks pass. Live cards render real values (e.g. '4 min read')."
+    },
+    {
+      "id": "related-blocks-spacing",
+      "title": "FEATURE: cohesive footer spacing when a blog post carries BOTH the curated 'Related reading' block and the new auto 'Related articles' block — currently they stack as two separately-bordered sections. Add a small no-JS, reduced-motion/contrast-safe CSS rule (adjacent-sibling: .related + .related-posts) that tightens the second block's top margin/border so the two related sections read as one cohesive footer unit. Dev: local-qwen adds one scoped rule to assets/style.css; verify asserts the '.related + .related-posts' selector is present and the light/dark tokens are untouched.",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "date": "2026-08-08",
+      "note": "Shipped a self-contained assets/related-spacing.css (scoped rule `.related + .related-posts` -> margin-top:1.25rem; padding-top:0; border-top:0) merging the stacked curated 'Related reading' and auto 'Related articles' blocks into one cohesive footer unit on the 5 blog posts that carry both; PM wired one <link> in templates/base.html. Pure CSS, no JS/motion/token changes; build green + all SEO checks pass."
     }
   ]
 }

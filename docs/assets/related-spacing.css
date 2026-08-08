@@ -1,0 +1,6 @@
+/* Merge two related footer blocks into one cohesive unit */
+.related + .related-posts {
+  margin-top: 1.25rem;
+  padding-top: 0;
+  border-top: 0;
+}
