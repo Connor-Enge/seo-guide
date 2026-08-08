@@ -1,6 +1,6 @@
 ---
 slug: common-seo-mistakes
-order: 10
+order: 11
 title: Common SEO Mistakes
 h1: Common SEO Mistakes — and Exactly How to Avoid Each
 description: The SEO mistakes that quietly cap your rankings — keyword stuffing, thin content, blocked pages, bought links — and the exact, sourced fix for each.

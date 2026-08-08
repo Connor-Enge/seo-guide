@@ -6,16 +6,8 @@
       "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
     {
-      "id": "dark-mode",
-      "title": "FEATURE: CSS-only dark mode via prefers-color-scheme (optional toggle), accessible contrast in both themes"
-    },
-    {
       "id": "related-articles",
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
-    },
-    {
-      "id": "local-seo",
-      "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
     {
       "id": "og-image",
@@ -76,10 +68,6 @@
     {
       "id": "pdf-print-button",
       "title": "FEATURE: subtle 'Print / Save as PDF' action in the article footer (progressive-enhancement window.print() button, hidden with no JS) so readers discover the new print stylesheet"
-    },
-    {
-      "id": "search-term-highlight",
-      "title": "FEATURE: highlight matched query terms with <mark> in on-site search results for scannability (extend the existing draw() in search.js; escape first then wrap matches, reduced-motion/contrast-safe styling in style.css)."
     },
     {
       "id": "glossary-crosslink",
@@ -352,6 +340,18 @@
     {
       "id": "ext-link-a11y-cue",
       "title": "DEPTH/accessibility: the new outbound ↗ marker is purely visual — add an accessible, non-visual cue that a link leaves the site for screen-reader users (e.g. a build.py post-processor appends a visually-hidden \"(opens an external site)\" span inside a.ext anchors, or an aria technique), plus a .visually-hidden utility if missing. No-JS, no layout shift; verify internal links untouched and the cue is present on ext anchors."
+    },
+    {
+      "id": "localseo-schema-snippet",
+      "title": "DEPTH/CONTENT: add a minimal, valid, HTML-escaped LocalBusiness JSON-LD example as a fenced code block to local-seo.md's 'Structured data for local businesses' section — a most-specific subtype (e.g. Restaurant) with required name + address (PostalAddress: streetAddress/addressLocality/addressRegion/postalCode/addressCountry) and recommended geo/telephone/openingHoursSpecification/priceRange/url, and NO self-serving aggregateRating/review. PM first web_fetch Google Search Central 'Local Business (LocalBusiness) structured data' for exact current syntax and supplies the verified snippet; Grok writes the one connective sentence; PM fact-checks before placing. Gives the copy-code button a real local-schema target and demonstrates the syntax the page describes. Must stay escaped inside <pre><code> (respect the code-fence integrity gate) so it never emits a second real JSON-LD node.",
+      "stream": "C-depth",
+      "dev": "grok"
+    },
+    {
+      "id": "localseo-inbound-links",
+      "title": "INTERNAL LINKS: add a contextual in-body link to the new Local SEO pillar from measuring.md and common-seo-mistakes.md (descriptive anchor text, one per page, in the most relevant existing sentence) so the page earns in-body inbound links beyond the nav + related blocks and can never orphan. Skip if a natural, non-forced anchor spot doesn't exist on a page.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -714,6 +714,24 @@
       "date": "2026-08-07",
       "dev": "local-qwen",
       "note": "Outbound links to third-party hosts now get rel=\"noopener\" + class=\"ext\" via improve/extlinks.py (mark_external wired into render()), and a subtle decorative ↗ 'leaves this site' indicator via assets/extlinks.css (a.ext:not(:empty)::after, muted+no layout shift, dark-mode via var(--muted)). local-qwen built the CSS marker; wired with one <link> in base.html. Verified: 14 external anchors marked, 0 same-host links touched; build green, all SEO gates pass."
+    },
+    {
+      "id": "local-seo",
+      "date": "2026-08-07",
+      "dev": "grok",
+      "note": "New pillar page content/local-seo.md (order 9, in top nav). PM sourced authoritative facts from Google Search Central (LocalBusiness structured data: required name+address PostalAddress, recommended geo/telephone/openingHoursSpecification/priceRange/url, most-specific subtype, self-review caveat) and Google Business Profile Help (local ranking = relevance + distance + prominence; verify, complete info, reviews, photos). Grok drafted the ~1000-word body from that brief; PM fact-checked every claim against the sources, trimmed the meta description to 147 chars, set the H1, and placed it. Wired: renumbered audit-checklist/mistakes/glossary to 10/11/12, added local-seo to related: of on-page-seo + technical-seo for in-body inbound links. Build green; title/desc/canonical/1x h1/Article JSON-LD/sitemap/related-block all verified on the new page."
+    },
+    {
+      "id": "dark-mode",
+      "date": "2026-08-07",
+      "dev": "n/a",
+      "note": "Already implemented — assets/style.css :root ships a full @media (prefers-color-scheme:dark) block overriding --ink/--muted/--line/--bg/--soft/--card/--accent* + shadows. Verified present this run; closed to avoid duplicate work."
+    },
+    {
+      "id": "search-term-highlight",
+      "date": "2026-08-07",
+      "dev": "local-qwen",
+      "note": "Built by a prior run's local-qwen (assets/search.js highlight(escapedText, terms): escape-first then wrap matches in <mark>, applied to title+description in draw()) but left uncommitted; committed this run in a dedicated commit. Verified build-green and reduced-motion/contrast-safe."
     }
   ]
 }
