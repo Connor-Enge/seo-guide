@@ -18,10 +18,6 @@
       "title": "Add concrete before/after examples (title tags, URLs, headings) to on-page + technical"
     },
     {
-      "id": "international-seo",
-      "title": "New section: International SEO — hreflang, ccTLD vs subfolder, duplicate-language handling"
-    },
-    {
       "id": "homepage-depth",
       "title": "Enrich the homepage: section summaries, what-you'll-learn, clear reading path"
     },
@@ -326,12 +322,6 @@
       "title": "BLOG POST: product structured data in 2026 for online stores — Product snippets vs merchant listings, which properties drive which rich results (ratings, shipping, availability, price drop, returns), the Organization-level return-policy/loyalty markup, and a Rich Results Test + Merchant Center validation workflow; source strictly to Google Search Central's product / merchant-listing / return-policy docs. (Only publish if >4h since newest content/blog date.)"
     },
     {
-      "id": "404-did-you-mean",
-      "stream": "A-feature",
-      "dev": "local-qwen",
-      "title": "FEATURE: build on the new 404 URL->query pre-fill — after populating #nf-q, render a small client-side 'Did you mean?' list of the top 2-3 matching pages inline on the 404 page by fetching the existing search-index.json and scoring against the derived query (reuse the same substring/tag matching search.js uses), so a mistyped/renamed URL surfaces likely destinations without a second click. Progressive enhancement, only on 404.html, fully graceful if JS is off or the fetch fails; no new dependencies. Objective verify: a DOM+fetch stub with a known index yields the expected top matches for a sample path."
-    },
-    {
       "id": "script-src-exists-gate",
       "stream": "C-depth",
       "dev": "local-qwen",
@@ -484,6 +474,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: single-source the 220-wpm reading-speed constant. It is currently hard-coded independently in improve/readinglencheck.py (the integrity gate) and improve/readingtime.py (the visible byline). Factor it into one tiny shared module (e.g. improve/readingspeed.py exposing WPM=220 + a reading_minutes() helper) and have BOTH importers use it, so the machine timeRequired and the reader-facing '≈N min read' can never drift apart. Objective verify: both modules reference the shared constant and reading_minutes() returns the same value the gate expects for a known word count. Dev: local-qwen."
+    },
+    {
+      "id": "intl-seo-inbound-links",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "INTERNAL LINKS: give the new International SEO pillar in-body inbound links from its topic hubs — add one contextual link (descriptive anchor) to /international-seo/ from technical-seo.md (near the canonical/duplicate-URL discussion) and one from how-search-works.md (canonical clustering) so the new pillar earns body inbound links beyond the nav + related block."
+    },
+    {
+      "id": "post-hreflang-mistakes",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'Why Google ignores your hreflang tags — the return-link, self-reference, and canonical-conflict traps'. Angle: hreflang only works when annotations are reciprocal and self-referential, URLs are fully qualified, and each page's canonical points to itself (not one master locale). PM first web_fetch Google Search Central localized-versions docs, supplies verified facts + a correct/incorrect example pair; deep-links to the new /international-seo/ pillar."
     }
   ],
   "done": [
@@ -1001,6 +1003,21 @@
       "dev": "local-qwen",
       "date": "2026-08-08",
       "note": "Shipped: improve/readinglencheck.py (built by local-qwen) walks docs/**/*.html and, for every Article/BlogPosting node carrying timeRequired, errors if timeRequired is not ^PT\\d+M$, if wordCount is not a positive int, or if the PT#M minutes disagree with round(wordCount/220); nodes with neither field are skipped. Wired one call into build.py (PM). Verified: good/skip/neither pass; malformed PT string, wordCount=0, and PT2M-vs-1443-words each error; full build green."
+    },
+    {
+      "id": "international-seo",
+      "title": "New section: International SEO — hreflang, ccTLD vs subfolder, duplicate-language handling",
+      "shipped": "2026-08-08",
+      "dev": "grok",
+      "note": "Shipped 2026-08-08: new International SEO pillar page (content/international-seo.md, order 11). Body written by Grok from PM-sourced Google Search Central facts (multilingual vs multi-regional, ccTLD/subdomain/subdirectory URL structures, locale signals, hreflang self+reciprocal rules with HTML example, self-canonical pitfall, common mistakes, FAQ). PM authored front matter + renumbered trailing pages. Build green, all SEO gates pass. (dev: grok)"
+    },
+    {
+      "id": "404-did-you-mean",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: build on the new 404 URL->query pre-fill — after populating #nf-q, render a small client-side 'Did you mean?' list of the top 2-3 matching pages inline on the 404 page by fetching the existing search-index.json and scoring against the derived query (reuse the same substring/tag matching search.js uses), so a mistyped/renamed URL surfaces likely destinations without a second click. Progressive enhancement, only on 404.html, fully graceful if JS is off or the fetch fails; no new dependencies. Objective verify: a DOM+fetch stub with a known index yields the expected top matches for a sample path.",
+      "shipped": "2026-08-08",
+      "note": "Shipped 2026-08-08: client-side 'Did you mean?' on the 404 page — assets/nf-suggest.js now token-matches the failed URL slug against the page links in the 404 .related-list (16 candidates) and renders the top 3 as an accessible <nav> above the search box; pure progressive enhancement, build green, node --check passes. Built by local-qwen in a prior run and left uncommitted; verified & shipped this run. (dev: local-qwen)"
     }
   ]
 }

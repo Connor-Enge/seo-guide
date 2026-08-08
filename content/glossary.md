@@ -1,6 +1,6 @@
 ---
 slug: glossary
-order: 13
+order: 14
 title: SEO Glossary
 h1: SEO Glossary — Key Terms, Clearly Defined
 description: SEO glossary gives plain definitions for crawling, indexing, canonicals, E-E-A-T, and Core Web Vitals each linked to further guides.

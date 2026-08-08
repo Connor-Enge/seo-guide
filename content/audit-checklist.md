@@ -1,6 +1,6 @@
 ---
 slug: audit-checklist
-order: 11
+order: 12
 title: SEO Audit Checklist
 h1: The Technical SEO Audit Checklist
 description: A practical, prioritized technical SEO audit checklist — crawlability, indexing, Core Web Vitals, on-page, structured data, and monitoring, with fixes.
