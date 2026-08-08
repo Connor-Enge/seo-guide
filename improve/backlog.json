@@ -228,10 +228,6 @@
       "title": "FEATURE: wire the already-built, self-tested noindex-vs-sitemap consistency gate (improve/noindexsitemapcheck.py) into build.py's post-build audit — fail the build if any page emits <meta name=robots content=...noindex...> while its URL is also listed in sitemap.xml (a contradictory index signal Google penalizes). PM wires one import block + one call, merging audit_noindex_sitemap(OUT, BASE_URL) into the existing post-build problems list next to audit_internal_links. Verify: a clean build stays green and reports zero such conflicts."
     },
     {
-      "id": "ext-link-a11y-cue",
-      "title": "DEPTH/accessibility: the new outbound ↗ marker is purely visual — add an accessible, non-visual cue that a link leaves the site for screen-reader users (e.g. a build.py post-processor appends a visually-hidden \"(opens an external site)\" span inside a.ext anchors, or an aria technique), plus a .visually-hidden utility if missing. No-JS, no layout shift; verify internal links untouched and the cue is present on ext anchors."
-    },
-    {
       "id": "localseo-schema-snippet",
       "title": "DEPTH/CONTENT: add a minimal, valid, HTML-escaped LocalBusiness JSON-LD example as a fenced code block to local-seo.md's 'Structured data for local businesses' section — a most-specific subtype (e.g. Restaurant) with required name + address (PostalAddress: streetAddress/addressLocality/addressRegion/postalCode/addressCountry) and recommended geo/telephone/openingHoursSpecification/priceRange/url, and NO self-serving aggregateRating/review. PM first web_fetch Google Search Central 'Local Business (LocalBusiness) structured data' for exact current syntax and supplies the verified snippet; Grok writes the one connective sentence; PM fact-checks before placing. Gives the copy-code button a real local-schema target and demonstrates the syntax the page describes. Must stay escaped inside <pre><code> (respect the code-fence integrity gate) so it never emits a second real JSON-LD node.",
       "stream": "C-depth",
@@ -549,6 +545,14 @@
       "stream": "A-feature",
       "dev": "local-qwen",
       "title": "FEATURE: show the code language as a small badge on each <pre> block, reading the existing data-lang attribute the renderer already emits (improve/fencedcode.py sets data-lang=\"<lang>\"), via one scoped CSS rule in assets/style.css using pre[data-lang]::before { content: attr(data-lang) } — no JS, reduced-motion/contrast-safe, light+dark tokens untouched, positioned so it never overlaps the existing copy-code button. Verify asserts the pre[data-lang]::before rule is present and existing tokens unchanged. Ties to the just-shipped fenced-lang gate."
+    },
+    {
+      "id": "extlink-cue-gate",
+      "title": "DEPTH (local-qwen): build-time stdlib gate improve/extlinkcuecheck.py that reads assets/extlinks.css and asserts the a.ext ::after content still carries the '/' CSS alternative-text cue whose alt string contains 'external' — so the just-shipped screen-reader external-link cue can never silently regress. Wire with one call in build.py; report-only WARN plus a hard fail if the a.ext ::after rule loses its content declaration entirely."
+    },
+    {
+      "id": "related-pillars-block",
+      "title": "FEATURE: surface a compact 'Related in this guide' block on the pillar content pages (not just blog posts) computed from shared front-matter tags, reusing the improve/relatedposts.py sibling-by-tags logic. New improve helper generating the block, wired into render() for content pages only; must not duplicate an existing curated related: list, must be accessible (nav landmark + heading), and must keep the build green + every SEO gate passing."
     }
   ],
   "done": [
@@ -1198,6 +1202,13 @@
       "shipped": "2026-08-08",
       "built_by": "local-qwen (built) + pm-wired",
       "result": "improve/fencedlangcheck.py: error-severity build gate that every rendered <pre><code> fenced block carries a non-empty language-* class; wired one gate block in build.py after the fenced-code audit. All 3 current fences (html/json/txt) pass; build green + all SEO checks pass."
+    },
+    {
+      "id": "ext-link-a11y-cue",
+      "title": "DEPTH/accessibility: the new outbound ↗ marker is purely visual — add an accessible, non-visual cue that a link leaves the site for screen-reader users (e.g. a build.py post-processor appends a visually-hidden \"(opens an external site)\" span inside a.ext anchors, or an aria technique), plus a .visually-hidden utility if missing. No-JS, no layout shift; verify internal links untouched and the cue is present on ext anchors.",
+      "date": "2026-08-08",
+      "dev": "local-qwen",
+      "note": "Shipped the screen-reader cue via CSS content alternative-text: assets/extlinks.css now sets a.ext:not(:empty)::after { content: '\\2197' / 'external link'; } so AT announces 'external link' while sighted users still see the decorative ↗ (color/size/spacing unchanged; reduced-motion block kept). No JS, no layout shift, no CSS utility needed. A first attempt to inject a visually-hidden <span> via improve/extlinks.py was tried but the local dev couldn't get the whole-anchor regex right after 3 iters, so I restored extlinks.py and shipped the simpler, equally-accessible CSS alt-text (broadly supported by 2026: Chrome 77+, Firefox 121+, Safari 17.4+). Build green; all SEO gates pass. Verified alt-text lands in docs/assets/extlinks.css. dev: local-qwen."
     }
   ]
 }

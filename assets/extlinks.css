@@ -1,11 +1,10 @@
-/* Adds a subtle 'leaves this site' indicator to external links using an up-right arrow */
-
+/* The '/' is the CSS content alternative-text for AT */
 a.ext:not(:empty)::after {
-  content: '\2197';
-  display: inline-block;
+  content: '\2197' / 'external link';
   margin-left: 0.15em;
   font-size: 0.85em;
   color: var(--muted);
+  display: inline-block;
 }
 
 @media (prefers-reduced-motion: no-preference) {
