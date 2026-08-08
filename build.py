@@ -162,6 +162,15 @@ _ho_mod = _ilu.module_from_spec(_ho_spec)
 _ho_spec.loader.exec_module(_ho_mod)
 audit_heading_order = _ho_mod.audit_heading_order
 
+# Post-build byline <time> gate: every rendered <time> element must carry a non-empty datetime
+# attribute matching ^\d{4}-\d{2}-\d{2}$ (zero-padded ISO), so a byline date can never regress to
+# <time datetime=""> or a malformed value that would break JSON-LD dates / freshness signals.
+# Error severity — fails the build. Logic in improve/timecheck.py.
+_tc_spec = _ilu.spec_from_file_location("timecheck", os.path.join(HERE, "improve", "timecheck.py"))
+_tc_mod = _ilu.module_from_spec(_tc_spec)
+_tc_spec.loader.exec_module(_tc_mod)
+audit_time = _tc_mod.audit_time
+
 # Post-build blog structured-data gate: every published post (docs/blog/<slug>/index.html) must carry a
 # valid BlogPosting JSON-LD node with a non-empty headline, datePublished, dateModified, and author, so
 # rich-result eligibility can never silently regress as more posts ship. Error severity — fails the build.
@@ -983,6 +992,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
     else:
         print("Heading-order audit: OK — no page skips a heading level.")
+
+    # ---------- byline <time> gate: every <time> must carry a valid zero-padded ISO datetime ----------
+    time_problems = audit_time(OUT)
+    if time_problems:
+        print(f"\nBYLINE-TIME AUDIT FAILED — {len(time_problems)} <time> element(s) with an invalid datetime:")
+        for p in time_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Byline-time audit: OK — every rendered <time> carries a valid zero-padded ISO datetime.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

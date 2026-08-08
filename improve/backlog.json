@@ -240,12 +240,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "byline-time-gate",
-      "title": "DEPTH: build-time gate that protects the new semantic-<time> byline — a stdlib-only improve/timecheck.py walks docs/**/*.html and asserts (error) that every rendered <time> element carries a non-empty datetime attribute matching ^\\d{4}-\\d{2}-\\d{2}$ (zero-padded ISO), so a byline date can never regress to <time datetime=\"\"> or a malformed value. Objective fixture verify (a <time datetime=\"2026-08-07\"> passes; <time datetime=\"\"> and <time datetime=\"2026-8-7\"> fail; a page with no <time> is skipped). Report-or-error severity; PM wires one call in build.py after the heading-order gate.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-lastmodified-freshness",
       "title": "BLOG POST (Grok prose): 'dateModified & content freshness — does updating a page actually help SEO in 2026?'. Angle: Google uses freshness as a query-dependent signal, honest lastmod/dateModified matters (don't fake-bump dates), meaningful updates > cosmetic edits, and how visible <time> bylines + accurate JSON-LD dateModified reinforce each other. PM first web_fetch Google Search Central guidance on dates (structured data 'Article' date fields, 'how Google determines the date of a page') + the freshness/QDF context to supply exact current facts; Grok drafts from that brief; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and the measuring page. Ties to the just-shipped <time> byline feature. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -418,9 +412,28 @@
       "stream": "A-feature",
       "dev": "local-qwen",
       "title": "FEATURE: give the existing copy-code button a visible + accessible success state — a dependency-free progressive-enhancement JS asset that, on a successful copy, briefly swaps the button's label/icon to a 'Copied ✓' confirmation and announces 'Code copied to clipboard' via one reusable polite aria-live region, then reverts after ~1.5s; respect prefers-reduced-motion (no transition, same timing). Dev writes a self-contained assets/*.js; PM confirms the current copy-code button selector and wires one <script defer> include in templates/base.html. Verify: node --check passes and the script guards double-init, uses aria-live, and reverts the label."
+    },
+    {
+      "id": "time-jsonld-date-agree",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate improve/timedateagreecheck.py that, for every blog post page, asserts (error) the visible byline <time datetime=\"X\"> date agrees with the post's JSON-LD BlogPosting datePublished (and, when a modified byline/time is present, dateModified) on the SAME page, so the human-visible date and the machine date can never silently diverge after an edit. Reuse timecheck.py's <time> extraction + the JSON-LD @graph walk already used by blogpostingcheck.py. stdlib-only, objective fixture verify (a post whose <time datetime> equals its datePublished passes; a post whose visible date and datePublished disagree fails; a page with no <time> or no BlogPosting is skipped). PM wires one call after the byline-time gate."
+    },
+    {
+      "id": "time-visible-text-nonempty",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/timecheck.py with a report-only 'time_empty_text' WARN (non-blocking) when a <time> element carries a valid datetime but its visible inner text is empty or whitespace-only (e.g. <time datetime=\"2026-08-07\"></time>), so a byline always renders a human-readable date and not just machine metadata. Keep the existing missing/invalid datetime as errors; add the empty-text case as a warn that build.py prints non-blocking (mirror the meta/sitemap warn split). stdlib-only, objective fixture verify (a <time> with visible text passes; a valid-datetime <time> with empty inner text warns; an invalid datetime still errors). Dev: local-qwen extends the helper to return severity; PM splits errors vs warns in the gate."
     }
   ],
   "done": [
+    {
+      "id": "byline-time-gate",
+      "title": "DEPTH: build-time gate that protects the new semantic-<time> byline — a stdlib-only improve/timecheck.py walks docs/**/*.html and asserts (error) that every rendered <time> element carries a non-empty datetime attribute matching ^\\d{4}-\\d{2}-\\d{2}$ (zero-padded ISO), so a byline date can never regress to <time datetime=\"\"> or a malformed value. Objective fixture verify (a <time datetime=\"2026-08-07\"> passes; <time datetime=\"\"> and <time datetime=\"2026-8-7\"> fail; a page with no <time> is skipped). Report-or-error severity; PM wires one call in build.py after the heading-order gate.",
+      "changed": "Local Qwen dev (via dispatch.py) authored the self-contained, stdlib-only improve/timecheck.py on attempt 2/3 against an objective 9-assertion fixture verify (/tmp/verify_timecheck.py). audit_time(root) os.walks the built site, finds every <time ...> opening tag (case-insensitive, any attribute order), extracts its datetime value (single/double quoted), and returns an error problem-dict {kind,page,detail} for every <time> whose datetime is absent, empty, or does not match ^\\d{4}-\\d{2}-\\d{2}$ (zero-padded ISO); pages with no <time> are skipped. Fixtures locked the contract: 2026-08-07 and class-before-datetime pass; ''/2026-8-7/missing-attr fail; a no-<time> page and a real byline (By Connor Enge · <time datetime=2026-08-05>) pass; a mixed corpus flags only the bad page and never the valid one. PM did ONLY the wiring: one importlib loader block co-located with the heading-order loader + one error-severity gate call after the heading-order gate in build.py. PM PRE-FLIGHT: this run opened by catching TWO uncommitted orphans from a prior crashed og-image run — assets/og-default.png (a 1200x630 PNG) and a root og-card.svg — and DISCARDED both: the SVG had passed its structural grep/bounds verify but was rasterized with macOS `sips`, which renders SVG text terribly (garbled overlapping title glyphs + stray white boxes where text failed to render), so the card was visually broken and unshippable; left untracked, the commit's git add -A would have swept the broken PNG into the repo. og-image stays queued (it needs a real text-capable rasterizer, not sips). VERIFIED end-to-end: build GREEN (14 guide pages + 6 posts, 21 <time>-bearing pages, BUILD_EXIT=0); the new 'Byline-time audit: OK' gate ran green against all 21 real bylines; every prior gate still OK; full SEO gate GREEN on docs/index.html (one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). The shipped <time> byline metadata that feeds JSON-LD dates + freshness signals can now never silently regress to an empty or malformed datetime. Self-replenished the backlog with time-jsonld-date-agree and time-visible-text-nonempty.",
+      "dev": "local-qwen (improve/timecheck.py) + PM wiring/verification",
+      "date": "2026-08-08"
+    },
     {
       "id": "ecommerce-crosslink-inbound",
       "title": "INTERNAL LINKS: add a contextual in-body link to the new E-commerce SEO pillar from technical-seo (faceted nav / canonical duplication), on-page-seo (product page titles/descriptions) and measuring (tracking transactional conversions), with descriptive anchors.",
