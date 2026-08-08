@@ -5,7 +5,7 @@ title: Technical SEO
 h1: Technical SEO — Crawlability, Speed & Structured Data
 description: Technical SEO removes obstacles between your content and search engines: indexability, sitemaps, mobile, HTTPS, Core Web Vitals, and structured data.
 updated: 2026-08-05
-related: how-search-works, on-page-seo, blog/passing-core-web-vitals-2026, audit-checklist, local-seo
+related: how-search-works, on-page-seo, blog/passing-core-web-vitals-2026, audit-checklist, local-seo, ecommerce-seo
 ---
 Technical SEO makes sure nothing stops a great page from being crawled, indexed, and enjoyed.
 

@@ -5,7 +5,7 @@ title: On-Page SEO
 h1: On-Page SEO — Titles, Structure & Internal Links
 description: On-page SEO makes each page clearly about one topic for both readers and crawlers. Titles, meta descriptions, headings, URLs, images, and internal links.
 updated: 2026-08-05
-related: keyword-research, content-quality, technical-seo, local-seo
+related: keyword-research, content-quality, technical-seo, local-seo, ecommerce-seo
 ---
 On-page SEO is everything you control **on the page** to make its topic unmistakable.
 

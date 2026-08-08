@@ -22,10 +22,6 @@
       "title": "Add concrete before/after examples (title tags, URLs, headings) to on-page + technical"
     },
     {
-      "id": "ecommerce-seo",
-      "title": "New section: E-commerce SEO — product schema, faceted navigation, canonical strategy"
-    },
-    {
       "id": "international-seo",
       "title": "New section: International SEO — hreflang, ccTLD vs subfolder, duplicate-language handling"
     },
@@ -358,6 +354,14 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: extend the sitemap integrity family with a report-only 'canonical_target_missing_from_sitemap' WARN — for each indexable (non-noindex) page whose rel=canonical points at ITSELF, warn if that canonical URL is NOT present in docs/sitemap.xml, since a page you consider canonical-and-indexable should normally be discoverable via the sitemap. Non-blocking WARN only, stdlib-only, reuse the loc-set + canonical-extraction logic already in noindexsitemapcheck.py, objective fixture verify (a self-canonical page in the sitemap passes; a self-canonical indexable page absent from the sitemap warns; a noindex page never warns). Dev: local-qwen; PM re-runs the audit and acts on any real findings."
+    },
+    {
+      "id": "ecommerce-crosslink-inbound",
+      "title": "INTERNAL LINKS: add a contextual in-body link to the new E-commerce SEO pillar from the most relevant spot in technical-seo (faceted navigation / canonical duplication), on-page-seo (product page titles/descriptions) and measuring (tracking transactional conversions), with descriptive anchors, so the new hub earns in-body inbound links beyond the related: block."
+    },
+    {
+      "id": "post-product-structured-data-2026",
+      "title": "BLOG POST: product structured data in 2026 for online stores — Product snippets vs merchant listings, which properties drive which rich results (ratings, shipping, availability, price drop, returns), the Organization-level return-policy/loyalty markup, and a Rich Results Test + Merchant Center validation workflow; source strictly to Google Search Central's product / merchant-listing / return-policy docs. (Only publish if >4h since newest content/blog date.)"
     }
   ],
   "done": [
@@ -746,6 +750,12 @@
       "dev": "local-qwen",
       "shipped": "2026-08-08",
       "note": "Shipped 2026-08-08. improve/noindexsitemapcheck.py (local-qwen) rewritten from a broken orphan (SyntaxError) into a working stdlib-only gate: audit_noindex_sitemap() flags any page that emits meta robots noindex while its canonical URL is listed in sitemap.xml (contradictory index signal), error severity. Wired into build.py after the sitemap gate. Verified by an independent PM fixture harness (/tmp/verify_noindex.py): indexable+in-sitemap passes, noindex+in-sitemap fails, noindex+not-in-sitemap passes, 404.html skipped, missing sitemap yields []. Build green, all SEO checks OK."
+    },
+    {
+      "id": "ecommerce-seo",
+      "title": "New section: E-commerce SEO — product schema, faceted navigation, canonical strategy",
+      "done": "2026-08-08",
+      "note": "New pillar page content/ecommerce-seo.md (order 10, auto-added to top nav + sitemap). PM sourced authoritative facts from Google Search Central (Product structured data: Product snippets vs Merchant listings, core fields name/image/price/priceCurrency/availability/reviews, Organization-level return-policy + loyalty-program markup, rich-result enhancements incl. Google-computed price drops, mark up only visible/accurate data; Faceted-navigation crawl guidance: infinite URL-space/overcrawling, block via robots.txt param rules or URL fragments, rel=canonical/nofollow less effective long-term, use & separator + consistent filter order + 404 on empty combos). Grok drafted the ~1120-word body from that brief; PM fact-checked every claim against the sources, kept the single fenced Product JSON example as escaped code (no second JSON-LD node), set H1, trimmed meta description to 148 chars. Wired: renumbered audit-checklist/mistakes/glossary to 11/12/13, added ecommerce-seo to related: of on-page-seo + technical-seo for inbound internal links. Build green; title/desc/canonical/1x h1/Article JSON-LD/BreadcrumbList/sitemap/related-block all verified. (dev: grok)"
     }
   ]
 }

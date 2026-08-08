@@ -237,6 +237,21 @@
       ]
     },
     {
+      "id": "https://connor-enge.github.io/seo-guide/ecommerce-seo/",
+      "url": "https://connor-enge.github.io/seo-guide/ecommerce-seo/",
+      "title": "E-commerce SEO",
+      "summary": "How e-commerce SEO works — category and product pages, unique product content, product structured data, faceted-nav crawl control, and canonicals.",
+      "content_text": "How e-commerce SEO works — category and product pages, unique product content, product structured data, faceted-nav crawl control, and canonicals.",
+      "date_published": "2026-08-08T00:00:00Z",
+      "date_modified": "2026-08-08T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/audit-checklist/",
       "url": "https://connor-enge.github.io/seo-guide/audit-checklist/",
       "title": "SEO Audit Checklist",
