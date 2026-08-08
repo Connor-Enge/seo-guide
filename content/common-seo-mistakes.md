@@ -49,7 +49,7 @@ Placing a URL in robots.txt prevents crawling, so any noindex tag on that page i
 
 The pages remain invisible or appear with the wrong URL, wasting the work put into them. 
 
-Use a noindex meta tag or header on pages you want excluded and allow crawling. Remove robots.txt blocks from any URL you need Google to evaluate. Audit staging sites for leftover directives before they go live, and tie this work into a broader [technical SEO](/technical-seo/) review.
+Use a noindex meta tag or header on pages you want excluded and allow crawling. Remove robots.txt blocks from any URL you need Google to evaluate. Audit staging sites for leftover directives before they go live, and tie this work into a broader [technical SEO](/technical-seo/) review. If you are unsure which control to reach for, [robots.txt vs. noindex vs. X-Robots-Tag](/blog/robots-txt-vs-noindex/) walks through crawling vs. indexing and why noindex belongs in a meta tag or header — never in robots.txt.
 
 ## Treating Core Web Vitals as the whole strategy or ignoring them
 Core Web Vitals measure real-user experience with thresholds of LCP under 2.5 seconds, INP under 200 ms, and CLS under 0.1 at the 75th percentile. They function as a tie-breaker among pages that already answer the query, not a replacement for relevance. 

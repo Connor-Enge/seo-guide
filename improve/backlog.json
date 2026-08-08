@@ -521,10 +521,16 @@
       "title": "BLOG POST (Grok prose): 'Crawl budget in 2026 — what it is, which sites actually need to worry, and how to spend it'. Angle: crawl budget = crawl rate limit + crawl demand; most small/medium sites never need to manage it, it matters for very large or very frequently-changing sites; faceted/duplicate/infinite-space URLs, soft 404s, and slow server response waste it; robots.txt Disallow and server speed are the real levers, noindex does NOT save crawl budget (Google must still crawl to see it). Ties directly to the just-shipped robots-txt-vs-noindex post. PM first web_fetch Google Search Central 'Large site owner's guide to managing crawl budget' for exact current facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to technical-seo, how-search-works, and the robots-txt-vs-noindex post. Respect the ~1 post / 4h cadence."
     },
     {
-      "id": "robots-noindex-post-crosslink",
+      "id": "robots-post-tertiary-inbound",
       "stream": "C-depth",
       "dev": "pm-wired internal links",
-      "title": "INTERNAL LINKS: once the robots-txt-vs-noindex post is live, add a contextual in-body link to /blog/robots-txt-vs-noindex/ from technical-seo.md (and, if natural, common-seo-mistakes.md near the 'blocking/de-indexing your own pages' mistake) with descriptive anchors, so the new post earns inbound internal links from its topic hubs — mirrors the established de-orphan pattern."
+      "title": "INTERNAL LINKS: extend inbound coverage to /blog/robots-txt-vs-noindex/ with ONE more contextual descriptive-anchor link from /how-search-works/ (line ~43, the 'A robots.txt disallow stops crawling...' passage) so a third distinct hub feeds the post; verify the target renders and the anchor is descriptive (never 'read more'), build green."
+    },
+    {
+      "id": "xrobots-header-snippet-technical",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH/CONTENT: add a minimal, valid, HTML-escaped X-Robots-Tag HTTP response-header example (e.g. 'X-Robots-Tag: noindex') as a fenced code block to technical-seo.md near the existing meta-robots noindex snippet, so the page shows the header-based control the robots-vs-noindex post references; keep it factual and sourced to Google Search Central robots-meta spec."
     }
   ],
   "done": [
@@ -1102,6 +1108,14 @@
       "shipped": "2026-08-08",
       "dev": "grok (prose) + pm (sourcing/fact-check/placement)",
       "note": "Published /blog/robots-txt-vs-noindex/ (2026-08-08). PM sourced exact facts from Google Search Central (robots.txt intro, Block Search indexing with noindex, robots meta tag/X-Robots-Tag specs), Grok drafted the ~900-word body, PM fact-checked every claim, added front-matter + 3 descriptive-anchor in-body hub links (common-seo-mistakes, how-search-works, technical-seo) + related:. Build green, all SEO gates pass."
+    },
+    {
+      "id": "robots-noindex-post-crosslink",
+      "stream": "C-depth",
+      "dev": "pm-wired internal links",
+      "title": "INTERNAL LINKS: once the robots-txt-vs-noindex post is live, add a contextual in-body link to /blog/robots-txt-vs-noindex/ from technical-seo.md (and, if natural, common-seo-mistakes.md near the 'blocking/de-indexing your own pages' mistake) with descriptive anchors, so the new post earns inbound internal links from its topic hubs — mirrors the established de-orphan pattern.",
+      "shipped": "2026-08-08",
+      "note": "De-orphaned the freshly published /blog/robots-txt-vs-noindex/ with 2 net-new contextual descriptive-anchor inbound links from its topic hubs: technical-seo.md (robots.txt-vs-noindex FAQ answer) and common-seo-mistakes.md (accidentally blocking/de-indexing section). Build green; both links render to the live post URL."
     }
   ]
 }

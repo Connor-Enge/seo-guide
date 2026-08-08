@@ -74,7 +74,7 @@ Add Article JSON-LD to help Google understand the page and potentially enable ri
 ## FAQ
 
 ### What's the difference between robots.txt and noindex?
-`robots.txt` controls crawling — whether Google fetches a URL at all. `noindex` controls indexing — whether a fetched page can appear in results. The catch: if you block a page in `robots.txt`, Google can't crawl it to see the `noindex`, so use `noindex` (not a crawl block) when you want a page kept out of search.
+`robots.txt` controls crawling — whether Google fetches a URL at all. `noindex` controls indexing — whether a fetched page can appear in results. The catch: if you block a page in `robots.txt`, Google can't crawl it to see the `noindex`, so use `noindex` (not a crawl block) when you want a page kept out of search. For the full decision guide — including the `X-Robots-Tag` HTTP header for non-HTML files like PDFs — see [robots.txt vs. noindex vs. X-Robots-Tag](/blog/robots-txt-vs-noindex/).
 
 ### What are good Core Web Vitals scores?
 Google's "good" thresholds, measured at the 75th percentile of real visits, are Largest Contentful Paint under 2.5 seconds, Interaction to Next Paint under 200 milliseconds, and Cumulative Layout Shift under 0.1. INP replaced FID as the responsiveness metric in March 2024.
