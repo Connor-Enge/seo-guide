@@ -29,7 +29,7 @@ Make authorship self-evident. Add accurate bylines where readers expect them and
 
 ## Common quality-killing myths
 
-Several persistent beliefs lack support in Google's guidance. There is no preferred word count. Updating a page's date without substantial content changes does not improve performance. Adding or removing large blocks of text solely to create an appearance of freshness produces no ranking benefit. AI-generated content itself is not prohibited; only its use at scale to manipulate rankings crosses the line into spam.
+Several persistent beliefs lack support in Google's guidance. There is no preferred word count. Updating a page's date without substantial content changes does not improve performance. Adding or removing large blocks of text solely to create an appearance of freshness produces no ranking benefit. [AI-generated content](/blog/does-ai-content-hurt-seo/) itself is not prohibited; only its use at scale to manipulate rankings crosses the line into spam.
 
 ## Practical moves (a tight checklist)
 

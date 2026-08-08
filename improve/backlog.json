@@ -76,12 +76,6 @@
       "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
     },
     {
-      "id": "aicontent-inbound-links",
-      "title": "INTERNAL LINKS: add a contextual in-body link from content-quality.md and common-seo-mistakes.md to the new 'Does AI Content Hurt SEO?' post so the new post earns inbound internal links from its most relevant topic hubs (descriptive anchor text, one per page).",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-xml-sitemaps-2026",
       "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -497,9 +491,28 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: add improve/tests/test_anchors.py (stdlib unittest) locking the heading-permalink slug/id generator in improve/anchors.py — lowercasing, non-alphanumeric runs collapsed to single hyphens, leading/trailing hyphen strip, and the dedup suffix applied when the same heading text recurs on a page (so #anchor deep-links stay stable). Inbound deep links break if this silently changes, so pin the contract. Dev: local-qwen writes the test file after reading anchors.py; verify = the new test module exits 0 against the live anchors.py."
+    },
+    {
+      "id": "internal-link-orphan-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: add a report-only build-time in-body-orphan warn — a stdlib-only improve/orphancheck.py that walks docs/**/*.html, builds the set of internal page paths, and for every guide/blog page counts how many OTHER pages link to it from inside <main>/article body (excluding nav, breadcrumb, related-block and footer regions), then warns (non-blocking) for any page with zero in-body inbound links so freshly shipped pillars/posts can't silently sit as in-body orphans. stdlib-only, objective fixture verify (a page linked from another page's body passes; a page linked only from nav warns). PM wires one non-blocking call in build.py after the internal-link gate."
+    },
+    {
+      "id": "aicontent-crosslink-secondary",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "INTERNAL LINKS: now that content-quality and common-seo-mistakes link to the 'Does AI Content Hurt SEO?' post, extend one more descriptive-anchor in-body link to it from the most relevant EXISTING sentence in on-page-seo.md or measuring.md (whichever has a genuinely on-topic mention of AI/automation/scaled content), one link only, no authored prose — so the post earns inbound equity from a third topic hub. Verify: the internal-link gate confirms the new href resolves and the build stays green."
     }
   ],
   "done": [
+    {
+      "id": "aicontent-inbound-links",
+      "title": "INTERNAL LINKS: add a contextual in-body link from content-quality.md and common-seo-mistakes.md to the new 'Does AI Content Hurt SEO?' post so the new post earns inbound internal links from its most relevant topic hubs (descriptive anchor text, one per page).",
+      "changed": "PM-placed internal links (internal-links depth stream — a single contextual in-body link per page, no dev needed; matches the wiring precedent of the ecommerce-crosslink-inbound and international-SEO de-orphan commits). This run opened by catching uncommitted, complete work from a prior crashed run: content-quality.md, common-seo-mistakes.md and their rebuilt docs/*/index.html were modified but never committed. PM verified the edits were exactly this backlog item and correct rather than discarding them: (1) common-seo-mistakes.md 'Writing for search engines instead of people' paragraph -> 'rely on [heavy automation](/blog/does-ai-content-hurt-seo/), or rewrite existing material without new insight'; (2) content-quality.md 'Common quality-killing myths' paragraph -> '[AI-generated content](/blog/does-ai-content-hurt-seo/) itself is not prohibited; only its use at scale to manipulate rankings crosses the line into spam.'. Each is exactly one descriptive, keyword-relevant, factually-accurate anchor placed into an EXISTING sentence (no authored prose), root-relative so build.py's resolve_href prefixes BASE_URL. VERIFIED end-to-end: re-ran build GREEN (15 guide pages + 6 posts, feed 19 items, BUILD_EXIT=0); all build-time gates OK (internal-link, canonical, metadata, JSON-LD, BlogPosting, sitemap, robots, h1, fenced-code, social-meta, image-alt, heading-order, byline-time, reading-length) — the internal-link gate confirms both new hrefs resolve to the real /blog/does-ai-content-hurt-seo/ page; full SEO gate GREEN on docs/index.html (one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). Both body links render with the absolute BASE_URL and the intended descriptive anchor text ('heavy automation', 'AI-generated content'). The 'Does AI Content Hurt SEO?' post now earns real in-body inbound links from its two most relevant topic hubs, beyond the shared nav and related block. Self-replenished the backlog with internal-link-orphan-gate (a permanent report-only build-time guard warning on any in-body-orphan page) and aicontent-crosslink-secondary (extend a third inbound link from on-page-seo or measuring).",
+      "dev": "pm-wired internal links (verified + shipped prior-run work)",
+      "date": "2026-08-08"
+    },
     {
       "id": "byline-time-gate",
       "title": "DEPTH: build-time gate that protects the new semantic-<time> byline — a stdlib-only improve/timecheck.py walks docs/**/*.html and asserts (error) that every rendered <time> element carries a non-empty datetime attribute matching ^\\d{4}-\\d{2}-\\d{2}$ (zero-padded ISO), so a byline date can never regress to <time datetime=\"\"> or a malformed value. Objective fixture verify (a <time datetime=\"2026-08-07\"> passes; <time datetime=\"\"> and <time datetime=\"2026-8-7\"> fail; a page with no <time> is skipped). Report-or-error severity; PM wires one call in build.py after the heading-order gate.",

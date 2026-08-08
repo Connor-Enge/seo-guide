@@ -10,7 +10,7 @@ related: content-quality, technical-seo, on-page-seo, keyword-research
 Search engines reward pages that serve real users first. Many site owners still create content mainly to trigger rankings, and the results show up as shallow pages that Google eventually devalues. Each fix below is grounded in Google's own documentation rather than folklore — and most of these mistakes are common enough that you have probably made one or two.
 
 ## Writing for search engines instead of people
-Google's guidance is explicit: content must demonstrate first-hand knowledge, add original analysis, and satisfy the reader rather than serve as filler created to rank. Sites that publish volume across unrelated topics, rely on heavy automation, or rewrite existing material without new insight trigger the people-first content signals that lower visibility. 
+Google's guidance is explicit: content must demonstrate first-hand knowledge, add original analysis, and satisfy the reader rather than serve as filler created to rank. Sites that publish volume across unrelated topics, rely on [heavy automation](/blog/does-ai-content-hurt-seo/), or rewrite existing material without new insight trigger the people-first content signals that lower visibility. 
 
 The practical cost is wasted effort and rankings that never stabilize. Readers notice the lack of depth and leave, which reinforces the poor performance. 
 
