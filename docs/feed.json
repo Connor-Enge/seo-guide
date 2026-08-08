@@ -15,6 +15,28 @@
   ],
   "items": [
     {
+      "id": "https://connor-enge.github.io/seo-guide/blog/xml-sitemaps-in-2026/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/xml-sitemaps-in-2026/",
+      "title": "XML Sitemaps in 2026: What to Include",
+      "summary": "Sitemaps are a crawl hint, not a ranking factor: what to include (canonical URLs only), the lastmod Google trusts, size limits, and how to submit.",
+      "content_text": "Sitemaps are a crawl hint, not a ranking factor: what to include (canonical URLs only), the lastmod Google trusts, size limits, and how to submit.",
+      "date_published": "2026-08-08T00:00:00Z",
+      "date_modified": "2026-08-08T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "technical-seo",
+        "sitemaps",
+        "crawling",
+        "indexing",
+        "lastmod"
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/",
       "url": "https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/",
       "title": "Google Search Console Workflow",

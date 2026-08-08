@@ -9,6 +9,19 @@
 <lastBuildDate>Sat, 08 Aug 2026 00:00:00 +0000</lastBuildDate>
 <generator>build.py — a static, no-JS SEO guide generator</generator>
 <item>
+<title>XML Sitemaps in 2026: What to Include</title>
+<link>https://connor-enge.github.io/seo-guide/blog/xml-sitemaps-in-2026/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/blog/xml-sitemaps-in-2026/</guid>
+<pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<category>technical-seo</category>
+<category>sitemaps</category>
+<category>crawling</category>
+<category>indexing</category>
+<category>lastmod</category>
+<description>Sitemaps are a crawl hint, not a ranking factor: what to include (canonical URLs only), the lastmod Google trusts, size limits, and how to submit.</description>
+</item>
+<item>
 <title>Google Search Console Workflow</title>
 <link>https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/</link>
 <guid isPermaLink="true">https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/</guid>

@@ -68,12 +68,6 @@
       "title": "BLOG POST: breadcrumbs & site structure for SEO — why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
     },
     {
-      "id": "post-xml-sitemaps-2026",
-      "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
-      "stream": "B-blog",
-      "dev": "grok"
-    },
-    {
       "id": "post-semantic-html-seo",
       "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -571,6 +565,18 @@
       "stream": "A-feature",
       "dev": "local-qwen",
       "title": "FEATURE: emit a machine-readable docs/related-graph.json every build (mirrors the existing link-audit.json pattern) mapping each page/post label to its list of RESOLVED outbound related: targets, so internal-link topology is inspectable over time. Dev writes a self-contained stdlib-only emitter helper improve/relatedgraph.py taking (items, related_registry-like resolver) and returning a JSON-serializable dict; PM wires one call + open().write() next to the feeds. Objective fixture verify on the pure builder."
+    },
+    {
+      "id": "xml-sitemaps-post-inbound-links",
+      "stream": "C-depth",
+      "dev": "pm-placed",
+      "title": "INTERNAL LINKS: de-orphan the freshly published /blog/xml-sitemaps-in-2026/ post — add one contextual in-body descriptive-anchor link to it from technical-seo.md (the crawlability/sitemap discussion) and from the robots-txt-vs-noindex post (where it covers the robots.txt Sitemap: line / crawling-vs-indexing), so the new post earns inbound links from its topic hubs. One link per page; verify both render to the live post URL and the build stays green."
+    },
+    {
+      "id": "sitemap-lastmod-format-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: add a build-time gate validating that every <lastmod> in docs/sitemap.xml is a well-formed W3C datetime (YYYY-MM-DD or a full ISO-8601 date-time), since Google only trusts lastmod when it is verifiably accurate and silently drops a malformed value — complementing the existing lastmod-honesty warn. Stdlib-only NEW helper improve/sitemapdatecheck.py exposing a pure audit function; PM wires one call into the sitemap gate block. Objective fixture verify: '2026-08-08' and an ISO date-time pass; '2026-13-99', 'today', and '' fail. Dev: local-qwen builds the helper; PM wires."
     }
   ],
   "done": [
@@ -1251,6 +1257,14 @@
       "dev": "local-qwen (built) + pm-wired",
       "date": "2026-08-08",
       "shipped": "New stdlib-only improve/relatedkeycheck.py: audit_related_keys() flags any front-matter related: key that does not resolve to a real page/post slug (deterministic first-appearance order, hash-seed independent). PM-wired one report-only WARN block after the related-posts audit, sourcing valid keys from related_registry. Build green, all SEO checks pass, current related: keys all resolve (audit reports OK)."
+    },
+    {
+      "id": "post-xml-sitemaps-2026",
+      "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
+      "stream": "B-blog",
+      "dev": "grok",
+      "shipped": "2026-08-08",
+      "note": "Published /blog/xml-sitemaps-in-2026/ (~950 words). Grok drafted the body from a PM fact-brief sourced to Google Search Central ('Learn about sitemaps', 'Build and Submit a Sitemap', 'Manage Your Sitemaps With Sitemap Index Files'); PM fact-checked every claim, inserted the two exact Google XML examples (urlset + sitemapindex) as language-xml fenced blocks, and wove 5 descriptive-anchor in-body links (how-search-works, technical-seo, glossary, robots-txt-vs-noindex, google-search-console-workflow) plus related: technical-seo/how-search-works/glossary. Fixed a front-matter quote-leak (naive parser keeps literal quotes -> unquoted title/h1/description). Build green, all 24 SEO gates pass. (dev: grok prose + pm-sourced/pm-wired)"
     }
   ]
 }
