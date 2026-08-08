@@ -768,8 +768,9 @@ def main():
     # ---------- blog posts ----------
     # Plain-data card list so each post can auto-link to sibling posts sharing tags.
     post_cards = [{"slug": m["slug"], "title": m["title"], "description": m["description"],
-                   "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()]}
-                  for m, _ in posts]
+                   "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()],
+                   "minutes": reading_minutes(search_text(b))}
+                  for m, b in posts]
     for meta, body in posts:
         slug = meta["slug"]
         content_html, toc = render_md(body)

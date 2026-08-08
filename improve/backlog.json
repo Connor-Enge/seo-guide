@@ -194,12 +194,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "reading-time-related-cards",
-      "title": "FEATURE: show the same 'N min read' token on the auto 'Related articles' post cards (improve/relatedposts.py related_posts_block) that the blog index now shows, so readers gauge length before clicking a related post too. Thread each card's reading minutes through post_cards in build.py (already computed at build time) into the block; reuse the exact ' · N min read' formatting for visual consistency. Dev: local-qwen extends relatedposts.py to accept/render an optional minutes per card; PM wires the minutes into the post_cards data. Objective fixture verify: a card given minutes renders the token, a card given 0/None omits it, and unrelated posts still never appear.",
-      "stream": "A-feature",
-      "dev": "local-qwen"
-    },
-    {
       "id": "blog-index-reading-time-gate",
       "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
       "stream": "C-depth",
@@ -553,6 +547,18 @@
     {
       "id": "related-pillars-block",
       "title": "FEATURE: surface a compact 'Related in this guide' block on the pillar content pages (not just blog posts) computed from shared front-matter tags, reusing the improve/relatedposts.py sibling-by-tags logic. New improve helper generating the block, wired into render() for content pages only; must not duplicate an existing curated related: list, must be accessible (nav landmark + heading), and must keep the build green + every SEO gate passing."
+    },
+    {
+      "id": "relatedposts-minutes-unit-tests",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "TESTS: add improve/tests/test_relatedposts.py (stdlib unittest, mirroring test_titlecheck.py) locking the just-shipped related-card reading-time contract so it cannot silently regress: a card with positive int 'minutes' renders exactly '<p class=\"meta\">N min read</p>'; minutes of 0, None, or an absent key renders NO token; the 'related-posts' marker + 'related related-posts' wrapper are always present when there are results; related_posts_block returns '' when no post shares a tag; and rank_related excludes the current slug + non-overlapping posts and orders by (-overlap, original index). Ties to reading-time-related-cards. Dev: local-qwen writes the test file; PM re-runs it."
+    },
+    {
+      "id": "curated-related-reading-minutes",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: show the same ' N min read' meta token on the CURATED 'Related reading' block (build.py related_block) that the auto 'Related articles' cards now show, so both footer link blocks give consistent length cues. PM threads each related target's precomputed reading minutes (from the related_registry, already built at build time) into related_block; local-qwen extends the block renderer to emit '<p class=\"meta\">N min read</p>' when a target has a positive minutes value and omit it otherwise (guide hubs/homepage with no reading time show no token). Objective fixture verify: a target with minutes renders the token, a target with 0/None omits it, existing descriptive anchors/structure unchanged. Ties to reading-time-related-cards."
     }
   ],
   "done": [
@@ -1209,6 +1215,14 @@
       "date": "2026-08-08",
       "dev": "local-qwen",
       "note": "Shipped the screen-reader cue via CSS content alternative-text: assets/extlinks.css now sets a.ext:not(:empty)::after { content: '\\2197' / 'external link'; } so AT announces 'external link' while sighted users still see the decorative ↗ (color/size/spacing unchanged; reduced-motion block kept). No JS, no layout shift, no CSS utility needed. A first attempt to inject a visually-hidden <span> via improve/extlinks.py was tried but the local dev couldn't get the whole-anchor regex right after 3 iters, so I restored extlinks.py and shipped the simpler, equally-accessible CSS alt-text (broadly supported by 2026: Chrome 77+, Firefox 121+, Safari 17.4+). Build green; all SEO gates pass. Verified alt-text lands in docs/assets/extlinks.css. dev: local-qwen."
+    },
+    {
+      "id": "reading-time-related-cards",
+      "title": "FEATURE: show the same 'N min read' token on the auto 'Related articles' post cards (improve/relatedposts.py related_posts_block) that the blog index now shows, so readers gauge length before clicking a related post too. Thread each card's reading minutes through post_cards in build.py (already computed at build time) into the block; reuse the exact ' · N min read' formatting for visual consistency. Dev: local-qwen extends relatedposts.py to accept/render an optional minutes per card; PM wires the minutes into the post_cards data. Objective fixture verify: a card given minutes renders the token, a card given 0/None omits it, and unrelated posts still never appear.",
+      "stream": "A-feature",
+      "dev": "local-qwen (built improve/relatedposts.py) + pm-wired (minutes into post_cards in build.py)",
+      "done_date": "2026-08-08",
+      "result": "Auto 'Related articles' cards now show a '<p class=\"meta\">N min read</p>' token from each post's computed reading_minutes; 0/None/absent omits it; unrelated posts still excluded; related-posts marker + integrity gate intact; build green + all SEO checks pass. Live cards render real values (e.g. '4 min read')."
     }
   ]
 }
