@@ -396,14 +396,20 @@
       "title": "BLOG POST (Grok prose): 'Google Trends for SEO — reading seasonality, rising queries, and whether a traffic drop is just you'. Angle: Trends shows a largely unfiltered, anonymized sample of real search interest, useful for separating a site-specific drop from a web-wide demand shift, spotting seasonal query patterns, and surfacing rising related queries to plan content; it shows relative interest, not absolute volume, so it complements (not replaces) Search Console's Performance report. PM first web_fetch Google Search Central's 'Use Google Trends' / trends-start doc for exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, and internally links to the new google-search-console-workflow post, measuring, and keyword-research. Ties to the just-shipped GSC workflow post's seasonality section. Respect the ~1 post / 4h cadence."
     },
     {
-      "id": "hanchor-copy-link",
-      "title": "FEATURE: make the heading/subheading ¶ permalinks one-click copyable — on click, copy the absolute deep-link URL to the clipboard (navigator.clipboard) and show a brief 'Link copied' confirmation, with graceful no-JS fallback (the anchor still navigates and updates the URL hash). Progressive enhancement, self-contained assets/hanchor-copy.js loaded with defer; keyboard-accessible; respects prefers-reduced-motion for the confirmation. Dev: local-qwen writes the JS asset; PM wires one <script defer> include in templates/base.html. Verify: JS parses, attaches to a.hanchor, and the page works identically with JS disabled.",
+      "id": "toc-active-highlight",
+      "title": "FEATURE: highlight the current section in the on-page TOC as the reader scrolls (IntersectionObserver watches h2/h3 targets, toggles aria-current='true' + a subtle style on the matching TOC link). Pure progressive enhancement in a self-contained assets/toc-scrollspy.js (defer), no layout shift, respects prefers-reduced-motion, and is a no-op when the page has no TOC. Pairs with the pending h3-toc-nesting item. Dev: local-qwen writes the JS; PM wires one include. Verify: JS parses, observes the TOC targets, and the page is unchanged with JS off.",
       "stream": "A-feature",
       "dev": "local-qwen"
     },
     {
-      "id": "toc-active-highlight",
-      "title": "FEATURE: highlight the current section in the on-page TOC as the reader scrolls (IntersectionObserver watches h2/h3 targets, toggles aria-current='true' + a subtle style on the matching TOC link). Pure progressive enhancement in a self-contained assets/toc-scrollspy.js (defer), no layout shift, respects prefers-reduced-motion, and is a no-op when the page has no TOC. Pairs with the pending h3-toc-nesting item. Dev: local-qwen writes the JS; PM wires one include. Verify: JS parses, observes the TOC targets, and the page is unchanged with JS off.",
+      "id": "hanchor-copy-wiring-gate",
+      "title": "DEPTH: build-time wiring gate improve/hanchorcopywiring.py (stdlib-only) that walks docs/**/*.html and asserts consistency of the just-shipped copy-permalink feature: every page whose body contains class=\"hanchor\" MUST also reference assets/hanchor-copy.js, and every page that references hanchor-copy.js MUST actually contain a class=\"hanchor\" anchor (no dead script include). Error severity, fail the build on mismatch; wire it into build.py alongside the other docs/**/*.html audits. Objective fixture verify: an anchor-bearing page missing the script fails; a script-referencing page with no anchors fails; a correctly-paired page passes.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "hanchor-title-affordance",
+      "title": "FEATURE (local-qwen, small): give the ¶ heading permalink a discoverable click-to-copy affordance for mouse users — in improve/anchors.py add title=\"Copy link to this section\" to the a.hanchor element (both heading_html and subheading_html) so hovering shows a native tooltip hinting the new copy behavior; keep the existing aria-label=\"Permalink to this section\" for screen readers (title is supplementary, not a replacement). Verify: rendered docs h2/h3 permalink anchors carry both title and aria-label attributes and the build stays green.",
       "stream": "A-feature",
       "dev": "local-qwen"
     }
@@ -842,6 +848,14 @@
       "dev": "local-qwen",
       "shipped": "2026-08-08",
       "note": "local-qwen wrote subheading_html(text, inner_html, seen) in improve/anchors.py (slugify -> base-n dedup against a per-page seen set -> escaped id + pilcrow permalink markup); PM wired render_md to import it, track seen_ids (seeding h2 slugs), and call it on '### ' lines; local-qwen also extended assets/anchors.css so the reveal rule covers h3:hover/h3:focus-within (previously h2-only), so the ¶ now appears on hover for h3 too, not only keyboard focus. Recovered + finished by the 2026-08-08 run (a prior run built the anchors.py helper + build.py wiring but was interrupted before committing and before the CSS reveal fix). Orphan untracked improve/ogcard.py and improve/assetrefcheck.py from that interrupted run were discarded. Verify met: build green, all SEO/heading-order/JSON-LD gates OK, h3 ids unique per page (no dup-id), hover reveal live. Remaining TOC-nesting split into pending id 'h3-toc-nesting'."
+    },
+    {
+      "id": "hanchor-copy-link",
+      "title": "FEATURE: make the heading/subheading ¶ permalinks one-click copyable — on click, copy the absolute deep-link URL to the clipboard (navigator.clipboard) and show a brief 'Link copied' confirmation, with graceful no-JS fallback (the anchor still navigates and updates the URL hash). Progressive enhancement, self-contained assets/hanchor-copy.js loaded with defer; keyboard-accessible; respects prefers-reduced-motion for the confirmation. Dev: local-qwen writes the JS asset; PM wires one <script defer> include in templates/base.html. Verify: JS parses, attaches to a.hanchor, and the page works identically with JS disabled.",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "done_date": "2026-08-08",
+      "note": "local-qwen wrote assets/hanchor-copy.js (delegated click on a.hanchor -> copies absolute permalink URL via navigator.clipboard w/ execCommand fallback, transient \"Copied!\" bubble, aria-live=polite/role=status announcement, respects prefers-reduced-motion, no preventDefault so no-JS anchor nav still works). PM wired one defer <script>, gated on class=\"hanchor\" in content, in build.py render()."
     }
   ]
 }

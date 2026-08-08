@@ -571,6 +571,7 @@ def main():
             toc=toc, content=content, pager=pager, jsonld=jsonld,
             scripts=('<script defer src="%s/assets/search-focus.js"></script><script defer src="%s/assets/backtotop.js"></script><script defer src="%s/assets/scrollspy.js"></script>' % (BASE_URL, BASE_URL, BASE_URL))
                     + ('<script defer src="%s/assets/copycode.js"></script>' % BASE_URL if "<pre" in content else "")
+                    + ('<script defer src="%s/assets/hanchor-copy.js"></script>' % BASE_URL if 'class="hanchor"' in content else "")
                     + scripts,
             breadcrumb=breadcrumb, year=today[:4])
 
