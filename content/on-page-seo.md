@@ -15,7 +15,7 @@ The `<title>` is your single most important on-page element and the headline in 
 ## Meta descriptions
 Google may rewrite it, but a clear ~150-character description acts as ad copy that improves click-through. Summarize the page and give a reason to click. Never duplicate descriptions across pages.
 
-Your title and meta description control what searchers see in results. Keep the title unique and front-loaded, and write a compelling ~150-character description that earns the click.
+Your title and meta description control what searchers see in results. Keep the title unique and front-loaded, and write a compelling ~150-character description that earns the click. This gets harder at scale, where [product and category page templates](/ecommerce-seo/) must still yield a unique title and description for every URL.
 
 ```html
 <title>Keyword Research for SEO: A Beginner's Guide</title>

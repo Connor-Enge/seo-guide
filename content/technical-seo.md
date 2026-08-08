@@ -24,7 +24,7 @@ Allow: /
 Sitemap: https://www.example.com/sitemap.xml
 ```
 
-Use a rel=canonical link to name the one preferred URL for duplicate or similar pages. Include a self-referential canonical on the canonical page itself.
+Use a rel=canonical link to name the one preferred URL for duplicate or similar pages. Include a self-referential canonical on the canonical page itself. On large catalogs, [faceted navigation and product variants](/ecommerce-seo/) are the most common source of these duplicate URLs.
 
 ```html
 <link rel="canonical" href="https://www.example.com/dresses/green-dress">

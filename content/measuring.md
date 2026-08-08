@@ -24,7 +24,7 @@ Use an analytics tool (e.g. GA4) to see what happens **after** the click: engage
 - **Organic clicks & impressions** (trend, not day-to-day noise).
 - **Rankings** for priority queries — directional, since results are personalized.
 - **Indexed page count** vs. what you published.
-- **Conversions from organic** — the number that pays for the work.
+- **Conversions from organic** — the number that pays for the work; for [transactional revenue on an online store](/ecommerce-seo/), track purchases and revenue, not just leads.
 
 ## Make it a loop
 1. Ship content and technical fixes.

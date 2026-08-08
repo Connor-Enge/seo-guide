@@ -356,8 +356,16 @@
       "title": "DEPTH: extend the sitemap integrity family with a report-only 'canonical_target_missing_from_sitemap' WARN — for each indexable (non-noindex) page whose rel=canonical points at ITSELF, warn if that canonical URL is NOT present in docs/sitemap.xml, since a page you consider canonical-and-indexable should normally be discoverable via the sitemap. Non-blocking WARN only, stdlib-only, reuse the loc-set + canonical-extraction logic already in noindexsitemapcheck.py, objective fixture verify (a self-canonical page in the sitemap passes; a self-canonical indexable page absent from the sitemap warns; a noindex page never warns). Dev: local-qwen; PM re-runs the audit and acts on any real findings."
     },
     {
-      "id": "ecommerce-crosslink-inbound",
-      "title": "INTERNAL LINKS: add a contextual in-body link to the new E-commerce SEO pillar from the most relevant spot in technical-seo (faceted navigation / canonical duplication), on-page-seo (product page titles/descriptions) and measuring (tracking transactional conversions), with descriptive anchors, so the new hub earns in-body inbound links beyond the related: block."
+      "id": "ecommerce-crosslink-secondary-hubs",
+      "stream": "C-depth",
+      "dev": "pm-placed",
+      "title": "INTERNAL LINKS: keep growing in-body inbound links to the E-commerce SEO pillar — add one contextual in-body link (descriptive anchor) from content-quality.md (unique, non-thin product descriptions) and common-seo-mistakes.md (duplicate/thin product pages at scale), one per page, in the most relevant existing sentence, so the pillar accrues inbound links from its remaining topic hubs beyond the three already added (technical-seo, on-page-seo, measuring). Skip a page if no natural, non-forced anchor spot exists."
+    },
+    {
+      "id": "inbound-link-strength-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time in-body inbound-link strength gate — a stdlib-only improve/inboundlinkcheck.py that, for every substantive guide/pillar page, counts how many OTHER pages link to it from within their BODY prose (i.e. inside <main article>, EXCLUDING the shared site nav and the footer related/related-posts blocks), and reports (WARN, non-blocking) any guide/pillar page with ZERO in-body inbound links, so a freshly shipped pillar can never silently ship as an in-body orphan again (this generalizes the ecommerce-crosslink fix into a permanent guardrail). stdlib-only, objective fixture verify: a page linked from another page's body passes; a page linked only from nav + related warns; the homepage/about/404 are exempt. Wire one call into build.py after the internal-link audit; report-only, never fail the build. Dev: local-qwen."
     },
     {
       "id": "post-product-structured-data-2026",
@@ -365,6 +373,13 @@
     }
   ],
   "done": [
+    {
+      "id": "ecommerce-crosslink-inbound",
+      "title": "INTERNAL LINKS: add a contextual in-body link to the new E-commerce SEO pillar from technical-seo (faceted nav / canonical duplication), on-page-seo (product page titles/descriptions) and measuring (tracking transactional conversions), with descriptive anchors.",
+      "changed": "PM-placed internal links (internal-links depth stream — a single contextual link per page, no dev needed). The E-commerce SEO pillar shipped earlier the same day (top commit, 2026-08-08) with ZERO in-body inbound links: it appeared only in the shared site nav and in technical-seo/on-page-seo's related: front-matter (measuring didn't reference it at all), making it an in-body orphan and the site's biggest current internal-link-equity gap. PM first verified no in-body links existed (grep found only related: keys), then added exactly ONE descriptive-anchor contextual link per page into the single most relevant EXISTING sentence — not authored prose, one connective clause each: (1) technical-seo.md canonical/duplication paragraph -> 'On large catalogs, [faceted navigation and product variants](/ecommerce-seo/) are the most common source of these duplicate URLs.'; (2) on-page-seo.md titles/descriptions paragraph -> 'This gets harder at scale, where [product and category page templates](/ecommerce-seo/) must still yield a unique title and description for every URL.'; (3) measuring.md 'Conversions from organic' metric -> 'for [transactional revenue on an online store](/ecommerce-seo/), track purchases and revenue, not just leads.'. Each anchor is descriptive, keyword-relevant, and factually accurate to the pillar. Links authored root-relative (/ecommerce-seo/) so build.py's resolve_href prefixes BASE_URL. VERIFIED end-to-end: build GREEN (14 guide pages + 5 posts, BUILD_EXIT=0); all eleven build-time gates OK (internal-link, canonical, metadata, JSON-LD, BlogPosting, sitemap, robots, h1, social-meta, image-alt, heading-order) — the internal-link gate confirms all three new hrefs resolve to a real page; full SEO gate GREEN on docs/index.html (one <title>, one meta description, one rel=canonical, a JSON-LD Article node, exactly one <h1>, sitemap.xml present). All three body links render with the absolute BASE_URL and the intended descriptive anchor text. The freshest pillar now earns real in-body inbound links from its three most relevant topic hubs, beyond the nav + related block. Self-replenished the backlog with ecommerce-crosslink-secondary-hubs (extend the crosslinking to content-quality + common-seo-mistakes) and inbound-link-strength-gate (a permanent build-time guardrail that warns on any in-body-orphan pillar).",
+      "dev": "pm-placed (internal links) + PM verification",
+      "date": "2026-08-08"
+    },
     {
       "id": "code-scroll-affordance",
       "title": "FEATURE: horizontal-scroll affordance on wide code blocks — a pure-CSS right-edge fade/shadow that appears only when a <pre> overflows horizontally (background-attachment gradient trick, no JS).",
