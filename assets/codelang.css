@@ -1,0 +1,23 @@
+/* Code language badge for fenced code blocks */
+
+pre[data-lang] {
+  position: relative;
+  padding-top: 2.1rem;
+}
+
+pre[data-lang]::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  left: 0;
+  font-family: var(--mono);
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--muted);
+  background: var(--line);
+  padding: .3rem .6rem;
+  border-radius: var(--radius) 0 6px 0;
+  pointer-events: none;
+}

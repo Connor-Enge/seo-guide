@@ -168,12 +168,6 @@
       "dev": "pm-sourced"
     },
     {
-      "id": "code-lang-chip",
-      "title": "FEATURE: show the snippet language on fenced code blocks that carry one - extend improve/fencedcode.py to emit a small accessible language label (e.g. a data-lang attribute or a .code-lang badge reading 'python') derived from the existing language-xxx class, plus a no-JS, reduced-motion / contrast-safe CSS rule, so readers can see a snippet's language at a glance. Dev: local-qwen extends the helper and adds a tiny CSS block; objective fixture verify asserts the label appears only when a language token is present.",
-      "stream": "A-feature",
-      "dev": "local-qwen"
-    },
-    {
       "id": "socialmeta-length-warn",
       "title": "DEPTH: extend improve/socialmetacheck.py with report-only length warns so shared cards render well as more pages ship — warn 'og_title_long' when og:title exceeds ~60 chars and 'og_description_long' when og:description exceeds ~200 chars (both truncate in most social previews), and 'og_description_divergence' when og:description length differs sharply from the page meta description (they should usually match). Non-blocking WARN only, stdlib-only, measured after html.unescape, objective fixture verify (a 70-char og:title and a 240-char og:description warn; healthy values do not). Dev: local-qwen extends socialmetacheck.py; PM re-runs the audit.",
       "stream": "C-depth",
@@ -220,12 +214,6 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: enrich improve/headingorder.py warnings with a short heading-text snippet — capture the inner text of the offending heading (strip tags, collapse whitespace, truncate ~60 chars) and append it to the detail string, so a skipped-level warning names WHICH heading to fix rather than only the level jump. Keep stdlib-only; extend the existing fixture verify to assert the snippet appears."
-    },
-    {
-      "id": "code-lang-label",
-      "title": "FEATURE: language label chip on fenced code blocks. The fenced renderer already emits <pre><code class=\"language-xxx\">; have local-qwen add a matching data-lang attribute on the <pre> (small tweak in improve/fencedcode.py or a build.py post-step) plus a CSS rule pre[data-lang]::before that shows a subtle uppercase 'TXT'/'HTML' chip in the top-left, so readers see a snippet's language at a glance next to the new Copy button. No JS, reduced-motion irrelevant, must not overlap the copy button (sits left). Objective verify: rendered technical-seo page has pre[data-lang=\"txt\"] and pre[data-lang=\"html\"].",
-      "stream": "A-feature",
-      "dev": "local-qwen"
     },
     {
       "id": "fenced-lang-gate",
@@ -339,6 +327,18 @@
       "id": "blog-index-reading-time-gate",
       "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
       "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "codelang-sync-gate",
+      "title": "DEPTH: build-time codelang consistency gate — a stdlib-only improve/codelangcheck.py walks docs/**/*.html and asserts (error) that every <pre data-lang=\"X\"> has its child <code class=\"language-X\"> with the SAME token X (and vice-versa: a language-* code block should carry the matching data-lang), so the newly shipped visible language badge can never silently disagree with the highlight class after a renderer refactor. Objective fixture verify: matched pair passes; a <pre data-lang=\"html\"><code class=\"language-txt\"> mismatch fails; a plain <pre><code> (no lang, no badge) passes. Wire into build.py after the heading gate.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "code-scroll-affordance",
+      "title": "FEATURE: horizontal-scroll affordance on wide code blocks — a pure-CSS right-edge fade/shadow that appears only when a <pre> overflows horizontally (background-attachment:local gradient trick, no JS), so on mobile readers can tell a snippet scrolls sideways instead of assuming it's truncated. Must be reduced-motion-safe (static gradient, no animation), theme-variable colored for light+dark, and must not interfere with the top-left language badge or top-right copy button. Dev: local-qwen adds a small block to a new assets file (or extends codelang.css); objective verify asserts the overflow gradient rule targets pre and uses background-attachment:local.",
+      "stream": "A-feature",
       "dev": "local-qwen"
     }
   ],
@@ -677,6 +677,18 @@
       "title": "FEATURE: show the per-post reading time on the /blog/ index listing (and any post-card lists) next to each post's date, reusing the same reading_minutes(search_text(body)) value already computed at build time, so readers can gauge article length before clicking. Dev: local-qwen adds/extends the blog-index card renderer helper; PM wires one call. Verify: the rendered /blog/ index shows an 'N min read' token for every listed post; build + all gates stay green.",
       "date": "2026-08-07",
       "dev": "local-qwen (improve/blogindex.py post_list_item helper) + PM (build.py import + one wiring call, verification/ship)"
+    },
+    {
+      "id": "code-lang-chip",
+      "date": "2026-08-07",
+      "dev": "local-qwen (extended improve/fencedcode.py to add data-lang on <pre>; built new assets/codelang.css badge via pre[data-lang]::before) + PM (base.html <link> wiring, verify harnesses, build/SEO gate + ship)",
+      "note": "Reader-visible uppercase language badge now renders top-left on all 6 language-tagged fenced code blocks (technical-seo, on-page-seo); pure CSS, no-JS, theme-variable contrast-safe, static (reduced-motion safe), pointer-events:none so it never pollutes copied text. Copy button (top-right) unaffected."
+    },
+    {
+      "id": "code-lang-label",
+      "date": "2026-08-07",
+      "dev": "n/a",
+      "note": "Superseded by code-lang-chip (shipped 2026-08-07) — exact duplicate (data-lang on <pre> + pre[data-lang]::before uppercase chip top-left). Closed to avoid duplicate/thin work."
     }
   ]
 }
