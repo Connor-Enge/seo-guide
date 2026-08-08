@@ -36,6 +36,28 @@
       ]
     },
     {
+      "id": "https://connor-enge.github.io/seo-guide/blog/robots-txt-vs-noindex/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/robots-txt-vs-noindex/",
+      "title": "robots.txt vs. noindex vs. X-Robots-Tag",
+      "summary": "\"robots.txt controls crawling; noindex controls indexing. Why 'noindex in robots.txt' fails, when to use the meta robots tag vs. X-Robots-Tag, and how to choose.\"",
+      "content_text": "\"robots.txt controls crawling; noindex controls indexing. Why 'noindex in robots.txt' fails, when to use the meta robots tag vs. X-Robots-Tag, and how to choose.\"",
+      "date_published": "2026-08-08T00:00:00Z",
+      "date_modified": "2026-08-08T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "technical-seo",
+        "robots-txt",
+        "noindex",
+        "crawling",
+        "indexing"
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/",
       "url": "https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/",
       "title": "Does AI Content Hurt SEO?",

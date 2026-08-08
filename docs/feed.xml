@@ -21,6 +21,19 @@
 <description>"A practical Google Search Console workflow: the reports that matter, reading the Performance report, and how to diagnose a drop in Search traffic."</description>
 </item>
 <item>
+<title>robots.txt vs. noindex vs. X-Robots-Tag</title>
+<link>https://connor-enge.github.io/seo-guide/blog/robots-txt-vs-noindex/</link>
+<guid isPermaLink="true">https://connor-enge.github.io/seo-guide/blog/robots-txt-vs-noindex/</guid>
+<pubDate>Sat, 08 Aug 2026 00:00:00 +0000</pubDate>
+<dc:creator>Connor Enge</dc:creator>
+<category>technical-seo</category>
+<category>robots-txt</category>
+<category>noindex</category>
+<category>crawling</category>
+<category>indexing</category>
+<description>"robots.txt controls crawling; noindex controls indexing. Why 'noindex in robots.txt' fails, when to use the meta robots tag vs. X-Robots-Tag, and how to choose."</description>
+</item>
+<item>
 <title>Does AI Content Hurt SEO?</title>
 <link>https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/</link>
 <guid isPermaLink="true">https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/</guid>

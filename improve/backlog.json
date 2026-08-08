@@ -68,10 +68,6 @@
       "title": "BLOG POST: breadcrumbs & site structure for SEO — why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
     },
     {
-      "id": "post-robots-noindex",
-      "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
-    },
-    {
       "id": "post-xml-sitemaps-2026",
       "title": "BLOG POST (Grok prose): 'XML sitemaps in 2026 — what to include, the <lastmod> Google actually trusts, sitemap index files, and the mistakes that get them ignored'. Angle: sitemaps are a discovery hint not a ranking factor; include only canonical, indexable, 200-status URLs; keep <lastmod> honest (Google discounts sitemaps whose lastmod is always 'today'); split >50k URLs / >50MB into a sitemap index; don't list noindex/redirect/blocked URLs. PM first web_fetch Google Search Central's 'Build and submit a sitemap' + 'Sitemaps best practices' to supply exact current facts, Grok drafts from that brief, PM fact-checks every claim against the sources, adds tags + related:, and internally links to technical-seo and the glossary. Ties thematically to the just-shipped sitemap integrity gate. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -517,6 +513,18 @@
       "stream": "C-depth",
       "dev": "pm-wired internal links",
       "title": "INTERNAL LINKS: make the pillar↔Common-SEO-Mistakes cluster bidirectional — from the matching sections of common-seo-mistakes.md, add descriptive-anchor links back OUT to the relevant pillar deep-dives where not already present (keyword stuffing / duplicate titles → on-page-seo; thin/duplicated content → content-quality; blocking or de-indexing pages → technical-seo; buying links → link-building; weak internal linking → the internal-linking topic-clusters post), one descriptive anchor per section, skip any that already link there. Reinforces the topic cluster in both directions."
+    },
+    {
+      "id": "post-crawl-budget-2026",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'Crawl budget in 2026 — what it is, which sites actually need to worry, and how to spend it'. Angle: crawl budget = crawl rate limit + crawl demand; most small/medium sites never need to manage it, it matters for very large or very frequently-changing sites; faceted/duplicate/infinite-space URLs, soft 404s, and slow server response waste it; robots.txt Disallow and server speed are the real levers, noindex does NOT save crawl budget (Google must still crawl to see it). Ties directly to the just-shipped robots-txt-vs-noindex post. PM first web_fetch Google Search Central 'Large site owner's guide to managing crawl budget' for exact current facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to technical-seo, how-search-works, and the robots-txt-vs-noindex post. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "robots-noindex-post-crosslink",
+      "stream": "C-depth",
+      "dev": "pm-wired internal links",
+      "title": "INTERNAL LINKS: once the robots-txt-vs-noindex post is live, add a contextual in-body link to /blog/robots-txt-vs-noindex/ from technical-seo.md (and, if natural, common-seo-mistakes.md near the 'blocking/de-indexing your own pages' mistake) with descriptive anchors, so the new post earns inbound internal links from its topic hubs — mirrors the established de-orphan pattern."
     }
   ],
   "done": [
@@ -1087,6 +1095,13 @@
       "dev": "pm-wired internal links",
       "date": "2026-08-08",
       "note": "Shipped 4 net-new contextual descriptive-anchor inbound links, each deep-linking to the exact matching mistake section: content-quality 'mass-produce material mainly for ranking purposes' -> #publishing-thin-or-duplicated-content-at-scale; on-page-seo 'duplicate descriptions across pages' -> #using-duplicate-or-generic-title-tags; technical-seo 'block it in robots.txt' -> #accidentally-blocking-or-de-indexing-your-own-pages; link-building 'buying or selling links for ranking purposes' -> #chasing-links-you-can-buy-instead-of-links-you-earn. First fragment internal links on the site; linkcheck strips fragments so paths passed the gate, and all four target ids were verified present on docs/common-seo-mistakes/index.html. The pre-existing bare mistakes link on each pillar is only the global nav, so these topical in-body links are genuinely new. Build green, all SEO gates OK."
+    },
+    {
+      "id": "post-robots-noindex",
+      "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs.",
+      "shipped": "2026-08-08",
+      "dev": "grok (prose) + pm (sourcing/fact-check/placement)",
+      "note": "Published /blog/robots-txt-vs-noindex/ (2026-08-08). PM sourced exact facts from Google Search Central (robots.txt intro, Block Search indexing with noindex, robots meta tag/X-Robots-Tag specs), Grok drafted the ~900-word body, PM fact-checked every claim, added front-matter + 3 descriptive-anchor in-body hub links (common-seo-mistakes, how-search-works, technical-seo) + related:. Build green, all SEO gates pass."
     }
   ]
 }
