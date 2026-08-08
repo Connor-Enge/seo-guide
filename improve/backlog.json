@@ -182,12 +182,6 @@
       "dev": "pm-placed"
     },
     {
-      "id": "related-key-integrity-warn",
-      "title": "DEPTH (local-qwen): build-time related-key integrity warn — a stdlib-only improve/relatedkeycheck.py that, given the known page/post slug registry, reports (warn, non-blocking) any front-matter related: key that does NOT resolve to a real guide slug or blog/<slug>, so a typo in a related: reference is surfaced instead of being silently dropped by related_block(). Objective fixture verify: a related list containing a bogus key warns; an all-valid list passes. Wire after the metadata audit; report-only, never fail the build.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "blog-index-reading-time-gate",
       "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
       "stream": "C-depth",
@@ -565,6 +559,18 @@
       "stream": "B-blog",
       "dev": "grok",
       "title": "BLOG POST (Grok prose): 'Pagination & faceted navigation for SEO in 2026 — rel=next/prev is gone, so how do you handle paginated series and filter URLs?'. Angle: Google no longer uses rel=next/prev; use self-referencing canonicals on each paginated page; avoid index bloat from facet/filter URL combinations; when to noindex vs canonicalize vs robots-block facets; the role of a crawlable 'View all' page; keep internal links to deep pages. PM first web_fetch Google Search Central pagination + faceted-navigation (ecommerce) docs to supply exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and ecommerce-seo. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "related-self-reference-warn",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/relatedkeycheck.py with a second report-only helper `related_self_references(items)` that warns when a page lists its OWN slug/label in its related: field (a self-link that related_block() silently drops), so curation stays clean. Non-blocking WARN, stdlib-only, deterministic order, objective fixture verify (a page whose related: contains its own label warns; one that does not, passes). PM wires one hook next to the related-key audit."
+    },
+    {
+      "id": "related-graph-json",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: emit a machine-readable docs/related-graph.json every build (mirrors the existing link-audit.json pattern) mapping each page/post label to its list of RESOLVED outbound related: targets, so internal-link topology is inspectable over time. Dev writes a self-contained stdlib-only emitter helper improve/relatedgraph.py taking (items, related_registry-like resolver) and returning a JSON-serializable dict; PM wires one call + open().write() next to the feeds. Objective fixture verify on the pure builder."
     }
   ],
   "done": [
@@ -1237,6 +1243,14 @@
       "dev": "local-qwen",
       "date": "2026-08-08",
       "note": "Shipped a self-contained assets/related-spacing.css (scoped rule `.related + .related-posts` -> margin-top:1.25rem; padding-top:0; border-top:0) merging the stacked curated 'Related reading' and auto 'Related articles' blocks into one cohesive footer unit on the 5 blog posts that carry both; PM wired one <link> in templates/base.html. Pure CSS, no JS/motion/token changes; build green + all SEO checks pass."
+    },
+    {
+      "id": "related-key-integrity-warn",
+      "title": "DEPTH (local-qwen): build-time related-key integrity warn — a stdlib-only improve/relatedkeycheck.py that, given the known page/post slug registry, reports (warn, non-blocking) any front-matter related: key that does NOT resolve to a real guide slug or blog/<slug>, so a typo in a related: reference is surfaced instead of being silently dropped by related_block(). Objective fixture verify: a related list containing a bogus key warns; an all-valid list passes. Wire after the metadata audit; report-only, never fail the build.",
+      "stream": "C-depth",
+      "dev": "local-qwen (built) + pm-wired",
+      "date": "2026-08-08",
+      "shipped": "New stdlib-only improve/relatedkeycheck.py: audit_related_keys() flags any front-matter related: key that does not resolve to a real page/post slug (deterministic first-appearance order, hash-seed independent). PM-wired one report-only WARN block after the related-posts audit, sourcing valid keys from related_registry. Build green, all SEO checks pass, current related: keys all resolve (audit reports OK)."
     }
   ]
 }

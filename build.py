@@ -287,6 +287,15 @@ _ss_mod = _ilu.module_from_spec(_ss_spec)
 _ss_spec.loader.exec_module(_ss_mod)
 audit_script_src = _ss_mod.audit_script_src
 
+# Related-key integrity check (report-only): flag any front-matter `related:` key that does NOT
+# resolve to a real page/post slug in the related_registry — related_block() silently drops unknown
+# keys, so a typo would quietly lose an intended internal link with no error. Logic in
+# improve/relatedkeycheck.py; wired after the metadata audit (source-level, non-blocking WARN).
+_rk_spec = _ilu.spec_from_file_location("relatedkeycheck", os.path.join(HERE, "improve", "relatedkeycheck.py"))
+_rk_mod = _ilu.module_from_spec(_rk_spec)
+_rk_spec.loader.exec_module(_rk_mod)
+audit_related_keys = _rk_mod.audit_related_keys
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -1019,6 +1028,17 @@ def main():
         raise SystemExit(1)
     print("Related-posts audit: OK — every post sharing a tag with another post carries the related-posts"
           " nav, and no zero-overlap post does.")
+
+    # ---------- related-key integrity warn: front-matter related: keys must resolve to real slugs ----------
+    related_key_items = ([(m["slug"], m.get("related", "")) for m, _ in pages]
+                         + [("blog/" + m["slug"], m.get("related", "")) for m, _ in posts])
+    relatedkey_warns = audit_related_keys(related_key_items, related_registry.keys())
+    if relatedkey_warns:
+        print(f"\nRelated-key audit — {len(relatedkey_warns)} warning(s) (unresolved related: key, non-blocking):")
+        for p in relatedkey_warns:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+    else:
+        print("Related-key audit: OK — every front-matter related: key resolves to a real page or post.")
 
     # ---------- sitemap gate: well-formed; every <loc> absolute + resolves; no dupes; no 404 listed ----------
     sitemap_problems = audit_sitemap(OUT, BASE_URL)
