@@ -10,7 +10,7 @@ _tc_mod = _ilu.module_from_spec(_tc_spec)
 _tc_spec.loader.exec_module(_tc_mod)
 redundant_title_segment = _tc_mod.redundant_title_segment
 
-def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155):
+def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155, min_title_chars=20, min_desc_chars=70):
     problems = []
     title_texts = {}
     desc_texts = {}
@@ -37,6 +37,8 @@ def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155):
                         problems.append({'page': page, 'kind': 'empty_title', 'severity': 'warn', 'detail': 'empty <title>'})
                     elif len(title_text) > max_title_chars:
                         problems.append({'page': page, 'kind': 'long_title', 'severity': 'warn', 'detail': f'{len(title_text)} chars (max {max_title_chars})'})
+                    elif len(title_text) < min_title_chars:
+                        problems.append({'page': page, 'kind': 'short_title', 'severity': 'warn', 'detail': f'{len(title_text)} chars (min {min_title_chars})'})
                     else:
                         title_texts[title_text] = title_texts.get(title_text, []) + [page]
 
@@ -51,6 +53,8 @@ def audit_meta(out_dir, max_title_chars=60, max_desc_chars=155):
                         problems.append({'page': page, 'kind': 'empty_description', 'severity': 'warn', 'detail': 'empty meta description'})
                     elif len(desc_text) > max_desc_chars:
                         problems.append({'page': page, 'kind': 'long_description', 'severity': 'warn', 'detail': f'{len(desc_text)} chars (max {max_desc_chars})'})
+                    elif len(desc_text) < min_desc_chars:
+                        problems.append({'page': page, 'kind': 'short_description', 'severity': 'warn', 'detail': f'{len(desc_text)} chars (min {min_desc_chars})'})
                     else:
                         desc_texts[desc_text] = desc_texts.get(desc_text, []) + [page]
 
