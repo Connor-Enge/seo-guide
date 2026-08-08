@@ -187,6 +187,15 @@ _ns_mod = _ilu.module_from_spec(_ns_spec)
 _ns_spec.loader.exec_module(_ns_mod)
 audit_noindex_sitemap = _ns_mod.audit_noindex_sitemap
 
+# Post-build code-fence safety gate: an instructional snippet inside a rendered <pre><code> block
+# must never leak as a REAL tag — a live <script>/<meta>/<link>/<img> in a code sample could inject
+# markup, duplicate a page's meta description, or add a second JSON-LD node. Every such tag must be
+# html-escaped (&lt;...&gt;). Error severity. Logic in improve/fencedcodecheck.py.
+_fc_spec = _ilu.spec_from_file_location("fencedcodecheck", os.path.join(HERE, "improve", "fencedcodecheck.py"))
+_fc_mod = _ilu.module_from_spec(_fc_spec)
+_fc_spec.loader.exec_module(_fc_mod)
+audit_fenced_code = _fc_mod.audit_fenced_code
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -931,6 +940,15 @@ def main():
             print(f"  {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("H1 audit: OK — every rendered page carries exactly one <h1>.")
+
+    # ---------- code-fence safety gate: no real <script>/<meta>/<link>/<img> may leak inside a code block ----------
+    fenced_problems = audit_fenced_code(OUT)
+    if fenced_problems:
+        print(f"\nFENCED-CODE AUDIT FAILED — {len(fenced_problems)} real tag(s) leaked inside a code block:")
+        for p in fenced_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Fenced-code audit: OK — every instructional tag inside a <pre><code> block stays html-escaped.")
 
     # ---------- social-snippet gate: og:url absolute + == canonical (error); og/twitter tags present (warn) ----------
     social_problems = audit_social_meta(OUT)

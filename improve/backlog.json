@@ -142,12 +142,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "code-fence-integrity-gate",
-      "title": "DEPTH: build-time code-fence safety gate — a stdlib-only improve/fencedcodecheck.py walks docs/**/*.html and asserts (error) that no instructional example snippet ever leaks as a REAL tag: inside any <pre><code> block there must be no unescaped <script>, <meta>, <link>, or <img> (they must appear html-escaped as &lt;...&gt;), so a fenced example can never inject real markup, duplicate a page's meta description, or add a second JSON-LD node. Objective fixture verify: a page whose code block shows an escaped &lt;script&gt; passes; a crafted page with a real <script> inside <pre><code> fails. Wire it into build.py after the H1 gate; protects the copy-able snippets just shipped.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "sitemap-example-snippet",
       "title": "DEPTH/CONTENT (Grok prose): extend the new copy-able snippets — add a minimal valid XML sitemap example (a <urlset> with one <url>/<loc>/<lastmod>) as a fenced code block to technical-seo.md's crawlability section, so the guide demonstrates sitemap syntax alongside the robots.txt/canonical/noindex/JSON-LD examples it now shows. PM first web_fetch Google Search Central 'Build and submit a sitemap' for the exact current element syntax and lastmod format, supplies the verified snippet, Grok writes the one connective sentence, PM fact-checks before placing. Ties to the pending post-xml-sitemaps-2026 post.",
       "stream": "C-depth",
@@ -412,6 +406,18 @@
       "title": "FEATURE (local-qwen, small): give the ¶ heading permalink a discoverable click-to-copy affordance for mouse users — in improve/anchors.py add title=\"Copy link to this section\" to the a.hanchor element (both heading_html and subheading_html) so hovering shows a native tooltip hinting the new copy behavior; keep the existing aria-label=\"Permalink to this section\" for screen readers (title is supplementary, not a replacement). Verify: rendered docs h2/h3 permalink anchors carry both title and aria-label attributes and the build stays green.",
       "stream": "A-feature",
       "dev": "local-qwen"
+    },
+    {
+      "id": "fencedcode-broaden-tags",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: broaden the just-shipped improve/fencedcodecheck.py — in addition to script/meta/link/img, also ERROR when a REAL <iframe>, <style>, <object>, or <embed> tag leaks inside a <pre><code> block (same html-escaping guarantee), since these can also execute, restyle, or embed content if a snippet ever renders unescaped. stdlib-only, keep the single audit_fenced_code signature + problem-dict shape, extend the fixture verify (a code block showing an escaped &lt;iframe&gt; passes; a real <iframe> inside <pre><code> fails; real tags outside fences still ignored). No new wiring — the existing build.py gate call already consumes the returned problems."
+    },
+    {
+      "id": "copy-code-copied-state",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: give the existing copy-code button a visible + accessible success state — a dependency-free progressive-enhancement JS asset that, on a successful copy, briefly swaps the button's label/icon to a 'Copied ✓' confirmation and announces 'Code copied to clipboard' via one reusable polite aria-live region, then reverts after ~1.5s; respect prefers-reduced-motion (no transition, same timing). Dev writes a self-contained assets/*.js; PM confirms the current copy-code button selector and wires one <script defer> include in templates/base.html. Verify: node --check passes and the script guards double-init, uses aria-live, and reverts the label."
     }
   ],
   "done": [
@@ -856,6 +862,14 @@
       "dev": "local-qwen",
       "done_date": "2026-08-08",
       "note": "local-qwen wrote assets/hanchor-copy.js (delegated click on a.hanchor -> copies absolute permalink URL via navigator.clipboard w/ execCommand fallback, transient \"Copied!\" bubble, aria-live=polite/role=status announcement, respects prefers-reduced-motion, no preventDefault so no-JS anchor nav still works). PM wired one defer <script>, gated on class=\"hanchor\" in content, in build.py render()."
+    },
+    {
+      "id": "code-fence-integrity-gate",
+      "title": "DEPTH: build-time code-fence safety gate — a stdlib-only improve/fencedcodecheck.py walks docs/**/*.html and asserts (error) that no instructional example snippet ever leaks as a REAL tag: inside any <pre><code> block there must be no unescaped <script>, <meta>, <link>, or <img> (they must appear html-escaped as &lt;...&gt;), so a fenced example can never inject real markup, duplicate a page's meta description, or add a second JSON-LD node. Objective fixture verify: a page whose code block shows an escaped &lt;script&gt; passes; a crafted page with a real <script> inside <pre><code> fails. Wire it into build.py after the H1 gate; protects the copy-able snippets just shipped.",
+      "dev": "local-qwen",
+      "date": "2026-08-08",
+      "shipped": "2026-08-08",
+      "note": "New improve/fencedcodecheck.py: build-time gate scanning docs/**/*.html so no real <script>/<meta>/<link>/<img> can leak inside a <pre><code> block (must stay html-escaped). Wired into build.py after the H1 gate, error severity. Objective fixture verify: escaped tags pass; real script/meta/link/img inside a code fence fail; real tags outside fences ignored. Build green; SEO invariants intact."
     }
   ]
 }
