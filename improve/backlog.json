@@ -10,12 +10,6 @@
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
     },
     {
-      "id": "og-image",
-      "title": "Generate per-page social share images and wire og:image / twitter:image. NOTE: major crawlers (Facebook, LinkedIn, X) do NOT render SVG as og:image and no rasterizer/Pillow is installed on this host, so do NOT ship an SVG og:image. Correct path: either (a) add a build dep (Pillow) to rasterize a branded PNG card per page, or (b) ship ONE static, well-designed default PNG share card referenced site-wide (absolute URL) to fix the current summary_large_image-with-no-image gap. Pick (b) as the minimal correct first step. Verify: og:image + twitter:image present, absolute URL, file is PNG/JPG.",
-      "dev": "local-qwen",
-      "stream": "A-feature"
-    },
-    {
       "id": "howto-schema",
       "title": "Add valid HowTo JSON-LD to procedural sections (keyword research, running an audit)"
     },
@@ -417,7 +411,7 @@
     },
     {
       "id": "depth-dethin-next-pillars",
-      "title": "DEPTH: de-thin the next-thinnest pillar pages the same rigorous way — how-search-works.md (~250 words) and measuring.md (~250 words). PM first web_fetch Google Search Central ('In-depth guide to how Google Search works' for crawling/indexing/serving) and the Search Console/Analytics docs for measuring, supplies verified facts, Grok drafts substantial sourced bodies, PM fact-checks every claim and places. One page per run; never pad; keep the build green.",
+      "title": "DEPTH: de-thin measuring.md (~250 words) the same rigorous way — how-search-works.md shipped 2026-08-08. PM web_fetch Google Search Central + Search Console/Analytics docs for measuring, supplies verified facts, Grok drafts a substantial sourced body, PM fact-checks every claim and places. Never pad; keep the build green.",
       "stream": "C-depth",
       "dev": "grok"
     },
@@ -450,6 +444,26 @@
       "title": "DEPTH: extend improve/metacheck.py with a report-only 'title_desc_overlap' warn when a page's <meta name=description> merely restates its <title> — compute case-insensitive word-token Jaccard overlap between title and description and warn when overlap > ~0.7, since a description that echoes the title wastes SERP snippet space that should add NEW context/benefit. Report-only, never fails the build; measured after html.unescape. Objective fixture verify: identical title/description warns; a title + a distinct benefit-led description does not. Dev: local-qwen whole-file rewrite preserving all existing checks; PM re-runs the audit and rewrites any real offenders' descriptions (prose via Grok).",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "og-image-per-page-dynamic",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: now that a default 1200x630 og:image ships, generate a PER-PAGE branded share card so each page/post shares with its own headline instead of one generic card. Reuse the just-proven pipeline: local dev writes a build helper that templates improve/og-card.html per page (inject the page <h1>/title + a small section eyebrow, escaped) and rasterizes each to docs/assets/og/<slug>.png via headless Google Chrome (the SAME --window-size=1200,630 --screenshot invocation the default card used — sips is NOT usable, it mangles text). MUST degrade safely: if the Chrome binary is absent at build time, skip per-page generation and keep the site-wide default card (build stays green on any host). PM then wires per-page og:image to /assets/og/<slug>.png with a fallback to the default. Verify: with Chrome present, a sample slug yields a 1200x630 PNG whose card text matches that page's title; with Chrome absent, build still green and pages fall back to the default card."
+    },
+    {
+      "id": "og-image-wiring-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate improve/ogimagecheck.py (stdlib-only) protecting the just-shipped social-card wiring — for every rendered page that declares <meta name=twitter:card content=summary_large_image>, assert (error) it ALSO emits BOTH an og:image and a twitter:image whose content is an ABSOLUTE http(s) URL ending in a raster extension (.png/.jpg/.jpeg), and that the referenced default card file actually exists under docs/assets/, so the card can never silently regress to a missing image, a relative URL, or a non-raster (SVG) file that crawlers won't render. Objective fixture verify: a page with absolute og:image+twitter:image PNG and the file present passes; a summary_large_image page missing og:image fails; an og:image pointing at a .svg fails; an og:image whose file is absent from docs/assets fails. PM wires one call into build.py after the social-meta audit."
+    },
+    {
+      "id": "depth-dethin-content-quality",
+      "title": "DEPTH: de-thin content-quality.md (~232 words, the thinnest pillar) the same rigorous way. PM web_fetch Google Search Central 'Creating helpful, reliable, people-first content' + the E-E-A-T/quality-rater guidance, supplies verified facts (helpful-content self-assessment, Experience added to E-A-T, 'who/how/why' content questions, self-assessment for AI-assisted content), Grok drafts a substantial sourced body, PM fact-checks every claim and places. Never pad; keep the build green."
+    },
+    {
+      "id": "how-search-works-inbound-links",
+      "title": "INTERNAL LINKS: now that /how-search-works/ has a real Rendering/JavaScript passage, add ONE contextual in-body link to /how-search-works/ from technical-seo.md where JavaScript/crawlability is discussed, and one from measuring.md's diagnose-a-drop context — deepening the topic cluster around the enriched pillar. Minimal edits; keep the internal-link audit green."
     }
   ],
   "done": [
@@ -931,6 +945,19 @@
       "dev": "local-qwen",
       "shipped": "2026-08-08",
       "result": "Added report-only short_title (<20 chars) and short_description (<70 chars) warn kinds to improve/metacheck.py (min_title_chars=20, min_desc_chars=70), measured after html.unescape like existing checks; never fails build. Audit currently shows 0 short warnings — all pages healthy — so the guard is preventive against future regressions."
+    },
+    {
+      "id": "og-image",
+      "title": "Ship a site-wide default og:image / twitter:image so shared cards render (closing the summary_large_image-with-no-image gap on all 22 pages).",
+      "dev": "local-qwen (card design, improve/og-card.html) + PM rasterization (headless Chrome) & meta wiring",
+      "date": "2026-08-08",
+      "result": "BACKGROUND: every page declared twitter:card=summary_large_image but shipped ZERO og:image — a real site-wide defect making all 22 pages render a blank large card when shared. The prior (2026-08-07) og-image attempt was DISCARDED because it rasterized an SVG card with macOS `sips`, which mangles SVG text (garbled title + stray boxes). THIS run used the right tool: (1) Local Qwen dev (dispatch.py) authored improve/og-card.html — a self-contained, resource-free 1200x630 branded card (brand #0b6bcb background edge-to-edge, white title 'The Guide to SEO', tagline 'How search actually works — sourced to primary docs', url eyebrow, inline-SVG mark); passed an objective structural verify. First render left a white bottom band, so PM re-dispatched a tightened spec (html+body height:630px + background:#0b6bcb, card fills the frame) — dev fixed it. (2) PM rasterized improve/og-card.html -> assets/og-card.png with headless Google Chrome (--window-size=1200,630 --screenshot), a real text-capable rasterizer (NOT sips); PM VISUALLY inspected the PNG both times (fixed the white-band regression before shipping) and confirmed 1200x630 image/png via sips. (3) PM wiring only: added og:image (+ :secure_url/:type/:width/:height/:alt) and twitter:image (+ :alt) to templates/base.html using the existing absolute {base} + {site} placeholders — no build.py format change needed; build.py's existing copytree ships the PNG to docs/assets/. Kept the card HTML SOURCE in improve/ (NOT assets/) so the whole-assets copytree can't sweep a stray .html into docs/ where the *.html audit gates would fail it. VERIFIED end-to-end: build GREEN (BUILD_EXIT=0, 14 guide pages + 6 posts); docs/assets/og-card.png present & 1200x630 PNG; all 22 summary_large_image pages now carry an ABSOLUTE og:image AND twitter:image pointing at the PNG (22/22); full SEO gate GREEN on docs/index.html (one <title>, one meta description, one rel=canonical, JSON-LD Article, exactly one <h1>, sitemap.xml present with 22 urls); every prior gate still OK. Self-replenished with og-image-per-page-dynamic and og-image-wiring-gate."
+    },
+    {
+      "id": "depth-dethin-how-search-works",
+      "title": "DEPTH: de-thinned the How Search Works pillar (~242 -> ~704 words). Added sourced depth on URL discovery, two Googlebot types + mobile-first indexing, adaptive crawl-rate/HTTP-500 throttling, Chrome rendering of JavaScript, 2MB/64MB crawl cutoffs, canonical clustering, language/locale/usability signals, hundreds of ranking factors, intent-driven SERP features, and the robots.txt-vs-noindex distinction. All facts sourced to Google Search Central.",
+      "dev": "grok",
+      "date": "2026-08-08"
     }
   ]
 }
