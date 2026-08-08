@@ -239,6 +239,15 @@ _fc_mod = _ilu.module_from_spec(_fc_spec)
 _fc_spec.loader.exec_module(_fc_mod)
 audit_fenced_code = _fc_mod.audit_fenced_code
 
+# Post-build fenced-code language gate: every rendered <pre><code> fenced block must carry a non-empty
+# language-* class so code samples stay consistently labeled/highlightable and the copy-code button
+# always has a labeled target — an unlabeled ``` fence can never silently ship. Error severity.
+# Logic in improve/fencedlangcheck.py.
+_fl_spec = _ilu.spec_from_file_location("fencedlangcheck", os.path.join(HERE, "improve", "fencedlangcheck.py"))
+_fl_mod = _ilu.module_from_spec(_fl_spec)
+_fl_spec.loader.exec_module(_fl_mod)
+audit_fenced_lang = _fl_mod.audit_fenced_lang
+
 # Post-build JSON-LD reference-integrity gate: within each page, every entity-reference object
 # ({"@id": X} used as author/publisher/isPartOf/about/mainEntity/mainEntityOfPage) must resolve to a
 # node actually defined on that page, so a byline/publisher/isPartOf reference can never dangle after
@@ -1077,6 +1086,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("Fenced-code audit: OK — every instructional tag inside a <pre><code> block stays html-escaped.")
+
+    # ---------- fenced-code language gate: every <pre><code> block must carry a non-empty language-* class ----------
+    fenced_lang_problems = audit_fenced_lang(OUT)
+    if fenced_lang_problems:
+        print(f"\nFENCED-LANG AUDIT FAILED — {len(fenced_lang_problems)} <pre><code> block(s) missing a language-* class:")
+        for p in fenced_lang_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Fenced-lang audit: OK — every <pre><code> fenced block carries a non-empty language-* class.")
 
     # ---------- social-snippet gate: og:url absolute + == canonical (error); og/twitter tags present (warn) ----------
     social_problems = audit_social_meta(OUT)

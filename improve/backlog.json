@@ -126,12 +126,6 @@
       "title": "DEPTH: enrich improve/headingorder.py warnings with a short heading-text snippet — capture the inner text of the offending heading (strip tags, collapse whitespace, truncate ~60 chars) and append it to the detail string, so a skipped-level warning names WHICH heading to fix rather than only the level jump. Keep stdlib-only; extend the existing fixture verify to assert the snippet appears."
     },
     {
-      "id": "fenced-lang-gate",
-      "title": "DEPTH: build-time gate that every rendered <pre><code> fenced block carries a non-empty language-* class, so code snippets stay consistently labeled/highlightable as more are added and an unlabeled ``` fence can never silently ship. New improve/fencedlangcheck.py in the walk-docs/regex-tags style, stdlib-only, objective fixture verify (a <pre><code class=\"language-html\"> passes; a bare <pre><code> without a language-* class fails). Report-or-error severity; PM wires one call in build.py.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "blogposting-author-resolves",
       "title": "DEPTH: extend improve/blogpostingcheck.py so that when a post's BlogPosting.author (or publisher) is a reference object {'@id': X}, the build fails if X does not resolve to an actual node defined in that same page's JSON-LD @graph — closes the gap where a byline reference could dangle even though the field is present. Reuse the existing node-walk; error severity; objective fixture verify (a post whose author @id has a matching Person node passes; one whose author @id has no matching node fails).",
       "stream": "C-depth",
@@ -543,6 +537,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: build-time report-only warn (new improve/twittertextcheck.py, or extend twittercardcheck.py) that a page carrying a twitter:card also exposes shareable text — warn 'twitter_text_missing' when NEITHER twitter:title/twitter:description NOR the og:title/og:description X falls back to are present, since X shows an empty card otherwise. stdlib-only regex over rendered HTML, objective fixture verify (a card page with only og:title+og:description passes via fallback; a card page with none of the four warns). Dev: local-qwen; PM wires/prints non-blocking."
+    },
+    {
+      "id": "fenced-lang-known-set-warn",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/fencedlangcheck.py with a report-only 'fenced_lang_unknown' WARN (non-blocking, separate from the existing error) when a <pre><code> language token is present but not in the set the site actually uses/styles {html,json,txt,css,js,javascript,xml,bash,sh,python} — so a typo'd fence label (e.g. language-htlm) is surfaced instead of silently rendering unhighlighted. Keep the missing/empty-class case as the existing error. build.py splits errors vs warns (mirror the meta/robots warn pattern). Objective fixture verify: language-html passes clean, language-htlm warns, bare fence still errors."
+    },
+    {
+      "id": "copy-code-lang-badge",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: show the code language as a small badge on each <pre> block, reading the existing data-lang attribute the renderer already emits (improve/fencedcode.py sets data-lang=\"<lang>\"), via one scoped CSS rule in assets/style.css using pre[data-lang]::before { content: attr(data-lang) } — no JS, reduced-motion/contrast-safe, light+dark tokens untouched, positioned so it never overlaps the existing copy-code button. Verify asserts the pre[data-lang]::before rule is present and existing tokens unchanged. Ties to the just-shipped fenced-lang gate."
     }
   ],
   "done": [
@@ -1183,6 +1189,15 @@
       "dev": "local-qwen",
       "done_note": "SHIPPED 2026-08-08 (dev: local-qwen built improve/twittercardcheck.py, PM-wired gate). New stdlib-only regex module audit_twitter_card(docs_dir) scans every rendered <meta name=\"twitter:card\"> (order- and quote-independent) and ERRORs (kind twitter_card_invalid, severity error) when the value is not one of {summary,summary_large_image,app,player} — an invalid value makes X drop the card entirely. PM wired one gate block into build.py right after the social-meta gate (raises SystemExit(1) on any invalid card). Verified: negative test on a 'banner' value fires the error; build green + all SEO checks pass; supersedes the failed whole-file twitter-card-enum path.",
       "done_date": "2026-08-08"
+    },
+    {
+      "id": "fenced-lang-gate",
+      "title": "DEPTH: build-time gate that every rendered <pre><code> fenced block carries a non-empty language-* class, so code snippets stay consistently labeled/highlightable as more are added and an unlabeled ``` fence can never silently ship. New improve/fencedlangcheck.py in the walk-docs/regex-tags style, stdlib-only, objective fixture verify (a <pre><code class=\"language-html\"> passes; a bare <pre><code> without a language-* class fails). Report-or-error severity; PM wires one call in build.py.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "shipped": "2026-08-08",
+      "built_by": "local-qwen (built) + pm-wired",
+      "result": "improve/fencedlangcheck.py: error-severity build gate that every rendered <pre><code> fenced block carries a non-empty language-* class; wired one gate block in build.py after the fenced-code audit. All 3 current fences (html/json/txt) pass; build green + all SEO checks pass."
     }
   ]
 }
