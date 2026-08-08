@@ -128,10 +128,6 @@
       "title": "DEPTH: now that descriptions have been trimmed to <=155 chars, extend improve/metacheck.py with the OPPOSITE guard so trimming never overshoots — add report-only 'short_description' (rendered meta description < ~70 chars, too terse to earn a click) and 'short_title' (<title> under ~20 chars, wasting SERP real estate) warn kinds, measured after html.unescape like the existing checks, with an objective fixture verify (a 40-char desc and a 12-char title warn; a healthy 130-char desc / 45-char title do not). Report-only, never fail the build. Dev: local Qwen extends metacheck.py; PM re-runs the audit and acts on any real findings."
     },
     {
-      "id": "post-page-experience-2026",
-      "title": "BLOG POST (Grok prose): 'Page experience in 2026 — what actually counts beyond Core Web Vitals'. Angle: Google folded the standalone Page Experience ranking system into its core 'helpful content' guidance, so page experience is a set of signals (Core Web Vitals, HTTPS, mobile-friendliness, no intrusive interstitials) evaluated holistically, not a single boost. Substantial + sourced: PM first web_fetch Google Search Central 'Understanding page experience in Google Search results' and the Core Web Vitals / INP docs to supply exact current facts (INP replaced FID in March 2024; the three CWV metrics + thresholds; that helpful-content is now a core-ranking signal not a separate system), Grok drafts from that brief, PM fact-checks every claim against the sources before publishing, adds tags + related:, and internally links to the existing Core Web Vitals and technical-seo pages. Respect the ~1 post / 4h cadence."
-    },
-    {
       "id": "aicontent-inbound-links",
       "title": "INTERNAL LINKS: add a contextual in-body link from content-quality.md and common-seo-mistakes.md to the new 'Does AI Content Hurt SEO?' post so the new post earns inbound internal links from its most relevant topic hubs (descriptive anchor text, one per page).",
       "stream": "C-depth",
@@ -323,6 +319,18 @@
       "id": "related-blocks-spacing",
       "title": "FEATURE: cohesive footer spacing when a blog post carries BOTH the curated 'Related reading' block and the new auto 'Related articles' block — currently they stack as two separately-bordered sections. Add a small no-JS, reduced-motion/contrast-safe CSS rule (adjacent-sibling: .related + .related-posts) that tightens the second block's top margin/border so the two related sections read as one cohesive footer unit. Dev: local-qwen adds one scoped rule to assets/style.css; verify asserts the '.related + .related-posts' selector is present and the light/dark tokens are untouched.",
       "stream": "A-feature",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "pageexp-inbound-links",
+      "title": "INTERNAL LINKS: give the new 'Page Experience in 2026' post inbound links from its topic hubs — add one contextual in-body link (descriptive anchor) to /blog/page-experience-beyond-core-web-vitals/ from the technical-seo page (Core Web Vitals section) and from the passing-core-web-vitals-2026 post, so the new post isn't an orphan. One link per page.",
+      "stream": "C-depth",
+      "dev": "pm-placed"
+    },
+    {
+      "id": "related-key-integrity-warn",
+      "title": "DEPTH (local-qwen): build-time related-key integrity warn — a stdlib-only improve/relatedkeycheck.py that, given the known page/post slug registry, reports (warn, non-blocking) any front-matter related: key that does NOT resolve to a real guide slug or blog/<slug>, so a typo in a related: reference is surfaced instead of being silently dropped by related_block(). Objective fixture verify: a related list containing a bogus key warns; an all-valid list passes. Wire after the metadata audit; report-only, never fail the build.",
+      "stream": "C-depth",
       "dev": "local-qwen"
     }
   ],
@@ -649,6 +657,12 @@
       "dev": "local-qwen",
       "date": "2026-08-07",
       "note": "New improve/relatedposts.py helper (built + self-verified by local Qwen) ranks sibling posts by shared front-matter tags; PM wired it into build.py's blog-post render. Reuses existing .related/.related-list CSS, zero new CSS. Honest relatedness: posts with no shared tag emit no block."
+    },
+    {
+      "id": "post-page-experience-2026",
+      "title": "BLOG POST (Grok prose): 'Page experience in 2026 — what actually counts beyond Core Web Vitals'. Angle: Google folded the standalone Page Experience ranking system into its core 'helpful content' guidance, so page experience is a set of signals (Core Web Vitals, HTTPS, mobile-friendliness, no intrusive interstitials) evaluated holistically, not a single boost. Substantial + sourced: PM first web_fetch Google Search Central 'Understanding page experience in Google Search results' and the Core Web Vitals / INP docs to supply exact current facts (INP replaced FID in March 2024; the three CWV metrics + thresholds; that helpful-content is now a core-ranking signal not a separate system), Grok drafts from that brief, PM fact-checks every claim against the sources before publishing, adds tags + related:, and internally links to the existing Core Web Vitals and technical-seo pages. Respect the ~1 post / 4h cadence.",
+      "dev": "grok",
+      "date": "2026-08-07"
     }
   ]
 }

@@ -35,6 +35,27 @@
       ]
     },
     {
+      "id": "https://connor-enge.github.io/seo-guide/blog/page-experience-beyond-core-web-vitals/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/page-experience-beyond-core-web-vitals/",
+      "title": "Page Experience in 2026",
+      "summary": "Page experience isn't one Google ranking signal in 2026. What counts: Core Web Vitals, HTTPS, mobile-friendliness, and no intrusive interstitials.",
+      "content_text": "Page experience isn't one Google ranking signal in 2026. What counts: Core Web Vitals, HTTPS, mobile-friendliness, and no intrusive interstitials.",
+      "date_published": "2026-08-07T00:00:00Z",
+      "date_modified": "2026-08-07T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "technical-seo",
+        "page-experience",
+        "core-web-vitals",
+        "ux"
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/blog/title-tags-meta-descriptions-that-earn-clicks/",
       "url": "https://connor-enge.github.io/seo-guide/blog/title-tags-meta-descriptions-that-earn-clicks/",
       "title": "Title Tags & Meta Descriptions",
