@@ -45,6 +45,12 @@ _fc_mod = _ilu.module_from_spec(_fc_spec)
 _fc_spec.loader.exec_module(_fc_mod)
 consume_fence = _fc_mod.consume_fence
 
+# "Related articles" block linking sibling posts by shared tags. Logic in improve/relatedposts.py.
+_rp_spec = _ilu.spec_from_file_location("relatedposts", os.path.join(HERE, "improve", "relatedposts.py"))
+_rp_mod = _ilu.module_from_spec(_rp_spec)
+_rp_spec.loader.exec_module(_rp_mod)
+related_posts_block = _rp_mod.related_posts_block
+
 # Custom 404 page content (helpful links + search). Copy lives in improve/notfound.py.
 _nf_spec = _ilu.spec_from_file_location("notfound", os.path.join(HERE, "improve", "notfound.py"))
 _nf_mod = _ilu.module_from_spec(_nf_spec)
@@ -624,6 +630,10 @@ def main():
         write("" if slug == "index" else slug, page)
 
     # ---------- blog posts ----------
+    # Plain-data card list so each post can auto-link to sibling posts sharing tags.
+    post_cards = [{"slug": m["slug"], "title": m["title"], "description": m["description"],
+                   "tags": [t.strip() for t in m.get("tags", "").split(",") if t.strip()]}
+                  for m, _ in posts]
     for meta, body in posts:
         slug = meta["slug"]
         content_html, toc = render_md(body)
@@ -647,7 +657,11 @@ def main():
         page = render(
             title=meta["title"], description=meta["description"], url=url, og_type="article",
             h1=meta.get("h1", meta["title"]), byline=byline,
-            toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
+            toc=toc_block(toc),
+            content=(content_html + related_block(meta.get("related", ""), url)
+                     + related_posts_block(slug,
+                                           [t.strip() for t in meta.get("tags", "").split(",") if t.strip()],
+                                           post_cards, post_url)),
             pager=f'<nav class="pager"><a class="prev" href="{BLOG_URL}">← All articles</a></nav>',
             jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs))
         write(os.path.join("blog", slug), page)

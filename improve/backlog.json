@@ -14,10 +14,6 @@
       "title": "FEATURE: 'Related articles' block computed from shared tags/topics on each page"
     },
     {
-      "id": "blog-related-posts",
-      "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)"
-    },
-    {
       "id": "local-seo",
       "title": "New section: Local SEO — Google Business Profile, NAP consistency, reviews, local pack, local schema"
     },
@@ -316,6 +312,18 @@
       "title": "BLOG POST (Grok prose): 'dateModified & content freshness — does updating a page actually help SEO in 2026?'. Angle: Google uses freshness as a query-dependent signal, honest lastmod/dateModified matters (don't fake-bump dates), meaningful updates > cosmetic edits, and how visible <time> bylines + accurate JSON-LD dateModified reinforce each other. PM first web_fetch Google Search Central guidance on dates (structured data 'Article' date fields, 'how Google determines the date of a page') + the freshness/QDF context to supply exact current facts; Grok drafts from that brief; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and the measuring page. Ties to the just-shipped <time> byline feature. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
       "dev": "grok"
+    },
+    {
+      "id": "related-posts-gate",
+      "title": "DEPTH: build-time gate improve/relatedpostscheck.py protecting the just-shipped sibling internal-linking — given the rendered posts + their front-matter tags, assert every post that has >=1 OTHER post sharing at least one tag emits a 'related related-posts' nav, and every post with zero tag overlap emits none, so the shared-tag internal links can never silently regress after a refactor. stdlib-only, objective fixture verify (a corpus where two posts share a tag => both must carry the block; an unrelated third must not). Dev: local-qwen; PM wires the audit call into build.py.",
+      "stream": "C-depth",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "related-blocks-spacing",
+      "title": "FEATURE: cohesive footer spacing when a blog post carries BOTH the curated 'Related reading' block and the new auto 'Related articles' block — currently they stack as two separately-bordered sections. Add a small no-JS, reduced-motion/contrast-safe CSS rule (adjacent-sibling: .related + .related-posts) that tightens the second block's top margin/border so the two related sections read as one cohesive footer unit. Dev: local-qwen adds one scoped rule to assets/style.css; verify asserts the '.related + .related-posts' selector is present and the light/dark tokens are untouched.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -634,6 +642,13 @@
       "dev": "local-qwen",
       "date": "2026-08-07",
       "note": "Build-time image-accessibility gate: improve/imgaltcheck.py audit_img_alt() fails the build on any rendered <img> missing an alt attribute (alt=\"\" allowed for decorative). Wired into build.py after the BlogPosting gate. Built by local-qwen (2 attempts); PM wired one import block + one gate call."
+    },
+    {
+      "id": "blog-related-posts",
+      "title": "FEATURE: 'Related articles' on each blog post computed from shared front-matter tags, with descriptive anchors (build on the tags field posts already carry)",
+      "dev": "local-qwen",
+      "date": "2026-08-07",
+      "note": "New improve/relatedposts.py helper (built + self-verified by local Qwen) ranks sibling posts by shared front-matter tags; PM wired it into build.py's blog-post render. Reuses existing .related/.related-list CSS, zero new CSS. Honest relatedness: posts with no shared tag emit no block."
     }
   ]
 }
