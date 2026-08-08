@@ -31,7 +31,7 @@ Use a rel=canonical link to name the one preferred URL for duplicate or similar 
 <link rel="canonical" href="https://www.example.com/dresses/green-dress">
 ```
 
-Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not block it in robots.txt.
+Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not [block it in robots.txt](/common-seo-mistakes/#accidentally-blocking-or-de-indexing-your-own-pages).
 
 ```html
 <meta name="robots" content="noindex">

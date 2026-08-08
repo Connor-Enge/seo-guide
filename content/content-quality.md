@@ -25,7 +25,7 @@ Google's systems evaluate signals of Experience, Expertise, Authoritativeness, a
 
 ## Who, How, and Why
 
-Make authorship self-evident. Add accurate bylines where readers expect them and link those bylines to pages that detail the author's background and areas of expertise. Explain how the content was produced when it helps readers evaluate it. For reviews this includes the number of products tested and the method used, supported by evidence such as photos. When automation or AI plays a substantial role in generation, disclose the fact and explain the reason it improves the result. The decisive question remains why the content exists. It must exist primarily to help people. Using AI or automation to mass-produce material mainly for ranking purposes violates spam policies on scaled content abuse.
+Make authorship self-evident. Add accurate bylines where readers expect them and link those bylines to pages that detail the author's background and areas of expertise. Explain how the content was produced when it helps readers evaluate it. For reviews this includes the number of products tested and the method used, supported by evidence such as photos. When automation or AI plays a substantial role in generation, disclose the fact and explain the reason it improves the result. The decisive question remains why the content exists. It must exist primarily to help people. Using AI or automation to [mass-produce material mainly for ranking purposes](/common-seo-mistakes/#publishing-thin-or-duplicated-content-at-scale) violates spam policies on scaled content abuse.
 
 ## Common quality-killing myths
 

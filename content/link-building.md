@@ -41,7 +41,7 @@ Multiple values may be combined in a single attribute, for example `rel="ugc nof
 
 ## Link schemes to avoid
 
-Google lists several practices as link spam. These include buying or selling links for ranking purposes, excessive reciprocal exchanges, automated link creation services, and requiring links in contracts or terms of service without allowing qualification. Text ads or native placements that pass ranking credit without qualification also qualify, as do low-quality directory links, keyword-rich widget links, and forum signatures containing optimized anchors.
+Google lists several practices as link spam. These include [buying or selling links for ranking purposes](/common-seo-mistakes/#chasing-links-you-can-buy-instead-of-links-you-earn), excessive reciprocal exchanges, automated link creation services, and requiring links in contracts or terms of service without allowing qualification. Text ads or native placements that pass ranking credit without qualification also qualify, as do low-quality directory links, keyword-rich widget links, and forum signatures containing optimized anchors.
 
 Creating low-value content solely to generate links falls under the same category. Paid links themselves are not violations when properly qualified with `rel="sponsored"` or `rel="nofollow"`. Violations are detected through automated systems and, when needed, human review, and can trigger manual actions that suppress rankings.
 

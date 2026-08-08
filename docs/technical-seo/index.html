@@ -64,7 +64,7 @@ Allow: /
 Sitemap: https://www.example.com/sitemap.xml</code></pre>
 <p>Use a rel=canonical link to name the one preferred URL for duplicate or similar pages. Include a self-referential canonical on the canonical page itself. On large catalogs, <a href="https://connor-enge.github.io/seo-guide/ecommerce-seo/">faceted navigation and product variants</a> are the most common source of these duplicate URLs.</p>
 <pre data-lang="html"><code class="language-html">&lt;link rel="canonical" href="https://www.example.com/dresses/green-dress"&gt;</code></pre>
-<p>Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not block it in robots.txt.</p>
+<p>Add the meta robots tag with noindex in the head to keep the page out of the index. Google must still crawl the page to see the tag, so do not <a href="https://connor-enge.github.io/seo-guide/common-seo-mistakes/#accidentally-blocking-or-de-indexing-your-own-pages">block it in robots.txt</a>.</p>
 <pre data-lang="html"><code class="language-html">&lt;meta name="robots" content="noindex"&gt;</code></pre>
 <h2 id="mobile-https">Mobile &amp; HTTPS<a class="hanchor" href="#mobile-https" aria-label="Permalink to this section"><span aria-hidden="true">¶</span></a></h2>
 <p>Google indexes the <strong>mobile</strong> version of your site first, so it must be fully usable on a phone. Serve everything over <strong>HTTPS</strong> — security is a baseline expectation.</p>

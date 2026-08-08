@@ -56,10 +56,6 @@
       "title": "DEPTH: once the SEO glossary page ships, auto-link the first mention of each glossary term across all guide pages to its glossary anchor (build.py: term registry + first-mention linker, one link per term per page, skip headings/existing links)"
     },
     {
-      "id": "mistakes-crosslink-inbound",
-      "title": "INTERNAL LINKS: add a contextual link to the new Common SEO Mistakes page from the most relevant spot in content-quality, on-page-seo, technical-seo and link-building (descriptive anchors), so the new hub earns inbound internal links and isn't an orphan"
-    },
-    {
       "id": "post-eeat-2026",
       "title": "BLOG POST: what E-E-A-T actually is in 2026 and how to demonstrate it — Experience/Expertise/Authoritativeness/Trust, why Trust dominates, YMYL topics, and concrete on-page signals (clear authorship, sourcing/citations, about+contact, corroborated facts, reviews). Source to Google's Search Quality Rater Guidelines + Search Central 'Creating helpful, reliable, people-first content'."
     },
@@ -509,6 +505,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: extend improve/sitemaplastmodcheck.py with a report-only warn 'lastmod_bad_format' for any <lastmod> value that is neither a bare W3C date (YYYY-MM-DD) nor a valid W3C datetime (YYYY-MM-DDThh:mm:ss with optional fractional seconds and a Z or +hh:mm offset) — sitemaps.org requires W3C Datetime format and Google may ignore malformed lastmods. Validate with a strict regex + a real date parse (reject impossible dates like 2026-13-40). Non-blocking WARN only, stdlib-only, objective fixture verify (2026-08-08 and 2026-08-08T12:30:00+00:00 pass; 08/08/2026 and 2026-13-40 warn). Dev: local-qwen."
+    },
+    {
+      "id": "fragment-anchor-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate improve/fragmentcheck.py that validates in-page fragment anchors. For every rendered internal <a href> under BASE_URL that carries a '#id', load the target page in docs/ and fail (error) if no element on that page has a matching id=. Closes the gap where linkcheck.py strips the fragment (.split('#')[0]) and never confirms the anchor resolves — relevant now that the pillar→Common-SEO-Mistakes deep-links (the site's first fragment internal links) shipped. stdlib-only (regex-scan ids/hrefs, no external deps), skip pure '#' and cross-origin hrefs; objective fixture verify (an href to /common-seo-mistakes/#using-duplicate-or-generic-title-tags passes when that id exists; an href to a bogus #no-such-id fails). PM wires one call into build.py after linkcheck."
+    },
+    {
+      "id": "mistakes-reciprocal-outbound",
+      "stream": "C-depth",
+      "dev": "pm-wired internal links",
+      "title": "INTERNAL LINKS: make the pillar↔Common-SEO-Mistakes cluster bidirectional — from the matching sections of common-seo-mistakes.md, add descriptive-anchor links back OUT to the relevant pillar deep-dives where not already present (keyword stuffing / duplicate titles → on-page-seo; thin/duplicated content → content-quality; blocking or de-indexing pages → technical-seo; buying links → link-building; weak internal linking → the internal-linking topic-clusters post), one descriptive anchor per section, skip any that already link there. Reinforces the topic cluster in both directions."
     }
   ],
   "done": [
@@ -1072,6 +1080,13 @@
       "dev": "local-qwen",
       "date": "2026-08-08",
       "note": "Shipped as NEW sibling helper improve/sitemaplastmodcheck.py (audit_lastmod_honesty) — report-only WARN when >=2 present <lastmod> values are byte-identical; PM wired a non-blocking print into the sitemap gate in build.py. Hardened against empty/None-text <lastmod> elements after the first attempt crashed on them. Current sitemap has mixed lastmods (08-05..08-08) so the gate reports OK; it guards against a future regression to always-'today' lastmods."
+    },
+    {
+      "id": "mistakes-crosslink-inbound",
+      "title": "INTERNAL LINKS: add a contextual link to the new Common SEO Mistakes page from the most relevant spot in content-quality, on-page-seo, technical-seo and link-building (descriptive anchors), so the new hub earns inbound internal links and isn't an orphan",
+      "dev": "pm-wired internal links",
+      "date": "2026-08-08",
+      "note": "Shipped 4 net-new contextual descriptive-anchor inbound links, each deep-linking to the exact matching mistake section: content-quality 'mass-produce material mainly for ranking purposes' -> #publishing-thin-or-duplicated-content-at-scale; on-page-seo 'duplicate descriptions across pages' -> #using-duplicate-or-generic-title-tags; technical-seo 'block it in robots.txt' -> #accidentally-blocking-or-de-indexing-your-own-pages; link-building 'buying or selling links for ranking purposes' -> #chasing-links-you-can-buy-instead-of-links-you-earn. First fragment internal links on the site; linkcheck strips fragments so paths passed the gate, and all four target ids were verified present on docs/common-seo-mistakes/index.html. The pre-existing bare mistakes link on each pillar is only the global nav, so these topical in-body links are genuinely new. Build green, all SEO gates OK."
     }
   ]
 }

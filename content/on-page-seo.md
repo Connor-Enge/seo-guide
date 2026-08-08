@@ -13,7 +13,7 @@ On-page SEO is everything you control **on the page** to make its topic unmistak
 The `<title>` is your single most important on-page element and the headline in search results. Make it **unique per page**, put the primary topic near the front, keep it roughly under 60 characters, and write it for a human, not a robot.
 
 ## Meta descriptions
-Google may rewrite it, but a clear ~150-character description acts as ad copy that improves click-through. Summarize the page and give a reason to click. Never duplicate descriptions across pages.
+Google may rewrite it, but a clear ~150-character description acts as ad copy that improves click-through. Summarize the page and give a reason to click. Never [duplicate descriptions across pages](/common-seo-mistakes/#using-duplicate-or-generic-title-tags).
 
 Your title and meta description control what searchers see in results. Keep the title unique and front-loaded, and write a compelling ~150-character description that earns the click. This gets harder at scale, where [product and category page templates](/ecommerce-seo/) must still yield a unique title and description for every URL.
 
