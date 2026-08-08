@@ -90,10 +90,6 @@
       "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
     },
     {
-      "id": "404-suggest-search",
-      "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html."
-    },
-    {
       "id": "linkcheck-report-artifact",
       "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     },
@@ -370,6 +366,18 @@
     {
       "id": "post-product-structured-data-2026",
       "title": "BLOG POST: product structured data in 2026 for online stores — Product snippets vs merchant listings, which properties drive which rich results (ratings, shipping, availability, price drop, returns), the Organization-level return-policy/loyalty markup, and a Rich Results Test + Merchant Center validation workflow; source strictly to Google Search Central's product / merchant-listing / return-policy docs. (Only publish if >4h since newest content/blog date.)"
+    },
+    {
+      "id": "404-did-you-mean",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE: build on the new 404 URL->query pre-fill — after populating #nf-q, render a small client-side 'Did you mean?' list of the top 2-3 matching pages inline on the 404 page by fetching the existing search-index.json and scoring against the derived query (reuse the same substring/tag matching search.js uses), so a mistyped/renamed URL surfaces likely destinations without a second click. Progressive enhancement, only on 404.html, fully graceful if JS is off or the fetch fails; no new dependencies. Objective verify: a DOM+fetch stub with a known index yields the expected top matches for a sample path."
+    },
+    {
+      "id": "script-src-exists-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate that every <script src> a rendered page references under /assets/ actually exists in docs/assets/, so a one-line wiring typo (e.g. a renamed or missing JS asset) fails the build instead of silently shipping a 404ing <script> tag. New stdlib-only improve/scriptsrccheck.py in the walk-docs/regex-tags style; error severity; PM wires one call in build.py after the existing asset copy. Objective fixture verify: a page whose <script src> points at an existing asset passes; one pointing at a missing asset fails. Directly hardens the kind of script wiring the 404-suggest feature just added."
     }
   ],
   "done": [
@@ -771,6 +779,13 @@
       "title": "New section: E-commerce SEO — product schema, faceted navigation, canonical strategy",
       "done": "2026-08-08",
       "note": "New pillar page content/ecommerce-seo.md (order 10, auto-added to top nav + sitemap). PM sourced authoritative facts from Google Search Central (Product structured data: Product snippets vs Merchant listings, core fields name/image/price/priceCurrency/availability/reviews, Organization-level return-policy + loyalty-program markup, rich-result enhancements incl. Google-computed price drops, mark up only visible/accurate data; Faceted-navigation crawl guidance: infinite URL-space/overcrawling, block via robots.txt param rules or URL fragments, rel=canonical/nofollow less effective long-term, use & separator + consistent filter order + 404 on empty combos). Grok drafted the ~1120-word body from that brief; PM fact-checked every claim against the sources, kept the single fenced Product JSON example as escaped code (no second JSON-LD node), set H1, trimmed meta description to 148 chars. Wired: renumbered audit-checklist/mistakes/glossary to 11/12/13, added ecommerce-seo to related: of on-page-seo + technical-seo for inbound internal links. Build green; title/desc/canonical/1x h1/Article JSON-LD/BreadcrumbList/sitemap/related-block all verified. (dev: grok)"
+    },
+    {
+      "id": "404-suggest-search",
+      "title": "FEATURE: on the new 404 page, pre-fill the search box from the failed path (progressive enhancement) — a tiny no-dependency script reads location.pathname, turns the last URL segment into space-separated words, and populates #nf-q (and optionally runs the existing client search) so a mistyped/renamed URL immediately surfaces likely matches; fully graceful with no JS, reduced-motion irrelevant. Wire via the existing {scripts} slot, only on 404.html.",
+      "done_note": "Shipped 2026-08-08: assets/nf-suggest.js pre-fills the 404 page search box (#nf-q) with a query derived from the failed URL's last path segment; wired only on 404.html via the render() scripts slot. Built by local Qwen dev; objective DOM-stub verify.",
+      "dev": "local-qwen",
+      "date": "2026-08-08"
     }
   ]
 }

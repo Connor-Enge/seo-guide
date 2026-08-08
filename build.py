@@ -772,7 +772,8 @@ def main():
     open(os.path.join(OUT, "404.html"), "w").write(render(
         title=NF_TITLE, description=NF_DESCRIPTION, url=nf_url, og_type="website",
         h1=NF_H1, byline=NF_BYLINE, content=notfound_content(BASE_URL, nf_cards),
-        breadcrumb=breadcrumb_block([("Home", HOME_URL), (NF_TITLE, nf_url)])))
+        breadcrumb=breadcrumb_block([("Home", HOME_URL), (NF_TITLE, nf_url)]),
+        scripts='<script defer src="%s/assets/nf-suggest.js"></script>' % BASE_URL))
 
     # ---------- sitemap + robots ----------
     entries = [(page_url(m["slug"]), today, "1.0" if m["slug"] == "index" else "0.8") for m, _ in pages]
