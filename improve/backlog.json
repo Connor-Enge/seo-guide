@@ -462,16 +462,22 @@
       "title": "INTERNAL LINKS: now that /how-search-works/ has a real Rendering/JavaScript passage, add ONE contextual in-body link to /how-search-works/ from technical-seo.md where JavaScript/crawlability is discussed, and one from measuring.md's diagnose-a-drop context — deepening the topic cluster around the enriched pillar. Minimal edits; keep the internal-link audit green."
     },
     {
-      "id": "depth-dethin-measuring",
-      "stream": "C-depth",
-      "dev": "grok",
-      "title": "DEPTH: de-thin the Measuring & Analytics pillar (currently ~238 words, one of the thinnest) with sourced depth — Search Console vs GA4 roles, the metrics that actually matter (clicks/impressions/CTR/average position, then conversions & assisted conversions), the difference between measuring visibility vs. outcomes, and common vanity-metric traps. PM first web_fetch Google Search Central (Search Console docs) + GA4 help to supply exact current facts; Grok drafts; PM fact-checks, keeps front-matter + related:, internally links to measuring-relevant hubs. Not a new post — depth refresh, no cadence gate."
-    },
-    {
       "id": "contentquality-inbound-links",
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "INTERNAL LINKS: now that the Content Quality pillar is substantial again, add a contextual in-body link to it (descriptive anchor) from does-ai-content-hurt-seo.md and common-seo-mistakes.md — their most relevant topic hubs — so the refreshed pillar earns inbound internal links. One descriptive link per page, skip if a link to /content-quality/ already exists."
+    },
+    {
+      "id": "measuring-inbound-links",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "INTERNAL LINKS: now that Measuring SEO is a full pillar, add a contextual in-body link TO /measuring/ from keyword-research.md (near-win queries surface in Search Console) and from technical-seo.md (Page indexing / Crawl stats live in Search Console), descriptive anchors, one per page, so the de-thinned pillar earns inbound internal links from its topic hubs."
+    },
+    {
+      "id": "post-search-console-performance-report",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'How to actually read the Search Console Performance report' — the four metrics (clicks/impressions/CTR/avg position), why property-vs-page aggregation makes CTR & position look higher, preliminary (dotted-line) data, why average position beats spot-checking a query yourself (personalized results), and a near-win workflow (impressions high, CTR/position low = your best optimization targets). PM first web_fetch Google Search Central's Performance-report 'About the data' + overview to supply exact current facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to /measuring/ and /keyword-research/. Respect the ~1 post/4h cadence."
     }
   ],
   "done": [
@@ -973,6 +979,14 @@
       "date": "2026-08-08",
       "dev": "grok",
       "note": "226 -> 785 words; sourced to Google Search Central \"Creating helpful, reliable, people-first content\" (people-first vs search-engine-first, self-assessment questions, E-E-A-T with Trust central, Who/How/Why, myths incl. no preferred word count + no date-faking + scaled-content spam). PM sourced facts via web_fetch; Grok drafted; PM fact-checked & placed."
+    },
+    {
+      "id": "depth-dethin-measuring",
+      "stream": "C-depth",
+      "dev": "grok",
+      "title": "DEPTH: de-thin the Measuring & Analytics pillar (currently ~238 words, one of the thinnest) with sourced depth — Search Console vs GA4 roles, the metrics that actually matter (clicks/impressions/CTR/average position, then conversions & assisted conversions), the difference between measuring visibility vs. outcomes, and common vanity-metric traps. PM first web_fetch Google Search Central (Search Console docs) + GA4 help to supply exact current facts; Grok drafts; PM fact-checks, keeps front-matter + related:, internally links to measuring-relevant hubs. Not a new post — depth refresh, no cadence gate.",
+      "date": "2026-08-08",
+      "note": "De-thinned measuring.md 249->625 words: Search Console Performance report metrics & aggregation, preliminary data, personalized rankings, Page-indexing/URL-Inspection/Sitemaps reports, GA4 post-click, traffic-drop triage (Data Anomalies/core updates/technical), and the iteration loop — all sourced to Google Search Central. PM sourced facts + wired internal links; Grok drafted prose."
     }
   ]
 }
