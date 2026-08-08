@@ -214,6 +214,16 @@ _jr_mod = _ilu.module_from_spec(_jr_spec)
 _jr_spec.loader.exec_module(_jr_mod)
 audit_jsonld_refs = _jr_mod.audit_jsonld_refs
 
+# Post-build reading-length integrity gate: for every Article/BlogPosting node carrying a
+# timeRequired, assert timeRequired is a valid ^PT\d+M$ duration, wordCount is a positive int, and
+# the two agree (timeRequired minutes == reading_minutes(wordCount) at 220 wpm), so the reading-length
+# rich-result metadata can never regress to a malformed duration or contradict the word count.
+# Error severity. Logic in improve/readinglencheck.py.
+_rl_spec = _ilu.spec_from_file_location("readinglencheck", os.path.join(HERE, "improve", "readinglencheck.py"))
+_rl_mod = _ilu.module_from_spec(_rl_spec)
+_rl_spec.loader.exec_module(_rl_mod)
+audit_reading_length = _rl_mod.audit_reading_length
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -1019,6 +1029,15 @@ def main():
             print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
         raise SystemExit(1)
     print("Byline-time audit: OK — every rendered <time> carries a valid zero-padded ISO datetime.")
+
+    # ---------- reading-length integrity gate: timeRequired must be well-formed and agree with wordCount ----------
+    readinglen_problems = audit_reading_length(OUT)
+    if readinglen_problems:
+        print(f"\nREADING-LENGTH AUDIT FAILED — {len(readinglen_problems)} malformed/contradictory reading-length field(s):")
+        for p in readinglen_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Reading-length audit: OK — every timeRequired is a valid PT#M matching its wordCount.")
 
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")

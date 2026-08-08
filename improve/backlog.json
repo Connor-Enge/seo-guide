@@ -172,12 +172,6 @@
       "title": "DEPTH: audit the /blog/ listing page — ensure each post link uses the post's real title as descriptive anchor text (never a bare 'Read more'/date) and that each card exposes the post description, so the hub passes link value to posts with keyword-rich anchors. Verify: parse docs/blog/index.html, assert every post card links with anchor text equal to the post <title>-derived headline and carries a non-empty description snippet."
     },
     {
-      "id": "readinglen-integrity-gate",
-      "title": "DEPTH: build-time reading-length integrity gate that protects the just-shipped wordCount/timeRequired fields — a stdlib-only check (extend improve/jsonldcheck.py or a new improve/readinglencheck.py in the walk-docs/parse-JSON-LD style) that, for every Article/BlogPosting node which carries timeRequired, asserts (error) the value matches ^PT\\d+M$ AND wordCount is a positive int AND the timeRequired minute value equals reading_minutes(wordCount-derived) i.e. the two machine fields agree with each other, so the reading-length metadata can never regress to a malformed duration, a zero/negative count, or a duration that contradicts the word count. Report-or-error severity, objective fixture verify (a node with wordCount=1443/timeRequired=PT7M passes; PT0M, a non-PT string, wordCount=0, or PT2M-vs-1443-words mismatch each fail; a node with NEITHER field is skipped). Dev: local-qwen.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "metacheck-brand-in-both-title-h1",
       "title": "DEPTH: extend improve/metacheck.py (reuse titlecheck.py) with a report-only 'title_h1_identical' warn when a page's rendered <title> segment before the brand suffix is byte-identical to its <h1> — a duplicated title/H1 wastes the chance to target complementary phrasing; measure after html.unescape, objective fixture verify (identical title-lead & h1 warn; distinct ones do not). Non-blocking. Dev: local-qwen adds a pure helper, PM wires one hook.",
       "stream": "C-depth",
@@ -478,6 +472,18 @@
       "stream": "B-blog",
       "dev": "grok",
       "title": "BLOG POST (Grok prose): 'How to actually read the Search Console Performance report' — the four metrics (clicks/impressions/CTR/avg position), why property-vs-page aggregation makes CTR & position look higher, preliminary (dotted-line) data, why average position beats spot-checking a query yourself (personalized results), and a near-win workflow (impressions high, CTR/position low = your best optimization targets). PM first web_fetch Google Search Central's Performance-report 'About the data' + overview to supply exact current facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to /measuring/ and /keyword-research/. Respect the ~1 post/4h cadence."
+    },
+    {
+      "id": "readinglencheck-unit-tests",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: add improve/tests/test_readinglencheck.py (stdlib unittest) locking the reading-length gate's contract so it can't silently regress — a wordCount=1443/timeRequired=PT7M node passes; a malformed 'PT#M' (e.g. '7 min', 'PT7', 'PTM'), wordCount<=0 or non-int, and a PT-minutes-vs-wordCount mismatch each flag their exact kind; a node carrying NEITHER field is skipped; a non-Article/BlogPosting @type is ignored. Dev: local-qwen writes the test file; verify = the unittest suite exits 0."
+    },
+    {
+      "id": "reading-speed-single-source",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: single-source the 220-wpm reading-speed constant. It is currently hard-coded independently in improve/readinglencheck.py (the integrity gate) and improve/readingtime.py (the visible byline). Factor it into one tiny shared module (e.g. improve/readingspeed.py exposing WPM=220 + a reading_minutes() helper) and have BOTH importers use it, so the machine timeRequired and the reader-facing '≈N min read' can never drift apart. Objective verify: both modules reference the shared constant and reading_minutes() returns the same value the gate expects for a known word count. Dev: local-qwen."
     }
   ],
   "done": [
@@ -987,6 +993,14 @@
       "title": "DEPTH: de-thin the Measuring & Analytics pillar (currently ~238 words, one of the thinnest) with sourced depth — Search Console vs GA4 roles, the metrics that actually matter (clicks/impressions/CTR/average position, then conversions & assisted conversions), the difference between measuring visibility vs. outcomes, and common vanity-metric traps. PM first web_fetch Google Search Central (Search Console docs) + GA4 help to supply exact current facts; Grok drafts; PM fact-checks, keeps front-matter + related:, internally links to measuring-relevant hubs. Not a new post — depth refresh, no cadence gate.",
       "date": "2026-08-08",
       "note": "De-thinned measuring.md 249->625 words: Search Console Performance report metrics & aggregation, preliminary data, personalized rankings, Page-indexing/URL-Inspection/Sitemaps reports, GA4 post-click, traffic-drop triage (Data Anomalies/core updates/technical), and the iteration loop — all sourced to Google Search Central. PM sourced facts + wired internal links; Grok drafted prose."
+    },
+    {
+      "id": "readinglen-integrity-gate",
+      "title": "DEPTH: build-time reading-length integrity gate that protects the just-shipped wordCount/timeRequired fields — a stdlib-only check (extend improve/jsonldcheck.py or a new improve/readinglencheck.py in the walk-docs/parse-JSON-LD style) that, for every Article/BlogPosting node which carries timeRequired, asserts (error) the value matches ^PT\\d+M$ AND wordCount is a positive int AND the timeRequired minute value equals reading_minutes(wordCount-derived) i.e. the two machine fields agree with each other, so the reading-length metadata can never regress to a malformed duration, a zero/negative count, or a duration that contradicts the word count. Report-or-error severity, objective fixture verify (a node with wordCount=1443/timeRequired=PT7M passes; PT0M, a non-PT string, wordCount=0, or PT2M-vs-1443-words mismatch each fail; a node with NEITHER field is skipped). Dev: local-qwen.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "date": "2026-08-08",
+      "note": "Shipped: improve/readinglencheck.py (built by local-qwen) walks docs/**/*.html and, for every Article/BlogPosting node carrying timeRequired, errors if timeRequired is not ^PT\\d+M$, if wordCount is not a positive int, or if the PT#M minutes disagree with round(wordCount/220); nodes with neither field are skipped. Wired one call into build.py (PM). Verified: good/skip/neither pass; malformed PT string, wordCount=0, and PT2M-vs-1443-words each error; full build green."
     }
   ]
 }
