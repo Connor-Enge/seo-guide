@@ -82,12 +82,6 @@
       "dev": "grok"
     },
     {
-      "id": "sitemap-lastmod-honesty",
-      "title": "DEPTH: extend improve/sitemapcheck.py with a report-only 'lastmod' honesty warn — if every <lastmod> in docs/sitemap.xml is identical (e.g. all equal to the build date), warn that Google discounts sitemaps whose lastmod is always 'today', so the freshness signal stays trustworthy as more pages ship. Non-blocking warn only, stdlib-only, objective fixture verify (a sitemap with mixed lastmods passes; one where all lastmods are the same date warns). Ties to the just-shipped sitemap/robots gates and the pending post-xml-sitemaps-2026 post.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-semantic-html-seo",
       "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -503,6 +497,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "INTERNAL LINKS: now that content-quality and common-seo-mistakes link to the 'Does AI Content Hurt SEO?' post, extend one more descriptive-anchor in-body link to it from the most relevant EXISTING sentence in on-page-seo.md or measuring.md (whichever has a genuinely on-topic mention of AI/automation/scaled content), one link only, no authored prose — so the post earns inbound equity from a third topic hub. Verify: the internal-link gate confirms the new href resolves and the build stays green."
+    },
+    {
+      "id": "sitemap-lastmod-future-warn",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/sitemaplastmodcheck.py with a second report-only warn 'lastmod_in_future' — flag any <lastmod> whose date is later than today's build date (a future lastmod is dishonest and Google ignores it). Pass the build date into the function (or read it consistently) rather than calling date functions inside the checker so it stays deterministic/testable; parse YYYY-MM-DD and any leading date portion of a full ISO datetime; ignore unparseable values. Non-blocking WARN only, stdlib-only, objective fixture verify (a lastmod dated after the given 'today' warns; equal/earlier does not; malformed is ignored). Dev: local-qwen."
+    },
+    {
+      "id": "sitemap-lastmod-format-warn",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/sitemaplastmodcheck.py with a report-only warn 'lastmod_bad_format' for any <lastmod> value that is neither a bare W3C date (YYYY-MM-DD) nor a valid W3C datetime (YYYY-MM-DDThh:mm:ss with optional fractional seconds and a Z or +hh:mm offset) — sitemaps.org requires W3C Datetime format and Google may ignore malformed lastmods. Validate with a strict regex + a real date parse (reject impossible dates like 2026-13-40). Non-blocking WARN only, stdlib-only, objective fixture verify (2026-08-08 and 2026-08-08T12:30:00+00:00 pass; 08/08/2026 and 2026-13-40 warn). Dev: local-qwen."
     }
   ],
   "done": [
@@ -1058,6 +1064,14 @@
       "dev": "local-qwen",
       "completed": "2026-08-08",
       "result": "Added improve/tests/test_titlecheck.py — 12 stdlib unittest cases locking redundant_title_segment contract (doubled/case-insensitive dup returns second-in-original-case; all five spaced separators: em/en dash, middle dot, pipe, hyphen; internal-hyphen-not-split; single-segment/empty/whitespace/None -> None; distinct-segments -> None). All 12 pass against the live titlecheck.py; build stays green. Built by local-qwen via dispatch on 2026-08-08."
+    },
+    {
+      "id": "sitemap-lastmod-honesty",
+      "title": "DEPTH: extend improve/sitemapcheck.py with a report-only 'lastmod' honesty warn — if every <lastmod> in docs/sitemap.xml is identical (e.g. all equal to the build date), warn that Google discounts sitemaps whose lastmod is always 'today', so the freshness signal stays trustworthy as more pages ship. Non-blocking warn only, stdlib-only, objective fixture verify (a sitemap with mixed lastmods passes; one where all lastmods are the same date warns). Ties to the just-shipped sitemap/robots gates and the pending post-xml-sitemaps-2026 post.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "date": "2026-08-08",
+      "note": "Shipped as NEW sibling helper improve/sitemaplastmodcheck.py (audit_lastmod_honesty) — report-only WARN when >=2 present <lastmod> values are byte-identical; PM wired a non-blocking print into the sitemap gate in build.py. Hardened against empty/None-text <lastmod> elements after the first attempt crashed on them. Current sitemap has mixed lastmods (08-05..08-08) so the gate reports OK; it guards against a future regression to always-'today' lastmods."
     }
   ]
 }

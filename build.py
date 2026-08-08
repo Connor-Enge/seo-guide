@@ -129,6 +129,15 @@ _sm_mod = _ilu.module_from_spec(_sm_spec)
 _sm_spec.loader.exec_module(_sm_mod)
 audit_sitemap = _sm_mod.audit_sitemap
 
+# Post-build sitemap lastmod-honesty gate: report-only warn when every <lastmod> in docs/sitemap.xml is
+# byte-identical (e.g. all equal to the build date). Google discounts sitemaps whose lastmod is always
+# 'today', so keeping the freshness signal trustworthy matters as more pages ship. Non-blocking WARN only.
+# Logic in improve/sitemaplastmodcheck.py.
+_slm_spec = _ilu.spec_from_file_location("sitemaplastmodcheck", os.path.join(HERE, "improve", "sitemaplastmodcheck.py"))
+_slm_mod = _ilu.module_from_spec(_slm_spec)
+_slm_spec.loader.exec_module(_slm_mod)
+audit_lastmod_honesty = _slm_mod.audit_lastmod_honesty
+
 # Post-build robots.txt gate: assert docs/robots.txt exists, carries an absolute Sitemap: line equal to
 # BASE_URL + '/sitemap.xml', and that no 'User-agent: *' group blanket-disallows the whole site (Disallow: /).
 # Logic in improve/robotscheck.py.
@@ -943,6 +952,15 @@ def main():
         raise SystemExit(1)
     print(f"Sitemap audit: OK — every <loc> is absolute, resolves to a real file, unique, and 404-free"
           f" ({len(sm_warns)} orphan warning(s)).")
+
+    # ---------- sitemap lastmod-honesty warn: flag a sitemap whose every <lastmod> is identical ----------
+    lastmod_warns = audit_lastmod_honesty(OUT)
+    if lastmod_warns:
+        print(f"\nSitemap lastmod honesty — {len(lastmod_warns)} warning(s) (non-blocking):")
+        for p in lastmod_warns:
+            print(f"  [{p['kind']}] {p['loc']}  ({p['detail']})")
+    else:
+        print("Sitemap lastmod honesty: OK — <lastmod> values are not all identical (freshness signal stays trustworthy).")
 
     # ---------- noindex/sitemap contradiction gate: no page is both noindex AND listed in the sitemap ----------
     noindex_problems = audit_noindex_sitemap(OUT, BASE_URL)
