@@ -11,7 +11,9 @@
     },
     {
       "id": "og-image",
-      "title": "Generate a lightweight per-page SVG social image and wire og:image / twitter:image"
+      "title": "Generate per-page social share images and wire og:image / twitter:image. NOTE: major crawlers (Facebook, LinkedIn, X) do NOT render SVG as og:image and no rasterizer/Pillow is installed on this host, so do NOT ship an SVG og:image. Correct path: either (a) add a build dep (Pillow) to rasterize a branded PNG card per page, or (b) ship ONE static, well-designed default PNG share card referenced site-wide (absolute URL) to fix the current summary_large_image-with-no-image gap. Pick (b) as the minimal correct first step. Verify: og:image + twitter:image present, absolute URL, file is PNG/JPG.",
+      "dev": "local-qwen",
+      "stream": "A-feature"
     },
     {
       "id": "howto-schema",
@@ -60,10 +62,6 @@
     {
       "id": "heading-h3-anchors",
       "title": "FEATURE: extend the new deep-link permalinks to ### subheadings — give <h3> stable ids and a hover ¶ permalink (reuse improve/anchors.py's helper), and nest those subsections under their parent <h2> in the on-page TOC so deeper sections are linkable and navigable."
-    },
-    {
-      "id": "pdf-print-button",
-      "title": "FEATURE: subtle 'Print / Save as PDF' action in the article footer (progressive-enhancement window.print() button, hidden with no JS) so readers discover the new print stylesheet"
     },
     {
       "id": "glossary-crosslink",
@@ -378,6 +376,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: build-time gate that every <script src> a rendered page references under /assets/ actually exists in docs/assets/, so a one-line wiring typo (e.g. a renamed or missing JS asset) fails the build instead of silently shipping a 404ing <script> tag. New stdlib-only improve/scriptsrccheck.py in the walk-docs/regex-tags style; error severity; PM wires one call in build.py after the existing asset copy. Objective fixture verify: a page whose <script src> points at an existing asset passes; one pointing at a missing asset fails. Directly hardens the kind of script wiring the 404-suggest feature just added."
+    },
+    {
+      "id": "printbtn-a11y-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time gate improve/printbtnwiring.py (stdlib-only) that asserts the print-button progressive enhancement stays correctly scoped as pages are added — every rendered guide article (docs/<slug>/index.html, excluding index) and every blog post (docs/blog/<slug>/index.html) MUST reference assets/printbtn.js, while docs/index.html, docs/blog/index.html, docs/search/index.html and docs/404.html MUST NOT — so the feature can never silently regress or leak onto utility pages. Objective fixture verify: an article missing the include fails; a 404 page carrying it fails; correct wiring passes. PM wires one call in build.py after the H1 gate."
+    },
+    {
+      "id": "post-pdf-print-friendly-pages",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): do print/PDF-friendly pages matter for SEO in 2026? Cover what Google actually uses (the indexable HTML, not the print view), why a clean print stylesheet is a UX/accessibility win rather than a ranking factor, the myth that separate print URLs help (and the duplicate-content/canonical pitfalls of print URLs), and practical print-CSS tips (hide chrome, show link URLs, avoid page-break orphans). PM first web_fetch Google Search Central guidance on duplicate content/canonicalization + MDN/web.dev print-stylesheet docs to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, links to technical-seo and page-experience post. Ties to the just-shipped print button + existing print.css. Respect the ~1 post / 4h cadence."
     }
   ],
   "done": [
@@ -786,6 +796,13 @@
       "done_note": "Shipped 2026-08-08: assets/nf-suggest.js pre-fills the 404 page search box (#nf-q) with a query derived from the failed URL's last path segment; wired only on 404.html via the render() scripts slot. Built by local Qwen dev; objective DOM-stub verify.",
       "dev": "local-qwen",
       "date": "2026-08-08"
+    },
+    {
+      "id": "pdf-print-button",
+      "title": "FEATURE: subtle 'Print / Save as PDF' action in the article footer (progressive-enhancement window.print() button, hidden with no JS) so readers discover the new print stylesheet",
+      "dev": "local-qwen",
+      "shipped": "2026-08-08",
+      "note": "local-qwen wrote assets/printbtn.js (self-contained IIFE, scoped <style>, feature-guarded window.print(), hidden in @media print, dark-mode variant); PM wired a defer include into build.py render() for guide pages (not homepage) + blog posts. Build green, all gates OK."
     }
   ]
 }

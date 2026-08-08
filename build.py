@@ -649,7 +649,8 @@ def main():
             byline=byline,
             toc=toc_block(toc), content=content_html + related_block(meta.get("related", ""), url),
             pager=('<nav class="pager">' + "".join(links) + "</nav>") if links else "",
-            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs))
+            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs),
+            scripts=('<script defer src="%s/assets/printbtn.js"></script>' % BASE_URL if slug != "index" else ""))
         write("" if slug == "index" else slug, page)
 
     # ---------- blog posts ----------
@@ -686,7 +687,8 @@ def main():
                                            [t.strip() for t in meta.get("tags", "").split(",") if t.strip()],
                                            post_cards, post_url)),
             pager=f'<nav class="pager"><a class="prev" href="{BLOG_URL}">← All articles</a></nav>',
-            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs))
+            jsonld=jsonld, breadcrumb=breadcrumb_block(crumbs),
+            scripts='<script defer src="%s/assets/printbtn.js"></script>' % BASE_URL)
         write(os.path.join("blog", slug), page)
 
     # ---------- blog index ----------
