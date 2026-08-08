@@ -96,13 +96,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "twitter-card-enum",
-      "title": "DEPTH: extend improve/socialmetacheck.py to ERROR (kind 'twitter_card_invalid') when a page's twitter:card is present but not one of the valid X/Twitter card types (summary, summary_large_image, app, player) — an invalid value makes X drop the card entirely, so this locks the site's cards to valid types. stdlib-only, objective fixture verify (a page with twitter:card=summary_large_image passes; twitter:card=banner fails; a page with no twitter:card keeps only the existing missing_twitter_card warn, no new error). Dev: local-qwen.",
-      "stream": "C-depth",
-      "dev": "local-qwen",
-      "note_pm": "First local-qwen attempt (2026-08-08) failed 3x: the whole-file rewrite could not faithfully reproduce the stateful MetaTagParser(HTMLParser) subclass (parse_starttag crashed). Next attempt: dispatch a NEW tiny self-contained helper module improve/twittercardcheck.py that regex-scans rendered HTML for <meta name=\"twitter:card\" content=\"X\"> and returns a twitter_card_invalid error when X not in {summary,summary_large_image,app,player}; PM wires one gate block into build.py. Avoids re-deriving the existing parser."
-    },
-    {
       "id": "sitemap-example-snippet",
       "title": "DEPTH/CONTENT (Grok prose): extend the new copy-able snippets — add a minimal valid XML sitemap example (a <urlset> with one <url>/<loc>/<lastmod>) as a fenced code block to technical-seo.md's crawlability section, so the guide demonstrates sitemap syntax alongside the robots.txt/canonical/noindex/JSON-LD examples it now shows. PM first web_fetch Google Search Central 'Build and submit a sitemap' for the exact current element syntax and lastmod format, supplies the verified snippet, Grok writes the one connective sentence, PM fact-checks before placing. Ties to the pending post-xml-sitemaps-2026 post.",
       "stream": "C-depth",
@@ -534,16 +527,22 @@
       "title": "DEPTH: report-only WARN in fragmentcheck for fragments that only resolve after case-fold or trailing-space trim — surface 'near-miss' anchors (e.g. #Section vs id=section) that browsers won't match, so hand-authored deep-links get caught before they silently fail. Non-blocking warn kind 'fragment-case-mismatch'."
     },
     {
-      "id": "twittercardcheck-standalone",
-      "title": "DEPTH: ship improve/twittercardcheck.py (NEW self-contained regex-based module, local-qwen) that scans rendered docs/**/*.html for <meta name=twitter:card content=X> and returns an ERROR (kind twitter_card_invalid) when X is not one of {summary,summary_large_image,app,player} — invalid values make X drop the card entirely. stdlib-only, regex over the raw HTML (do NOT subclass HTMLParser), objective fixture verify (banner->error; summary_large_image->pass; no tag->no error). PM wires one gate block into build.py after the social-meta gate. Supersedes the failed whole-file twitter-card-enum path.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "deorphan-glossary-audit-checklist",
       "title": "DEPTH (pm-wired internal links): the Glossary and Audit-Checklist pages each have only 1 inbound contextual link. Add 2-3 genuine descriptive-anchor in-body links to each from thematically matching spots (e.g. link 'glossary'/specific terms from measuring & keyword-research; link the audit checklist from technical-seo and common-seo-mistakes where a 'run an audit' step is described). Verify each target renders to a live URL and build stays green.",
       "stream": "C-depth",
       "dev": "pm-wired internal links"
+    },
+    {
+      "id": "twitter-card-image-required",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/twittercardcheck.py with a report-only warn (kind 'twitter_image_missing', severity 'warn') when a page declares twitter:card=summary_large_image but has NO <meta name=\"twitter:image\"> — a large-image card with no image renders as a bare summary on X, wasting the format. Non-blocking warn (PM prints it in the twitter gate block alongside errors), stdlib-only regex, objective fixture verify (summary_large_image without twitter:image warns; the same card WITH a twitter:image does not; a plain summary card without an image does not warn). Dev: local-qwen extends the module; PM splits errors vs warns in the gate block."
+    },
+    {
+      "id": "twitter-title-desc-fallback-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: build-time report-only warn (new improve/twittertextcheck.py, or extend twittercardcheck.py) that a page carrying a twitter:card also exposes shareable text — warn 'twitter_text_missing' when NEITHER twitter:title/twitter:description NOR the og:title/og:description X falls back to are present, since X shows an empty card otherwise. stdlib-only regex over rendered HTML, objective fixture verify (a card page with only og:title+og:description passes via fallback; a card page with none of the four warns). Dev: local-qwen; PM wires/prints non-blocking."
     }
   ],
   "done": [
@@ -1167,6 +1166,23 @@
       "shipped": "2026-08-08",
       "dev": "pm-wired internal links",
       "note": "De-orphaned the Local SEO pillar (was 0 inbound contextual links). Added 2 net-new descriptive-anchor in-body inbound links: how-search-works.md ('trigger [local packs](/local-seo/)' in the results-features paragraph) and technical-seo.md structured-data section (a LocalBusiness pointer deep-linking /local-seo/#structured-data-for-local-businesses). Both render to live URLs, fragment resolves, build green + all SEO checks pass."
+    },
+    {
+      "id": "twitter-card-enum",
+      "title": "DEPTH: extend improve/socialmetacheck.py to ERROR (kind 'twitter_card_invalid') when a page's twitter:card is present but not one of the valid X/Twitter card types (summary, summary_large_image, app, player) — an invalid value makes X drop the card entirely, so this locks the site's cards to valid types. stdlib-only, objective fixture verify (a page with twitter:card=summary_large_image passes; twitter:card=banner fails; a page with no twitter:card keeps only the existing missing_twitter_card warn, no new error). Dev: local-qwen.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "note_pm": "First local-qwen attempt (2026-08-08) failed 3x: the whole-file rewrite could not faithfully reproduce the stateful MetaTagParser(HTMLParser) subclass (parse_starttag crashed). Next attempt: dispatch a NEW tiny self-contained helper module improve/twittercardcheck.py that regex-scans rendered HTML for <meta name=\"twitter:card\" content=\"X\"> and returns a twitter_card_invalid error when X not in {summary,summary_large_image,app,player}; PM wires one gate block into build.py. Avoids re-deriving the existing parser.",
+      "done_note": "SHIPPED 2026-08-08 (dev: local-qwen built improve/twittercardcheck.py, PM-wired gate). New stdlib-only regex module audit_twitter_card(docs_dir) scans every rendered <meta name=\"twitter:card\"> (order- and quote-independent) and ERRORs (kind twitter_card_invalid, severity error) when the value is not one of {summary,summary_large_image,app,player} — an invalid value makes X drop the card entirely. PM wired one gate block into build.py right after the social-meta gate (raises SystemExit(1) on any invalid card). Verified: negative test on a 'banner' value fires the error; build green + all SEO checks pass; supersedes the failed whole-file twitter-card-enum path.",
+      "done_date": "2026-08-08"
+    },
+    {
+      "id": "twittercardcheck-standalone",
+      "title": "DEPTH: ship improve/twittercardcheck.py (NEW self-contained regex-based module, local-qwen) that scans rendered docs/**/*.html for <meta name=twitter:card content=X> and returns an ERROR (kind twitter_card_invalid) when X is not one of {summary,summary_large_image,app,player} — invalid values make X drop the card entirely. stdlib-only, regex over the raw HTML (do NOT subclass HTMLParser), objective fixture verify (banner->error; summary_large_image->pass; no tag->no error). PM wires one gate block into build.py after the social-meta gate. Supersedes the failed whole-file twitter-card-enum path.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "done_note": "SHIPPED 2026-08-08 (dev: local-qwen built improve/twittercardcheck.py, PM-wired gate). New stdlib-only regex module audit_twitter_card(docs_dir) scans every rendered <meta name=\"twitter:card\"> (order- and quote-independent) and ERRORs (kind twitter_card_invalid, severity error) when the value is not one of {summary,summary_large_image,app,player} — an invalid value makes X drop the card entirely. PM wired one gate block into build.py right after the social-meta gate (raises SystemExit(1) on any invalid card). Verified: negative test on a 'banner' value fires the error; build green + all SEO checks pass; supersedes the failed whole-file twitter-card-enum path.",
+      "done_date": "2026-08-08"
     }
   ]
 }

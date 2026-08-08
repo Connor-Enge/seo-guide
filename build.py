@@ -163,6 +163,14 @@ _so_mod = _ilu.module_from_spec(_so_spec)
 _so_spec.loader.exec_module(_so_mod)
 audit_social_meta = _so_mod.audit_social_meta
 
+# Post-build Twitter Card validity gate: a <meta name="twitter:card"> whose value is not one of the four
+# valid X/Twitter card types (summary, summary_large_image, app, player) makes X drop the card entirely,
+# so an invalid value is an error. Logic in improve/twittercardcheck.py.
+_tw_spec = _ilu.spec_from_file_location("twittercardcheck", os.path.join(HERE, "improve", "twittercardcheck.py"))
+_tw_mod = _ilu.module_from_spec(_tw_spec)
+_tw_spec.loader.exec_module(_tw_mod)
+audit_twitter_card = _tw_mod.audit_twitter_card
+
 # Post-build heading-order gate (report-only): flag any page that skips a heading level (e.g. an <h3>
 # with no preceding <h2>), which breaks the accessible document outline and the topical hierarchy search
 # engines read. Non-blocking warnings. Logic in improve/headingorder.py.
@@ -1085,6 +1093,15 @@ def main():
         raise SystemExit(1)
     print(f"Social-meta audit: OK — every page's og:url is absolute and matches its canonical"
           f" ({len(so_warns)} snippet warning(s)).")
+
+    # ---------- twitter-card gate: every twitter:card value must be a valid X card type ----------
+    tw_problems = audit_twitter_card(OUT)
+    if tw_problems:
+        print(f"\nTWITTER-CARD AUDIT FAILED — {len(tw_problems)} invalid twitter:card value(s):")
+        for p in tw_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Twitter-card audit: OK — every twitter:card is a valid X card type (summary, summary_large_image, app, player).")
 
     # ---------- image-accessibility gate: every rendered <img> must carry an alt attribute ----------
     img_alt_problems = audit_img_alt(OUT)
