@@ -5,7 +5,7 @@ title: How Search Works
 h1: How Search Works — Crawling, Indexing, Ranking
 description: SEO makes sense once you understand Google's pipeline. Learn how crawling, indexing, ranking, and serving decide whether your page ever appears.
 updated: 2026-08-08
-related: technical-seo, keyword-research, measuring
+related: technical-seo, keyword-research, measuring, international-seo
 ---
 
 Every SEO decision is easier when you know the four stages a page passes through before it can rank.
@@ -24,7 +24,7 @@ During each crawl Google renders the page and executes its JavaScript using a re
 
 After the crawl finishes, Google processes the text, the title element, alt attributes, images, and videos to understand what the page contains. It compares the page against others and decides whether it is a duplicate. Similar pages are grouped, and the most representative version is chosen as the canonical. That canonical page becomes eligible to appear in results; the remaining versions are treated as alternates that may surface only in specific contexts such as mobile users.
 
-Google also records signals about the canonical page, including its language, the country or locale it targets, and its usability characteristics. Indexing is never guaranteed. Common reasons a crawled page stays out of the index are low content quality, a robots meta rule that blocks indexing, or site architecture that hides content behind complex JavaScript execution.
+Google also records signals about the canonical page, including its language, the country or locale it targets, and its usability characteristics. Sites make those language and locale signals explicit through [hreflang annotations](/international-seo/). Indexing is never guaranteed. Common reasons a crawled page stays out of the index are low content quality, a robots meta rule that blocks indexing, or site architecture that hides content behind complex JavaScript execution.
 
 ## Ranking
 

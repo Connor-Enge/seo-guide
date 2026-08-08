@@ -5,7 +5,7 @@ title: Technical SEO
 h1: Technical SEO — Crawlability, Speed & Structured Data
 description: Technical SEO removes obstacles between your content and search engines: indexability, sitemaps, mobile, HTTPS, Core Web Vitals, and structured data.
 updated: 2026-08-05
-related: how-search-works, on-page-seo, blog/passing-core-web-vitals-2026, audit-checklist, local-seo, ecommerce-seo
+related: how-search-works, on-page-seo, blog/passing-core-web-vitals-2026, audit-checklist, local-seo, ecommerce-seo, international-seo
 ---
 Technical SEO makes sure nothing stops a great page from being crawled, indexed, and enjoyed.
 
@@ -14,6 +14,7 @@ Technical SEO makes sure nothing stops a great page from being crawled, indexed,
 - Use `robots.txt` to guide crawlers, and `noindex` to keep thin pages out of the index — but never accidentally block pages you want ranked.
 - Set a **canonical** URL on every page to consolidate duplicates.
 - Return correct status codes: `200` for live pages, `301` for permanent moves, `404`/`410` for gone.
+- Sites serving multiple languages or regions implement [hreflang annotations](/international-seo/) to help Google serve the correct version.
 
 Place robots.txt at your site root to control what Googlebot crawls and to point it to your sitemap. It does not control indexing.
 

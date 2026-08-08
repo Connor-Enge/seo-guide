@@ -5,7 +5,7 @@ title: On-Page SEO
 h1: On-Page SEO — Titles, Structure & Internal Links
 description: On-page SEO makes each page clearly about one topic for both readers and crawlers. Titles, meta descriptions, headings, URLs, images, and internal links.
 updated: 2026-08-05
-related: keyword-research, content-quality, technical-seo, local-seo, ecommerce-seo
+related: keyword-research, content-quality, technical-seo, local-seo, ecommerce-seo, international-seo
 ---
 On-page SEO is everything you control **on the page** to make its topic unmistakable.
 
@@ -26,7 +26,7 @@ Your title and meta description control what searchers see in results. Keep the 
 Use **one `<h1>`** stating the page's subject, then `<h2>`/`<h3>` to structure sections logically. Good heading hierarchy helps readers scan and helps Google understand the page's outline.
 
 ## URLs
-Keep URLs short, lowercase, hyphenated, and descriptive: `/keyword-research/` beats `/page?id=48`. Stable, readable URLs are easier to share and to earn links to.
+Keep URLs short, lowercase, hyphenated, and descriptive: `/keyword-research/` beats `/page?id=48`. Stable, readable URLs are easier to share and to earn links to. Sites targeting multiple countries select [a language- or region-specific URL structure](/international-seo/).
 
 ## Images
 Compress them, use modern formats, set explicit `width`/`height` to avoid layout shift, and write **descriptive alt text** (accessibility and image search both benefit).
