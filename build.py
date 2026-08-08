@@ -88,6 +88,13 @@ _ck_mod = _ilu.module_from_spec(_ck_spec)
 _ck_spec.loader.exec_module(_ck_mod)
 audit_internal_links = _ck_mod.audit_internal_links
 
+# Emit the internal-link audit as a machine-readable docs/link-audit.json every build (green or not)
+# so internal-linking health is inspectable over time. Logic lives in improve/linkauditreport.py.
+_la_spec = _ilu.spec_from_file_location("linkauditreport", os.path.join(HERE, "improve", "linkauditreport.py"))
+_la_mod = _ilu.module_from_spec(_la_spec)
+_la_spec.loader.exec_module(_la_mod)
+write_link_audit = _la_mod.write_link_audit
+
 # Post-build canonical gate: assert every rendered page self-canonicalizes (rel=canonical exactly
 # equals its own BASE_URL page URL) so canonicalization can never silently drift. Logic lives in
 # improve/canonicalcheck.py.
@@ -818,6 +825,7 @@ def main():
 
     # ---------- integrity gate: never ship a broken internal link / soft-404 ----------
     problems = audit_internal_links(OUT, BASE_URL)
+    write_link_audit(problems, os.path.join(OUT, "link-audit.json"))
     if problems:
         print(f"\nINTERNAL-LINK AUDIT FAILED — {len(problems)} problem(s):")
         for p in problems:

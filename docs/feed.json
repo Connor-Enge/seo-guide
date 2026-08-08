@@ -15,6 +15,27 @@
   ],
   "items": [
     {
+      "id": "https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/",
+      "url": "https://connor-enge.github.io/seo-guide/blog/google-search-console-workflow/",
+      "title": "Google Search Console Workflow",
+      "summary": "\"A practical Google Search Console workflow: the reports that matter, reading the Performance report, and how to diagnose a drop in Search traffic.\"",
+      "content_text": "\"A practical Google Search Console workflow: the reports that matter, reading the Performance report, and how to diagnose a drop in Search traffic.\"",
+      "date_published": "2026-08-08T00:00:00Z",
+      "date_modified": "2026-08-08T00:00:00Z",
+      "authors": [
+        {
+          "name": "Connor Enge",
+          "url": "https://connor-enge.github.io/seo-guide/about/"
+        }
+      ],
+      "tags": [
+        "measuring",
+        "search-console",
+        "performance-report",
+        "traffic-drops"
+      ]
+    },
+    {
       "id": "https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/",
       "url": "https://connor-enge.github.io/seo-guide/blog/does-ai-content-hurt-seo/",
       "title": "Does AI Content Hurt SEO?",

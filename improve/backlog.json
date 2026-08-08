@@ -52,10 +52,6 @@
       "title": "FEATURE: full-content feeds — extend feed.xml with <content:encoded> (CDATA-wrapped rendered HTML) and feed.json items with content_html, so subscribers get the whole article, not just the summary; keep the summary fields too. Build on the existing feed_items pipeline in build.py."
     },
     {
-      "id": "post-search-console",
-      "title": "BLOG POST: a practical Google Search Console workflow — which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation."
-    },
-    {
       "id": "related-auto-fallback",
       "title": "FEATURE: auto-populate the Related-reading block from shared front-matter topics/tags when a page has no manual `related:` field, so every page always ships genuine descriptive internal links even before hand-curation — build on the existing related_registry + related_block pipeline in build.py."
     },
@@ -86,10 +82,6 @@
     {
       "id": "post-robots-noindex",
       "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
-    },
-    {
-      "id": "linkcheck-report-artifact",
-      "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems."
     },
     {
       "id": "jsonld-ref-integrity",
@@ -388,6 +380,18 @@
       "stream": "B-blog",
       "dev": "grok",
       "title": "BLOG POST (Grok prose): do print/PDF-friendly pages matter for SEO in 2026? Cover what Google actually uses (the indexable HTML, not the print view), why a clean print stylesheet is a UX/accessibility win rather than a ranking factor, the myth that separate print URLs help (and the duplicate-content/canonical pitfalls of print URLs), and practical print-CSS tips (hide chrome, show link URLs, avoid page-break orphans). PM first web_fetch Google Search Central guidance on duplicate content/canonicalization + MDN/web.dev print-stylesheet docs to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, links to technical-seo and page-experience post. Ties to the just-shipped print button + existing print.css. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "gsc-post-inbound-links",
+      "stream": "C-depth",
+      "dev": "pm-placed",
+      "title": "INTERNAL LINKS: give the new 'Google Search Console Workflow' post inbound in-body links from its topic hubs — add one contextual link (descriptive anchor) to /blog/google-search-console-workflow/ from measuring.md (the section on tracking Search performance) and from technical-seo.md (crawling/indexing diagnostics), one per page, in the most relevant existing sentence, so the new post earns inbound internal links and isn't an orphan. Skip a page if no natural, non-forced anchor spot exists."
+    },
+    {
+      "id": "post-google-trends-seo",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'Google Trends for SEO — reading seasonality, rising queries, and whether a traffic drop is just you'. Angle: Trends shows a largely unfiltered, anonymized sample of real search interest, useful for separating a site-specific drop from a web-wide demand shift, spotting seasonal query patterns, and surfacing rising related queries to plan content; it shows relative interest, not absolute volume, so it complements (not replaces) Search Console's Performance report. PM first web_fetch Google Search Central's 'Use Google Trends' / trends-start doc for exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, and internally links to the new google-search-console-workflow post, measuring, and keyword-research. Ties to the just-shipped GSC workflow post's seasonality section. Respect the ~1 post / 4h cadence."
     }
   ],
   "done": [
@@ -803,6 +807,20 @@
       "dev": "local-qwen",
       "shipped": "2026-08-08",
       "note": "local-qwen wrote assets/printbtn.js (self-contained IIFE, scoped <style>, feature-guarded window.print(), hidden in @media print, dark-mode variant); PM wired a defer include into build.py render() for guide pages (not homepage) + blog posts. Build green, all gates OK."
+    },
+    {
+      "id": "post-search-console",
+      "title": "BLOG POST: a practical Google Search Console workflow — which reports actually matter (Performance, Pages/Index coverage, Core Web Vitals, Enhancements), how to diagnose a traffic drop step by step, and a lightweight monthly routine; source to Google Search Central's Search Console documentation.",
+      "dev": "grok",
+      "shipped": "2026-08-08",
+      "note": "grok drafted the ~1000-word body from a PM-supplied fact brief sourced to Google Search Central's 'Get started with Search Console' + 'Debugging drops in Google Search traffic'; PM fact-checked every claim (Data Anomalies first, impressions+clicks vs clicks-only branch, 16-month range, compare tabs, Pages-by-clicks-difference, the six drop causes, small-vs-large position drop, exact report names), wrote front matter (tags + related), and wove 3 in-body internal links (how-search-works, technical-seo, measuring). Published content/blog/google-search-console-workflow.md. Build green, all SEO gates OK (title 49c, desc 148c, 1 h1, BlogPosting JSON-LD, in sitemap)."
+    },
+    {
+      "id": "linkcheck-report-artifact",
+      "title": "FEATURE: have build.py emit the internal-link audit result as a machine-readable docs/link-audit.json (counts + any problems, always regenerated) so the health of internal linking is inspectable over time even when the build is green — reuse the existing audit_internal_links() output; PM wires one write call. Objective verify: after a clean build the file exists, parses as JSON, and reports zero problems.",
+      "dev": "local-qwen",
+      "shipped": "2026-08-08",
+      "note": "local-qwen wrote improve/linkauditreport.py (self-contained write_link_audit(problems, dest): total_problems/ok/counts_by_kind/problems -> JSON); PM wired one import block + one write_link_audit(problems, OUT/link-audit.json) call after audit_internal_links in build.py. Recovered + committed by the 2026-08-08 run (prior run built it but was interrupted before commit). Objective verify met: clean build emits docs/link-audit.json, valid JSON, total_problems=0, ok=true."
     }
   ]
 }
