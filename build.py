@@ -45,6 +45,13 @@ _fc_mod = _ilu.module_from_spec(_fc_spec)
 _fc_spec.loader.exec_module(_fc_mod)
 consume_fence = _fc_mod.consume_fence
 
+# Outbound-link annotation: tag body anchors whose host differs from the site with
+# rel="noopener" + class="ext" so a CSS ↗ marks references that leave the site. improve/extlinks.py.
+_el_spec = _ilu.spec_from_file_location("extlinks", os.path.join(HERE, "improve", "extlinks.py"))
+_el_mod = _ilu.module_from_spec(_el_spec)
+_el_spec.loader.exec_module(_el_mod)
+mark_external = _el_mod.mark_external
+
 # "Related articles" block linking sibling posts by shared tags. Logic in improve/relatedposts.py.
 _rp_spec = _ilu.spec_from_file_location("relatedposts", os.path.join(HERE, "improve", "relatedposts.py"))
 _rp_mod = _ilu.module_from_spec(_rp_spec)
@@ -537,6 +544,7 @@ def main():
 
     def render(*, title, description, url, og_type, h1, byline, toc="", content="", pager="",
                jsonld="", scripts="", breadcrumb=""):
+        content = mark_external(content, BASE_URL)  # annotate outbound reference links (improve/extlinks.py)
         return TEMPLATE.format(
             title=html.escape(title), site=html.escape(SITE_NAME),
             description=html.escape(description), canonical=url, base=BASE_URL,

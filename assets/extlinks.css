@@ -1,0 +1,15 @@
+/* Adds a subtle 'leaves this site' indicator to external links using an up-right arrow */
+
+a.ext:not(:empty)::after {
+  content: '\2197';
+  display: inline-block;
+  margin-left: 0.15em;
+  font-size: 0.85em;
+  color: var(--muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a.ext:not(:empty)::after {
+    transition: opacity 0.2s ease-in-out;
+  }
+}

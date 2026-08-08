@@ -102,10 +102,6 @@
       "title": "BLOG POST: breadcrumbs & site structure for SEO — why breadcrumb navigation + BreadcrumbList structured data helps users and search engines understand hierarchy, how Google shows breadcrumb rich results, and implementation pitfalls (single visible trail, no conflicting markup); source to Google Search Central breadcrumb structured-data docs."
     },
     {
-      "id": "external-link-marker",
-      "title": "FEATURE: annotate outbound external links — build.py post-processor adds rel=\"noopener\" (no target change) and a class to <a> whose host differs from the site host, plus a small CSS ↗ 'leaves this site' indicator, so readers can see which links are external references. No-JS, pure HTML/CSS. Dev: a build.py helper that rewrites anchors + a tiny assets CSS rule; verify parses the host and asserts internal links are untouched."
-    },
-    {
       "id": "post-robots-noindex",
       "title": "BLOG POST: robots.txt vs. meta robots vs. X-Robots-Tag — crawling control vs. indexing control, the classic 'noindex in robots.txt doesn't work / a Disallow-ed page can still get indexed' trap, canonical vs. noindex, and a decision table for common cases; source to Google Search Central's 'Introduction to robots.txt', 'Block Search indexing with noindex', and 'robots meta tag' docs."
     },
@@ -348,6 +344,14 @@
       "title": "FEATURE: make wide markdown tables mobile-safe — a pure-CSS rule (new assets/tablescroll.css, linked after style.css) that lets a content <table> scroll horizontally within the article column on narrow viewports instead of overflowing the layout, reusing the SAME right-edge scroll-shadow cue shipped in codescroll.css so readers can tell a table scrolls sideways. Approach: give article tables a scroll container behavior (e.g. `main article table { display:block; overflow-x:auto; max-width:100%; }` plus the three-layer background/`background-attachment: local, scroll, scroll` shadow trick, theme-aware via var(--soft), dark-mode block). No JS, no animation/transition (reduced-motion safe). Objective verify: the rule targets `table`, uses overflow-x:auto, uses background-attachment incl. local, references var(--soft), has a prefers-color-scheme:dark block, and contains no animation/transition/@keyframes. Confirm at build time that the site actually has a rendered <table> to benefit (skip shipping if none).",
       "stream": "A-feature",
       "dev": "local-qwen"
+    },
+    {
+      "id": "noindex-sitemap-gate",
+      "title": "FEATURE: wire the already-built, self-tested noindex-vs-sitemap consistency gate (improve/noindexsitemapcheck.py) into build.py's post-build audit — fail the build if any page emits <meta name=robots content=...noindex...> while its URL is also listed in sitemap.xml (a contradictory index signal Google penalizes). PM wires one import block + one call, merging audit_noindex_sitemap(OUT, BASE_URL) into the existing post-build problems list next to audit_internal_links. Verify: a clean build stays green and reports zero such conflicts."
+    },
+    {
+      "id": "ext-link-a11y-cue",
+      "title": "DEPTH/accessibility: the new outbound ↗ marker is purely visual — add an accessible, non-visual cue that a link leaves the site for screen-reader users (e.g. a build.py post-processor appends a visually-hidden \"(opens an external site)\" span inside a.ext anchors, or an aria technique), plus a .visually-hidden utility if missing. No-JS, no layout shift; verify internal links untouched and the cue is present on ext anchors."
     }
   ],
   "done": [
@@ -704,6 +708,12 @@
       "date": "2026-08-07",
       "dev": "n/a",
       "note": "Superseded by code-lang-chip (shipped 2026-08-07) — exact duplicate (data-lang on <pre> + pre[data-lang]::before uppercase chip top-left). Closed to avoid duplicate/thin work."
+    },
+    {
+      "id": "external-link-marker",
+      "date": "2026-08-07",
+      "dev": "local-qwen",
+      "note": "Outbound links to third-party hosts now get rel=\"noopener\" + class=\"ext\" via improve/extlinks.py (mark_external wired into render()), and a subtle decorative ↗ 'leaves this site' indicator via assets/extlinks.css (a.ext:not(:empty)::after, muted+no layout shift, dark-mode via var(--muted)). local-qwen built the CSS marker; wired with one <link> in base.html. Verified: 14 external anchors marked, 0 same-host links touched; build green, all SEO gates pass."
     }
   ]
 }
