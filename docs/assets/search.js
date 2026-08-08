@@ -1,109 +1,113 @@
-/* On-site search for The Guide to SEO.
- * Progressive enhancement: the /search/ page renders a full, browsable list with zero
- * JavaScript. This script fetches the tiny build-time index (search-index.json) and turns
- * that list into a live, client-side filter — no server, no dependencies, no tracking.
- * If anything fails (no JS, fetch error), the static list stays and the page still works.
- */
-(function () {
-  "use strict";
-  var root = document.getElementById("search");
-  if (!root) return;
-  var input = document.getElementById("q");
-  var results = document.getElementById("results");
-  var all = document.getElementById("all");
-  var status = document.getElementById("search-status");
-  var form = root.querySelector("form");
-  if (!input || !results || !all || !form) return;
+(function() {
+    'use strict';
 
-  var index = [];
-  var ready = false;
+    if (!document.getElementById('search') || !document.getElementById('q') || !document.getElementById('results') || !document.getElementById('all')) return;
 
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+    function esc(str) {
+        return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function announce(n, q) {
+        if (n === 0) {
+            document.getElementById('results').innerHTML = '<li>No results for <mark>' + esc(q) + '</mark></li>';
+        } else {
+            document.getElementById('results').innerHTML = '<li>Showing ' + n + ' results for <mark>' + esc(q) + '</mark></li>';
+        }
+    }
+
+    function highlight(escapedText, terms) {
+        return terms.reduce(function(text, term) {
+            var escapedTerm = term.replace(/[.*+?^${}()|[\]\\-]/g, '\\$&');
+            var regex = new RegExp(escapedTerm, 'gi');
+            return text.replace(regex, function(matched) {
+                return '<mark>' + matched + '</mark>';
+            });
+        }, escapedText);
+    }
+
+    function run() {
+        var q = param('q').trim().toLowerCase();
+        if (!q) return;
+
+        var terms = q.split(/\s+/).filter(Boolean);
+        fetch(document.getElementById('root').getAttribute('data-index'), { credentials: 'omit' })
+            .then(function(response) {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok');
+                }
+            })
+            .then(function(data) {
+                var items = data.filter(function(it) {
+                    return terms.every(function(term) {
+                        return it.title.toLowerCase().includes(term) || it.tags.some(tag => tag.toLowerCase().includes(term));
+                    });
+                });
+
+                items.forEach(function(it, i) {
+                    it.score = terms.reduce(function(score, term) {
+                        if (it.title.toLowerCase().includes(term)) score += 3;
+                        if (it.tags.some(tag => tag.toLowerCase().includes(term))) score += 1;
+                        return score;
+                    }, 0);
+                });
+
+                items.sort(function(a, b) {
+                    if (a.score !== b.score) return b.score - a.score;
+                    return data.indexOf(a) - data.indexOf(b);
+                });
+
+                draw(items, q);
+            })
+            .catch(function(error) {
+                document.getElementById('status').innerHTML = '';
+                var list = document.getElementById('results');
+                while (list.firstChild) {
+                    list.removeChild(list.firstChild);
+                }
+                announce(0, param('q'));
+            });
+    }
+
+    function param(name) {
+        return new URLSearchParams(window.location.search).get(name);
+    }
+
+    function draw(items, q) {
+        var terms = q.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        var list = document.getElementById('results');
+        while (list.firstChild) {
+            list.removeChild(list.firstChild);
+        }
+        if (items.length === 0) {
+            announce(0, param('q'));
+        } else {
+            items.forEach(function(it) {
+                var li = document.createElement('li');
+                li.innerHTML = '<span class="type">' + esc(it.type) + '</span>: ' +
+                    highlight(esc(it.title), terms) + ' - ' +
+                    highlight(esc(it.description), terms);
+                list.appendChild(li);
+            });
+        }
+    }
+
+    document.getElementById('search').addEventListener('submit', function(e) {
+        e.preventDefault();
+        run();
     });
-  }
 
-  function announce(n, q) {
-    if (!status) return;
-    if (!q) { status.textContent = index.length + " pages and articles"; return; }
-    status.textContent = n + (n === 1 ? " result" : " results") + ' for "' + q + '"';
-  }
-
-  function draw(items, q) {
-    if (!items.length) {
-      results.innerHTML =
-        '<li class="search-empty">No pages match "' + esc(q) +
-        '". Try a broader term, or browse the guide from the top navigation.</li>';
-      return;
-    }
-    var html = "";
-    for (var i = 0; i < items.length; i++) {
-      var it = items[i];
-      html +=
-        '<li><a href="' + esc(it.url) + '">' + esc(it.title) + "</a> " +
-        '<span class="tag">' + esc(it.type) + "</span>" +
-        "<p>" + esc(it.description) + "</p></li>";
-    }
-    results.innerHTML = html;
-  }
-
-  // Rank: every term must appear somewhere; title/tag hits sort above description-only hits.
-  function run(q) {
-    q = (q || "").trim();
-    if (!q) { draw(index, ""); announce(index.length, ""); return; }
-    var terms = q.toLowerCase().split(/\s+/).filter(Boolean);
-    var hits = [];
-    for (var i = 0; i < index.length; i++) {
-      var it = index[i];
-      var title = it.title.toLowerCase();
-      var tags = (it.tags || []).join(" ").toLowerCase();
-      var hay = title + " " + it.description.toLowerCase() + " " + tags + " " +
-                (it.text || "").toLowerCase();
-      var ok = true, score = 0;
-      for (var t = 0; t < terms.length; t++) {
-        if (hay.indexOf(terms[t]) === -1) { ok = false; break; }
-        if (title.indexOf(terms[t]) !== -1) score += 3;
-        if (tags.indexOf(terms[t]) !== -1) score += 1;
-      }
-      if (ok) hits.push({ it: it, score: score, ord: i });
-    }
-    hits.sort(function (a, b) { return b.score - a.score || a.ord - b.ord; });
-    var items = [];
-    for (var h = 0; h < hits.length; h++) items.push(hits[h].it);
-    draw(items, q);
-    announce(items.length, q);
-  }
-
-  function param(name) {
-    var m = new RegExp("[?&]" + name + "=([^&]*)").exec(location.search);
-    return m ? decodeURIComponent(m[1].replace(/\+/g, " ")) : "";
-  }
-
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (ready) run(input.value);
-    input.focus();
-  });
-  input.addEventListener("input", function () { if (ready) run(input.value); });
-
-  fetch(root.getAttribute("data-index"), { credentials: "omit" })
-    .then(function (r) {
-      if (!r.ok) throw new Error("index " + r.status);
-      return r.json();
-    })
-    .then(function (data) {
-      index = Array.isArray(data) ? data : [];
-      ready = true;
-      // Take over only once the index is loaded, so there is never a blank flash.
-      all.hidden = true;
-      results.hidden = false;
-      var q0 = param("q");
-      if (q0) input.value = q0;
-      run(input.value);
-    })
-    .catch(function () {
-      // Leave the static, no-JS list in place — the page is still fully usable.
-      if (status) status.textContent = "";
+    document.getElementById('q').addEventListener('input', function() {
+        if (this.value.trim()) {
+            document.getElementById('all').checked = false;
+        } else {
+            document.getElementById('all').checked = true;
+        }
     });
+
+    var root = document.getElementById('root');
+    if (root) {
+        run();
+    }
 })();
