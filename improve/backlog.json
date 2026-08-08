@@ -130,12 +130,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "noindex-sitemap-conflict",
-      "title": "DEPTH: build-time noindex/sitemap contradiction gate — walk docs/**/*.html, and for any page that emits <meta name=\"robots\" content=\"...noindex...\">, assert (error) its canonical URL does NOT also appear in docs/sitemap.xml, because telling Google 'index this' (sitemap) and 'don't index this' (noindex) at once is a self-contradictory signal it flags. Reuse the sitemap <loc> set already parsed by sitemapcheck.py; stdlib-only; objective fixture verify (a normal indexable page passes; a noindex page listed in the sitemap fails; a noindex page ABSENT from the sitemap passes). Complements the robots + sitemap integrity gates.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "post-semantic-html-seo",
       "title": "BLOG POST (Grok prose): semantic HTML & heading hierarchy for SEO and accessibility — why one <h1>, logical h2/h3 nesting, landmark elements (header/nav/main/footer), and real lists/tables help both crawlers and assistive tech, plus common anti-patterns (headings used for styling, div soup). PM first web_fetch Google Search Central heading/structure guidance + web.dev/MDN semantics to supply exact facts; Grok drafts; PM fact-checks, adds tags + related:, internally links to on-page-seo and technical-seo. Respect the ~1 post / 4h cadence.",
       "stream": "B-blog",
@@ -352,6 +346,18 @@
       "title": "INTERNAL LINKS: add a contextual in-body link to the new Local SEO pillar from measuring.md and common-seo-mistakes.md (descriptive anchor text, one per page, in the most relevant existing sentence) so the page earns in-body inbound links beyond the nav + related blocks and can never orphan. Skip if a natural, non-forced anchor spot doesn't exist on a page.",
       "stream": "C-depth",
       "dev": "local-qwen"
+    },
+    {
+      "id": "post-noindex-vs-sitemap-explainer",
+      "stream": "B-blog",
+      "dev": "grok",
+      "title": "BLOG POST (Grok prose): 'noindex vs. your sitemap — the contradictory index signal that quietly confuses Google'. Angle: a page listed in the sitemap says 'index me' while a meta robots noindex says 'don't', and mixing them wastes crawl budget and muddies indexing; how to decide which signal you actually want (drop from sitemap OR remove noindex), how this differs from canonical and robots.txt Disallow, and how to audit for it. PM first web_fetch Google Search Central 'Block Search indexing with noindex' + 'Build and submit a sitemap' + 'Sitemaps best practices' for exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, internally links to technical-seo and the glossary. Ties directly to the just-shipped noindex/sitemap contradiction gate. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "canonical-target-in-sitemap-check",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend the sitemap integrity family with a report-only 'canonical_target_missing_from_sitemap' WARN — for each indexable (non-noindex) page whose rel=canonical points at ITSELF, warn if that canonical URL is NOT present in docs/sitemap.xml, since a page you consider canonical-and-indexable should normally be discoverable via the sitemap. Non-blocking WARN only, stdlib-only, reuse the loc-set + canonical-extraction logic already in noindexsitemapcheck.py, objective fixture verify (a self-canonical page in the sitemap passes; a self-canonical indexable page absent from the sitemap warns; a noindex page never warns). Dev: local-qwen; PM re-runs the audit and acts on any real findings."
     }
   ],
   "done": [
@@ -732,6 +738,14 @@
       "date": "2026-08-07",
       "dev": "local-qwen",
       "note": "Built by a prior run's local-qwen (assets/search.js highlight(escapedText, terms): escape-first then wrap matches in <mark>, applied to title+description in draw()) but left uncommitted; committed this run in a dedicated commit. Verified build-green and reduced-motion/contrast-safe."
+    },
+    {
+      "id": "noindex-sitemap-conflict",
+      "title": "DEPTH: build-time noindex/sitemap contradiction gate — walk docs/**/*.html, and for any page that emits <meta name=\"robots\" content=\"...noindex...\">, assert (error) its canonical URL does NOT also appear in docs/sitemap.xml, because telling Google 'index this' (sitemap) and 'don't index this' (noindex) at once is a self-contradictory signal it flags. Reuse the sitemap <loc> set already parsed by sitemapcheck.py; stdlib-only; objective fixture verify (a normal indexable page passes; a noindex page listed in the sitemap fails; a noindex page ABSENT from the sitemap passes). Complements the robots + sitemap integrity gates.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "shipped": "2026-08-08",
+      "note": "Shipped 2026-08-08. improve/noindexsitemapcheck.py (local-qwen) rewritten from a broken orphan (SyntaxError) into a working stdlib-only gate: audit_noindex_sitemap() flags any page that emits meta robots noindex while its canonical URL is listed in sitemap.xml (contradictory index signal), error severity. Wired into build.py after the sitemap gate. Verified by an independent PM fixture harness (/tmp/verify_noindex.py): indexable+in-sitemap passes, noindex+in-sitemap fails, noindex+not-in-sitemap passes, 404.html skipped, missing sitemap yields []. Build green, all SEO checks OK."
     }
   ]
 }

@@ -171,6 +171,14 @@ _ia_mod = _ilu.module_from_spec(_ia_spec)
 _ia_spec.loader.exec_module(_ia_mod)
 audit_img_alt = _ia_mod.audit_img_alt
 
+# Post-build contradiction gate: a page must not tell Google both "don't index" (meta robots noindex)
+# and "index this" (its canonical URL listed in the sitemap) at once — a self-contradictory signal.
+# Error severity. Logic in improve/noindexsitemapcheck.py.
+_ns_spec = _ilu.spec_from_file_location("noindexsitemapcheck", os.path.join(HERE, "improve", "noindexsitemapcheck.py"))
+_ns_mod = _ilu.module_from_spec(_ns_spec)
+_ns_spec.loader.exec_module(_ns_mod)
+audit_noindex_sitemap = _ns_mod.audit_noindex_sitemap
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -873,6 +881,15 @@ def main():
         raise SystemExit(1)
     print(f"Sitemap audit: OK — every <loc> is absolute, resolves to a real file, unique, and 404-free"
           f" ({len(sm_warns)} orphan warning(s)).")
+
+    # ---------- noindex/sitemap contradiction gate: no page is both noindex AND listed in the sitemap ----------
+    noindex_problems = audit_noindex_sitemap(OUT, BASE_URL)
+    if noindex_problems:
+        print(f"\nNOINDEX/SITEMAP AUDIT FAILED — {len(noindex_problems)} contradictory page(s):")
+        for p in noindex_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Noindex/sitemap audit: OK — no page emits meta robots noindex while listed in the sitemap.")
 
     # ---------- robots.txt gate: exists, absolute Sitemap: == BASE_URL/sitemap.xml, no blanket Disallow under * ----------
     robots_problems = audit_robots(OUT, BASE_URL)
