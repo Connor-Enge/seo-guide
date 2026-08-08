@@ -174,12 +174,6 @@
       "dev": "local-qwen"
     },
     {
-      "id": "titlecheck-unit-tests",
-      "title": "DEPTH: add improve/tests/test_titlecheck.py (stdlib unittest) locking redundant_title_segment's contract — doubled brand, case-insensitive dup, each separator (— – · | and spaced hyphen), internal-hyphen-not-split, single-segment/empty → None — so the new redundant-title guard can never silently regress. Dev: local-qwen writes the test file; verify = the test suite exits 0.",
-      "stream": "C-depth",
-      "dev": "local-qwen"
-    },
-    {
       "id": "metacheck-title-missing-brand",
       "title": "DEPTH: extend improve/metacheck.py (reuse titlecheck.py) with a report-only 'title_missing_brand' warn when a page's rendered <title> does NOT end with the site-name brand suffix (the ' — <site name>' that build.py appends), so branding stays consistent across the SERP and a hand-edited front-matter title can't silently drop the brand. Derive the brand string from the same config build.py uses; measure after html.unescape; skip pages whose title is exactly the brand. Non-blocking WARN only, stdlib-only, objective fixture verify (a title ending in the brand passes; one with no brand suffix warns; the bare-brand homepage-style title does not warn). Dev: local-qwen adds a pure helper (e.g. title_has_brand_suffix(title, brand)), PM wires one hook + re-runs the audit.",
       "stream": "C-depth",
@@ -491,6 +485,18 @@
       "id": "related-reciprocity-audit",
       "title": "INTERNAL LINKS: reciprocal-related audit — where page A lists page B in `related:` and the two are topically paired, ensure B also lists A. Start with local-seo & ecommerce-seo (both relate to international-seo's multi-regional guidance) and measuring<->how-search-works. Front-matter `related:` wiring only, no prose; verify build stays green and no related-key integrity warnings appear.",
       "stream": "C-depth"
+    },
+    {
+      "id": "tests-discovery-gate",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: add a runnable test-suite entry point improve/tests/run_tests.py that uses unittest discovery (unittest.TestLoader().discover('improve/tests', pattern='test_*.py')) and exits non-zero on any failure, so the growing unit-test suite (starting with test_titlecheck.py) can actually gate regressions instead of sitting unrun. stdlib-only, self-contained; verify = the runner exits 0 with the current passing suite and its output reports Ran >=1 tests / OK. Dev: local-qwen writes run_tests.py."
+    },
+    {
+      "id": "anchors-unit-tests",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: add improve/tests/test_anchors.py (stdlib unittest) locking the heading-permalink slug/id generator in improve/anchors.py — lowercasing, non-alphanumeric runs collapsed to single hyphens, leading/trailing hyphen strip, and the dedup suffix applied when the same heading text recurs on a page (so #anchor deep-links stay stable). Inbound deep links break if this silently changes, so pin the contract. Dev: local-qwen writes the test file after reading anchors.py; verify = the new test module exits 0 against the live anchors.py."
     }
   ],
   "done": [
@@ -1031,6 +1037,14 @@
       "title": "INTERNAL LINKS: give the new International SEO pillar in-body inbound links from its topic hubs — add one contextual link (descriptive anchor) to /international-seo/ from technical-seo.md (near the canonical/duplicate-URL discussion) and one from how-search-works.md (canonical clustering) so the new pillar earns body inbound links beyond the nav + related block.",
       "done_note": "Shipped 2026-08-08. Grok (prose) authored three contextual sentences with descriptive mid-sentence anchors ([hreflang annotations], [a language- or region-specific URL structure]) linking to /international-seo/; PM placed one in each topic hub (how-search-works Indexing, on-page-seo URLs, technical-seo Crawlability) and added reciprocal `related: international-seo` to all three front matters. De-orphaned the fresh International SEO pillar: content references 1->4; each hub renders in-body + related-block inbound links. All SEO gates green. (dev: grok + PM wiring)",
       "done_date": "2026-08-08"
+    },
+    {
+      "id": "titlecheck-unit-tests",
+      "title": "DEPTH: add improve/tests/test_titlecheck.py (stdlib unittest) locking redundant_title_segment's contract — doubled brand, case-insensitive dup, each separator (— – · | and spaced hyphen), internal-hyphen-not-split, single-segment/empty → None — so the new redundant-title guard can never silently regress. Dev: local-qwen writes the test file; verify = the test suite exits 0.",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "completed": "2026-08-08",
+      "result": "Added improve/tests/test_titlecheck.py — 12 stdlib unittest cases locking redundant_title_segment contract (doubled/case-insensitive dup returns second-in-original-case; all five spaced separators: em/en dash, middle dot, pipe, hyphen; internal-hyphen-not-split; single-segment/empty/whitespace/None -> None; distinct-segments -> None). All 12 pass against the live titlecheck.py; build stays green. Built by local-qwen via dispatch on 2026-08-08."
     }
   ]
 }
