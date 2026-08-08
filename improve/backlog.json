@@ -56,8 +56,10 @@
       "title": "FEATURE: auto-populate the Related-reading block from shared front-matter topics/tags when a page has no manual `related:` field, so every page always ships genuine descriptive internal links even before hand-curation — build on the existing related_registry + related_block pipeline in build.py."
     },
     {
-      "id": "heading-h3-anchors",
-      "title": "FEATURE: extend the new deep-link permalinks to ### subheadings — give <h3> stable ids and a hover ¶ permalink (reuse improve/anchors.py's helper), and nest those subsections under their parent <h2> in the on-page TOC so deeper sections are linkable and navigable."
+      "id": "h3-toc-nesting",
+      "title": "FEATURE: nest <h3> subsections under their parent <h2> in the on-page TOC so deeper sections are linkable/navigable. The h3 permalink ids already ship (subheading_html in improve/anchors.py); render_md now tracks seen_ids and emits <h3 id> permalinks. Remaining work: in render_md, also collect (h3-text, h3-id) under the current h2 and have toc_block render a nested <ul> of h3 links inside each h2 <li>. Keep the TOC accessible (nested lists) and skip pages with no h3s. Dev: local-qwen extends the toc list shape + toc_block; PM wires.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
     },
     {
       "id": "glossary-crosslink",
@@ -392,6 +394,18 @@
       "stream": "B-blog",
       "dev": "grok",
       "title": "BLOG POST (Grok prose): 'Google Trends for SEO — reading seasonality, rising queries, and whether a traffic drop is just you'. Angle: Trends shows a largely unfiltered, anonymized sample of real search interest, useful for separating a site-specific drop from a web-wide demand shift, spotting seasonal query patterns, and surfacing rising related queries to plan content; it shows relative interest, not absolute volume, so it complements (not replaces) Search Console's Performance report. PM first web_fetch Google Search Central's 'Use Google Trends' / trends-start doc for exact current facts; Grok drafts; PM fact-checks every claim, adds tags + related:, and internally links to the new google-search-console-workflow post, measuring, and keyword-research. Ties to the just-shipped GSC workflow post's seasonality section. Respect the ~1 post / 4h cadence."
+    },
+    {
+      "id": "hanchor-copy-link",
+      "title": "FEATURE: make the heading/subheading ¶ permalinks one-click copyable — on click, copy the absolute deep-link URL to the clipboard (navigator.clipboard) and show a brief 'Link copied' confirmation, with graceful no-JS fallback (the anchor still navigates and updates the URL hash). Progressive enhancement, self-contained assets/hanchor-copy.js loaded with defer; keyboard-accessible; respects prefers-reduced-motion for the confirmation. Dev: local-qwen writes the JS asset; PM wires one <script defer> include in templates/base.html. Verify: JS parses, attaches to a.hanchor, and the page works identically with JS disabled.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
+    },
+    {
+      "id": "toc-active-highlight",
+      "title": "FEATURE: highlight the current section in the on-page TOC as the reader scrolls (IntersectionObserver watches h2/h3 targets, toggles aria-current='true' + a subtle style on the matching TOC link). Pure progressive enhancement in a self-contained assets/toc-scrollspy.js (defer), no layout shift, respects prefers-reduced-motion, and is a no-op when the page has no TOC. Pairs with the pending h3-toc-nesting item. Dev: local-qwen writes the JS; PM wires one include. Verify: JS parses, observes the TOC targets, and the page is unchanged with JS off.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -821,6 +835,13 @@
       "dev": "local-qwen",
       "shipped": "2026-08-08",
       "note": "local-qwen wrote improve/linkauditreport.py (self-contained write_link_audit(problems, dest): total_problems/ok/counts_by_kind/problems -> JSON); PM wired one import block + one write_link_audit(problems, OUT/link-audit.json) call after audit_internal_links in build.py. Recovered + committed by the 2026-08-08 run (prior run built it but was interrupted before commit). Objective verify met: clean build emits docs/link-audit.json, valid JSON, total_problems=0, ok=true."
+    },
+    {
+      "id": "heading-h3-anchors-permalinks",
+      "title": "FEATURE: <h3> subheadings across the guide + blog now get stable, per-page-unique ids and a hover ¶ permalink (matching the existing <h2> deep links).",
+      "dev": "local-qwen",
+      "shipped": "2026-08-08",
+      "note": "local-qwen wrote subheading_html(text, inner_html, seen) in improve/anchors.py (slugify -> base-n dedup against a per-page seen set -> escaped id + pilcrow permalink markup); PM wired render_md to import it, track seen_ids (seeding h2 slugs), and call it on '### ' lines; local-qwen also extended assets/anchors.css so the reveal rule covers h3:hover/h3:focus-within (previously h2-only), so the ¶ now appears on hover for h3 too, not only keyboard focus. Recovered + finished by the 2026-08-08 run (a prior run built the anchors.py helper + build.py wiring but was interrupted before committing and before the CSS reveal fix). Orphan untracked improve/ogcard.py and improve/assetrefcheck.py from that interrupted run were discarded. Verify met: build green, all SEO/heading-order/JSON-LD gates OK, h3 ids unique per page (no dup-id), hover reveal live. Remaining TOC-nesting split into pending id 'h3-toc-nesting'."
     }
   ]
 }

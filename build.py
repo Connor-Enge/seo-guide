@@ -37,6 +37,7 @@ _an_spec = _ilu.spec_from_file_location("anchors", os.path.join(HERE, "improve",
 _an_mod = _ilu.module_from_spec(_an_spec)
 _an_spec.loader.exec_module(_an_mod)
 heading_html = _an_mod.heading_html
+subheading_html = _an_mod.subheading_html   # <h3> permalinks with per-page unique ids
 
 # Fenced ```code``` block support for the markdown renderer: convert a fenced block into a
 # semantic <pre><code> with HTML-escaped content. Logic lives in improve/fencedcode.py.
@@ -311,6 +312,7 @@ def search_text(body):
 def render_md(body):
     out, i, lines = [], 0, body.split("\n")
     toc = []
+    seen_ids = set()   # h2/h3 ids used on this page, so h3 permalinks stay unique
     while i < len(lines):
         ln = lines[i].rstrip()
         fenced = consume_fence(lines, i)   # ```code``` fence -> <pre><code>…</pre>
@@ -322,10 +324,12 @@ def render_md(body):
             i += 1
             continue
         if ln.startswith("### "):
-            out.append(f"<h3>{inline(ln[4:])}</h3>")
+            txt = ln[4:]
+            out.append(subheading_html(txt, inline(txt), seen_ids))
         elif ln.startswith("## "):
             txt = ln[3:]
             slug = re.sub(r"[^a-z0-9]+", "-", txt.lower()).strip("-")
+            seen_ids.add(slug)
             toc.append((txt, slug))
             out.append(heading_html(slug, inline(txt)))
         elif ln.startswith("> "):
