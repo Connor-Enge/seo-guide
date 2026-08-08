@@ -250,6 +250,26 @@ _rl_mod = _ilu.module_from_spec(_rl_spec)
 _rl_spec.loader.exec_module(_rl_mod)
 audit_reading_length = _rl_mod.audit_reading_length
 
+# Post-build in-page fragment gate: for every rendered internal <a href> that carries a '#id'
+# (same-page '#frag' or an absolute BASE_URL page URL + '#frag'), confirm the target page actually
+# defines that anchor (id= or name=). Closes the gap where linkcheck.py strips the fragment
+# (.split('#')[0]) and never verifies the anchor resolves — protecting the section deep-links
+# (TOC, heading permalinks, pillar->section cross-links). Reserved '#'/'#top' and cross-origin/
+# unknown-target hrefs are skipped. Error severity. Logic in improve/fragmentcheck.py.
+_frag_spec = _ilu.spec_from_file_location("fragmentcheck", os.path.join(HERE, "improve", "fragmentcheck.py"))
+_frag_mod = _ilu.module_from_spec(_frag_spec)
+_frag_spec.loader.exec_module(_frag_mod)
+audit_fragments = _frag_mod.audit_fragments
+
+# Post-build script-src existence gate: every rendered <script src> that points under /assets/ must
+# resolve to a file that actually exists in docs/assets/, so a one-line wiring typo (renamed/missing
+# JS asset) fails the build instead of silently shipping a 404ing <script> and a dead progressive
+# enhancement. Error severity. Logic in improve/scriptsrccheck.py.
+_ss_spec = _ilu.spec_from_file_location("scriptsrccheck", os.path.join(HERE, "improve", "scriptsrccheck.py"))
+_ss_mod = _ilu.module_from_spec(_ss_spec)
+_ss_spec.loader.exec_module(_ss_mod)
+audit_script_src = _ss_mod.audit_script_src
+
 # Reading-time byline helper: estimate whole-minute read time from a page's plain text at ~220 wpm.
 # Logic in improve/readingtime.py.
 _rt_spec = _ilu.spec_from_file_location("readingtime", os.path.join(HERE, "improve", "readingtime.py"))
@@ -900,6 +920,24 @@ def main():
             print(f"  [{p['kind']}] {p['page']} -> {p['href']}  ({p['detail']})")
         raise SystemExit(1)
     print("Internal-link audit: OK — no dangling internal links or root-relative hrefs.")
+
+    # ---------- integrity gate: every in-page fragment (#id) link must resolve to a real anchor ----------
+    fragment_problems = audit_fragments(OUT, BASE_URL)
+    if fragment_problems:
+        print(f"\nFRAGMENT AUDIT FAILED — {len(fragment_problems)} dangling in-page anchor(s):")
+        for p in fragment_problems:
+            print(f"  [{p['kind']}] {p['page']} -> {p['href']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Fragment audit: OK — every '#id' link resolves to a real anchor on its target page.")
+
+    # ---------- integrity gate: every <script src> under /assets/ must exist in docs/assets/ ----------
+    scriptsrc_problems = audit_script_src(OUT)
+    if scriptsrc_problems:
+        print(f"\nSCRIPT-SRC AUDIT FAILED — {len(scriptsrc_problems)} <script src> pointing at a missing asset:")
+        for p in scriptsrc_problems:
+            print(f"  [{p['kind']}] {p['page']}  ({p['detail']})")
+        raise SystemExit(1)
+    print("Script-src audit: OK — every /assets/ <script src> resolves to a real file in docs/assets/.")
 
     # ---------- integrity gate: every page must self-canonicalize (no canonical drift) ----------
     canon_problems = audit_canonicals(OUT, BASE_URL)
