@@ -424,6 +424,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: extend improve/timecheck.py with a report-only 'time_empty_text' WARN (non-blocking) when a <time> element carries a valid datetime but its visible inner text is empty or whitespace-only (e.g. <time datetime=\"2026-08-07\"></time>), so a byline always renders a human-readable date and not just machine metadata. Keep the existing missing/invalid datetime as errors; add the empty-text case as a warn that build.py prints non-blocking (mirror the meta/sitemap warn split). stdlib-only, objective fixture verify (a <time> with visible text passes; a valid-datetime <time> with empty inner text warns; an invalid datetime still errors). Dev: local-qwen extends the helper to return severity; PM splits errors vs warns in the gate."
+    },
+    {
+      "id": "depth-dethin-next-pillars",
+      "title": "DEPTH: de-thin the next-thinnest pillar pages the same rigorous way — how-search-works.md (~250 words) and measuring.md (~250 words). PM first web_fetch Google Search Central ('In-depth guide to how Google Search works' for crawling/indexing/serving) and the Search Console/Analytics docs for measuring, supplies verified facts, Grok drafts substantial sourced bodies, PM fact-checks every claim and places. One page per run; never pad; keep the build green.",
+      "stream": "C-depth",
+      "dev": "grok"
+    },
+    {
+      "id": "thin-content-guard",
+      "title": "FEATURE/gate: build-time thin-content guard — new improve/thincontentcheck.py (stdlib-only, walk-docs style) that computes each guide page's rendered MAIN word count (strip nav/footer/toc/related) and emits a report-only 'thin_content' WARN when a non-index article falls below ~350 words, so thin pillar pages get flagged for expansion before they erode topical authority. Report-only, never fail the build. Objective fixture verify (a 120-word main warns; an 800-word main does not). PM wires one call in build.py's audit phase. dev: local-qwen.",
+      "stream": "A-feature",
+      "dev": "local-qwen"
     }
   ],
   "done": [
@@ -883,6 +895,13 @@
       "date": "2026-08-08",
       "shipped": "2026-08-08",
       "note": "New improve/fencedcodecheck.py: build-time gate scanning docs/**/*.html so no real <script>/<meta>/<link>/<img> can leak inside a <pre><code> block (must stay html-escaped). Wired into build.py after the H1 gate, error severity. Objective fixture verify: escaped tags pass; real script/meta/link/img inside a code fence fail; real tags outside fences ignored. Build green; SEO invariants intact."
+    },
+    {
+      "id": "depth-dethin-link-building",
+      "title": "DEPTH: de-thinned the Link Building pillar (~250 -> ~700 words). Added Google-sourced sections: qualifying outbound links (rel=sponsored/ugc/nofollow), the full link-spam examples list + the 'paid links are fine if qualified' nuance, official anchor-text best practices, and an honest 'when NOT to disavow' section. Facts PM-sourced from Google Search Central (qualify-outbound-links, spam-policies, links-crawlable) + Search Console disavow help; prose by Grok; PM fact-checked every claim and placed it.",
+      "dev": "grok",
+      "stream": "C-depth",
+      "date": "2026-08-08"
     }
   ]
 }
