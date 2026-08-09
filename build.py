@@ -1187,6 +1187,14 @@ def main():
         raise SystemExit(1)
     print("Reading-length audit: OK — every timeRequired is a valid PT#M matching its wordCount.")
 
+    # ---------- bespoke homepage override (approved app-shell design) ----------
+    # All gates above validated the templated index; now swap in the hand-designed homepage.
+    # It is self-contained and SEO-complete (own canonical/OG/JSON-LD/one-h1); kept in templates/home.html.
+    _home_src = os.path.join(HERE, "templates", "home.html")
+    if os.path.exists(_home_src):
+        shutil.copyfile(_home_src, os.path.join(OUT, "index.html"))
+        print("Homepage: swapped in bespoke templates/home.html.")
+
     print(f"Built {len(pages)} guide pages + {len(posts)} blog post(s) -> docs/  "
           f"(+ /blog/, sitemap.xml, robots.txt, feed.xml, feed.json [{len(feed_items)} items])")
     for m, _ in pages:
