@@ -2,6 +2,34 @@
   "_note": "Endless-improvement backlog. The improver cron ships ONE genuine upgrade per run, logs it to done, and when pending runs thin it generates new real improvements. Quality over volume — never degrade the site, never pad, always keep the build green.",
   "pending": [
     {
+      "id": "refactor-design-system",
+      "title": "TOP PRIORITY — VISUAL REFACTOR CAMPAIGN (see improve/REFACTOR.md). Dispatch to GROK (design-grade CSS) a premium, mobile-first, web-app-caliber overhaul of the WHOLE assets/style.css: design tokens (color, clamp() fluid type scale, spacing, radii, layered shadows, motion), elevated sticky glass header + thumb nav, striking hero h1, polished cards/callouts/tables/TOC/pager, CSS-only motion + focus states, best-in-class dark mode. MUST preserve EVERY existing class name (inspect templates/base.html + a docs/*.html first) so nothing breaks. No JS. Grok writes it; you transcribe + verify build-green + commit (dev: grok)."
+    },
+    {
+      "id": "refactor-diagram-engine",
+      "title": "TOP PRIORITY — VISUAL REFACTOR. Build-time inline-SVG diagram engine: dispatch to GROK improve/diagrams.py (stdlib) returning accessible responsive inline-SVG (title/desc, role=img, viewBox, width=100% height=auto, theme-aware) for a process-flow, a threshold gauge, and a bar/comparison chart; then wire a 'diagram' fenced code block (tiny JSON spec) into build.py's renderer (dispatch the build.py change too). Zero-JS, mobile-first. (dev: grok/local-qwen)"
+    },
+    {
+      "id": "refactor-diagram-how-search",
+      "title": "VISUAL REFACTOR. Add a crawl -> render -> index -> rank inline-SVG process-flow diagram to content/how-search-works.md via the diagram engine (Grok-generated inline <svg> fallback if engine wiring is flaky)."
+    },
+    {
+      "id": "refactor-diagram-cwv",
+      "title": "VISUAL REFACTOR. Add LCP / INP / CLS threshold-gauge diagrams (good / needs-improvement / poor bands + marker) to the Core Web Vitals blog post (dev: grok SVG)."
+    },
+    {
+      "id": "refactor-diagram-keyword",
+      "title": "VISUAL REFACTOR. Add an intent x difficulty matrix diagram to keyword-research (dev: grok SVG)."
+    },
+    {
+      "id": "refactor-mobile-components",
+      "title": "VISUAL REFACTOR. Mobile-first component polish: thumb-friendly sticky header, stat/callout components, tables->cards at narrow widths, refined spacing/rhythm — dispatch design to GROK, preserve class names, build green."
+    },
+    {
+      "id": "refactor-diagram-rollout",
+      "title": "VISUAL REFACTOR (recurring until done): ensure EVERY remaining guide page + pillar carries >=1 genuine explanatory inline-SVG diagram (on-page anatomy, technical crawl/render flow, link-equity flow, measuring loop/funnel, local, e-commerce, international) — one page per run (dev: grok SVG)."
+    },
+    {
       "id": "tag-pages",
       "title": "FEATURE: tags/categories — front-matter tags generate tag pages that list related content, cross-linked"
     },
@@ -127,7 +155,10 @@
     },
     {
       "id": "blog-index-descriptive-anchors",
-      "title": "DEPTH: audit the /blog/ listing page — ensure each post link uses the post's real title as descriptive anchor text (never a bare 'Read more'/date) and that each card exposes the post description, so the hub passes link value to posts with keyword-rich anchors. Verify: parse docs/blog/index.html, assert every post card links with anchor text equal to the post <title>-derived headline and carries a non-empty description snippet."
+      "title": "DEPTH: audit the /blog/ listing page — ensure each post link uses the post's real title as descriptive anchor text (never a bare 'Read more'/date) and that each card exposes the post description, so the hub passes link value to posts with keyword-rich anchors. Verify: parse docs/blog/index.html, assert every post card links with anchor text equal to the post <title>-derived headline and carries a non-empty description snippet.",
+      "done": "2026-08-08",
+      "dev": "local-qwen built + pm-wired",
+      "result": "Shipped as one gate improve/blogindexcheck.py (audit_blog_index/_html): asserts every <ul class=\"post-list\"> card has a descriptive title anchor (not bare date / generic \"read more\"), a published <time>, an \"N min read\" token, and a non-empty description. Wired into build.py after the heading-order gate (error severity). Objective fixture verify + live index pass."
     },
     {
       "id": "metacheck-brand-in-both-title-h1",
@@ -179,7 +210,9 @@
       "id": "blog-index-reading-time-gate",
       "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
       "stream": "C-depth",
-      "dev": "local-qwen"
+      "dev": "local-qwen built + pm-wired",
+      "done": "2026-08-08",
+      "result": "Shipped as one gate improve/blogindexcheck.py (audit_blog_index/_html): asserts every <ul class=\"post-list\"> card has a descriptive title anchor (not bare date / generic \"read more\"), a published <time>, an \"N min read\" token, and a non-empty description. Wired into build.py after the heading-order gate (error severity). Objective fixture verify + live index pass."
     },
     {
       "id": "codelang-sync-gate",
@@ -577,6 +610,18 @@
       "stream": "C-depth",
       "dev": "local-qwen",
       "title": "DEPTH: add a build-time gate validating that every <lastmod> in docs/sitemap.xml is a well-formed W3C datetime (YYYY-MM-DD or a full ISO-8601 date-time), since Google only trusts lastmod when it is verifiably accurate and silently drops a malformed value — complementing the existing lastmod-honesty warn. Stdlib-only NEW helper improve/sitemapdatecheck.py exposing a pure audit function; PM wires one call into the sitemap gate block. Objective fixture verify: '2026-08-08' and an ISO date-time pass; '2026-13-99', 'today', and '' fail. Dev: local-qwen builds the helper; PM wires."
+    },
+    {
+      "id": "blog-index-anchor-href-inscope",
+      "stream": "C-depth",
+      "dev": "local-qwen",
+      "title": "DEPTH: extend improve/blogindexcheck.py so each post card's <h2><a> href must be an in-site blog URL — it should start with the passed base_url + '/blog/' and end with '/' (new problem kind 'bad_href') — closing the gap where a card can show a perfect descriptive title over a broken, '#', or off-site link. base_url is already accepted by audit_blog_index; thread it into audit_blog_index_html (add an optional base_url param, default None = skip the href-scope check so the pure fixtures still pass) and use it. Reuse the existing per-<li> walk. Objective fixture verify: a card linking to <base>/blog/x/ passes; one linking to '#' or an external https URL flags 'bad_href'; the live docs/blog/index.html still passes clean."
+    },
+    {
+      "id": "reading-progress-bar",
+      "stream": "A-feature",
+      "dev": "local-qwen",
+      "title": "FEATURE (local dev): a slim reading-progress indicator for long article pages — a new self-contained assets/readingprogress.js (progressive enhancement, no framework) that draws a thin bar at the top of the viewport reflecting scroll depth through <main article>. Constraints: no layout shift (position:fixed, height ~3px, above content), only activates on article pages tall enough to scroll, respects prefers-reduced-motion (no transitions when reduced), sets role/aria-hidden appropriately (decorative), and no-JS readers see nothing missing. PM wires ONE <script defer> in the article scripts slot. Objective DOM-level verify (jsdom or headless load): the bar element is created, updates width on a simulated scroll, and is absent/inert when the page is too short to scroll."
     }
   ],
   "done": [
@@ -1265,6 +1310,21 @@
       "dev": "grok",
       "shipped": "2026-08-08",
       "note": "Published /blog/xml-sitemaps-in-2026/ (~950 words). Grok drafted the body from a PM fact-brief sourced to Google Search Central ('Learn about sitemaps', 'Build and Submit a Sitemap', 'Manage Your Sitemaps With Sitemap Index Files'); PM fact-checked every claim, inserted the two exact Google XML examples (urlset + sitemapindex) as language-xml fenced blocks, and wove 5 descriptive-anchor in-body links (how-search-works, technical-seo, glossary, robots-txt-vs-noindex, google-search-console-workflow) plus related: technical-seo/how-search-works/glossary. Fixed a front-matter quote-leak (naive parser keeps literal quotes -> unquoted title/h1/description). Build green, all 24 SEO gates pass. (dev: grok prose + pm-sourced/pm-wired)"
+    },
+    {
+      "id": "blog-index-descriptive-anchors",
+      "title": "DEPTH: audit the /blog/ listing page — ensure each post link uses the post's real title as descriptive anchor text (never a bare 'Read more'/date) and that each card exposes the post description, so the hub passes link value to posts with keyword-rich anchors. Verify: parse docs/blog/index.html, assert every post card links with anchor text equal to the post <title>-derived headline and carries a non-empty description snippet.",
+      "done": "2026-08-08",
+      "dev": "local-qwen built + pm-wired",
+      "result": "Shipped as one gate improve/blogindexcheck.py (audit_blog_index/_html): asserts every <ul class=\"post-list\"> card has a descriptive title anchor (not bare date / generic \"read more\"), a published <time>, an \"N min read\" token, and a non-empty description. Wired into build.py after the heading-order gate (error severity). Objective fixture verify + live index pass."
+    },
+    {
+      "id": "blog-index-reading-time-gate",
+      "title": "DEPTH: build-time gate that locks in the new blog-index reading-time affordance — a stdlib-only improve/blogindexcheck.py walks docs/blog/index.html and asserts (error) that every post <li class-less item under ul.post-list> carries BOTH a <time datetime=...> published date AND a 'N min read' token in its <p class=\"meta\">, so a future refactor can never silently drop the reading-time signal from the listing. Objective fixture verify: an index item with both tokens passes; one missing the 'min read' token fails; one missing the <time> fails. Wire into build.py after the heading-order gate. Dev: local-qwen.",
+      "stream": "C-depth",
+      "dev": "local-qwen built + pm-wired",
+      "done": "2026-08-08",
+      "result": "Shipped as one gate improve/blogindexcheck.py (audit_blog_index/_html): asserts every <ul class=\"post-list\"> card has a descriptive title anchor (not bare date / generic \"read more\"), a published <time>, an \"N min read\" token, and a non-empty description. Wired into build.py after the heading-order gate (error severity). Objective fixture verify + live index pass."
     }
   ]
 }
